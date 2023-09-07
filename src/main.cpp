@@ -1,7 +1,8 @@
-#include <iostream>
 #include "../include/glm/glm.hpp"
-
+#include <iostream>
 
 int main() {
-	std::cout << "Hello World!" << std::endl;
+	// Testkod för glm
+	glm::vec3 vec(1.0f, 0.0f, 0.0f);
+	std::cout << "vec.x = " << vec.x << std::endl;
 }

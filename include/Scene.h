@@ -1,7 +1,6 @@
 #pragma once
 
-class Ray {
+class Scene {
 public:
 	// Implementera
 };
-
