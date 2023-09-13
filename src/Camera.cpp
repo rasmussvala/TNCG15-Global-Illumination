@@ -30,6 +30,7 @@ void Camera::saveImage(std::string filename, int width, int height, const std::v
 			auto g = double(j) / (height - 1);
 			auto b = 0;
 
+			// Convert to 0-255
 			int ir = static_cast<int>(255.999 * r);
 			int ig = static_cast<int>(255.999 * g);
 			int ib = static_cast<int>(255.999 * b);
@@ -38,7 +39,7 @@ void Camera::saveImage(std::string filename, int width, int height, const std::v
 		}
 	}
 
-	ppmFile.close(); // Close the file
+	ppmFile.close();
 }
 
 
