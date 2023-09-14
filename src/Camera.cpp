@@ -2,7 +2,13 @@
 #include <fstream>
 #include <iostream>
 
-Camera::Camera(int w, int h) : width(w), height(h), location(-1, 0, 0, 1) {
+Camera::Camera(int w, int h) : width(w), height(h), location(-1, 0, 0) {
+	// Allokera minne för pixels
+	pixels.resize(height);
+
+	for (int i = 0; i < height; ++i) {
+		pixels[i].resize(width);
+	}
 }
 
 int Camera::getWidth() {
@@ -26,9 +32,9 @@ void Camera::saveImage(std::string filename, int width, int height, const std::v
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			auto r = double(i) / (width - 1);
-			auto g = double(j) / (height - 1);
-			auto b = 0;
+			auto r = pixels[j][i].r;
+			auto g = pixels[j][i].g;
+			auto b = pixels[j][i].b;
 
 			// Convert to 0-255
 			int ir = static_cast<int>(255.999 * r);
@@ -42,4 +48,40 @@ void Camera::saveImage(std::string filename, int width, int height, const std::v
 	ppmFile.close();
 }
 
+void Camera::traceRays(std::vector<std::vector<ColorRGB>>& pixels, const std::vector<Polygon*>& objects) {
+	// Loopar igenom alla pixlar
+	for (int j = 0; j < height; ++j) {
+		for (int i = 0; i < width; ++i) {
 
+			// Skapar en ray för varje pixel
+			Ray ray(location, calculateRayDirection(i, j));
+			glm::vec3 intersectionPoint;
+
+			// Kollar om ray intersectar något objekt
+			bool hit = false;
+			for (const auto& obj : objects) {
+				if (obj->intersect(ray, intersectionPoint)) {
+					hit = true;
+					break;
+				}
+			}
+
+			// Ansätter färgen på pixeln 
+			if (hit) {
+				pixels[j][i] = ColorRGB(0.0, 1.0, 0.0); // Grön för hit
+			}
+			else {
+				pixels[j][i] = ColorRGB(1.0, 0.0, 0.0); // Röd för miss
+			}
+		}
+	}
+}
+
+glm::vec3 Camera::calculateRayDirection(int i, int j) {
+	// Beräknar u och v (positionen i world coordinates)
+	// u och v är mellan -1 och 1
+	float u = (2.0f * i) / width - 1.0f;
+	float v = (2.0f * j) / height - 1.0f;
+
+	return glm::vec3(0.0f, u, v);
+}
