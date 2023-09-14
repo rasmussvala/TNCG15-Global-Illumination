@@ -13,8 +13,8 @@ int Camera::getHeight() {
 	return height;
 }
 
-glm::vec4 Camera::getLocation() {
-	return glm::vec4();
+glm::vec3 Camera::getLocation() {
+	return glm::vec3();
 }
 
 void Camera::saveImage(std::string filename, int width, int height, const std::vector<std::vector<ColorRGB>>& pixels) {
