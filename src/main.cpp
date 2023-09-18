@@ -10,8 +10,7 @@ int main() {
 
 	Triangle triangle1{ glm::vec3{ 3, 0, 0 }, glm::vec3{ 3, 1, 0 }, glm::vec3{ 3, 0, 1 } };
 
-	camera.traceRays(camera.pixels, { &triangle1 });
+	camera.traceRays({ &triangle1 });
 
-	camera.saveImage("../images/test.ppm",
-		camera.getWidth(), camera.getHeight(), camera.pixels);
+	camera.saveImage("../images/test.ppm");
 }

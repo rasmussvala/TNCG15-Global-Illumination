@@ -23,7 +23,7 @@ glm::vec3 Camera::getLocation() {
 	return glm::vec3();
 }
 
-void Camera::saveImage(std::string filename, int width, int height, const std::vector<std::vector<ColorRGB>>& pixels) {
+void Camera::saveImage(std::string filename) {
 
 	std::ofstream ppmFile(filename); // Open a file for writing
 
@@ -48,7 +48,7 @@ void Camera::saveImage(std::string filename, int width, int height, const std::v
 	ppmFile.close();
 }
 
-void Camera::traceRays(std::vector<std::vector<ColorRGB>>& pixels, const std::vector<Polygon*>& objects) {
+void Camera::traceRays(const std::vector<Polygon*>& objects) {
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
