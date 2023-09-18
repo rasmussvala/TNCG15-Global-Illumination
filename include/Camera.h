@@ -10,11 +10,11 @@ class Camera {
 public:
 	Camera(int w, int h);
 
-	int getWidth(); // Get the width of the camera
-	int getHeight(); // Get the height of the camera
-	glm::vec3 getLocation(); // Get the location of the camera
-	void saveImage(std::string filename); // Save the image to a file (PPM-format)
-	void traceRays(const std::vector<Polygon*>& objects); // Trace the rays from the camera to the objects
+	int getWidth(); 
+	int getHeight(); 
+	glm::vec3 getLocation(); 
+	void saveImage(std::string filename); 
+	void traceRays(const std::vector<Polygon*>& objects); 
 	glm::vec3 calculateRayDirection(int i, int j);
 	std::vector<std::vector<ColorRGB>> pixels;
 

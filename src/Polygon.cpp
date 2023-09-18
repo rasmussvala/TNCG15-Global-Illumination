@@ -5,7 +5,7 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
 
 bool Rectangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
 
-	// Implement the intersection logic for a rectangle here
+	// Implementera senare
 	return false;
 }
 
@@ -13,6 +13,8 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 	: vertex1(p1), vertex2(p2), vertex3(p3) {}
 
 bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
+    // Möller–Trumbore algoritm för att hitta snitt mellan ray och triangel
+
     const float EPSILON = 1e-6;
 
     glm::vec3 edge1 = vertex2 - vertex1;
@@ -21,7 +23,7 @@ bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
     float a = glm::dot(edge1, h);
 
     if (a > -EPSILON && a < EPSILON)
-        return false; // Ray is parallel to the triangle
+        return false; // Ray är parallell med triangeln
 
     float f = 1.0f / a;
     glm::vec3 s = ray.getOrigin() - vertex1;
@@ -36,7 +38,7 @@ bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
     if (v < 0.0 || u + v > 1.0)
         return false;
 
-    // At this point, we have a valid intersection
+    // Vi har ett snitt, beräkna t för att hitta snittpunkten
     float t = f * glm::dot(edge2, q);
 
     if (t > EPSILON) {
@@ -44,6 +46,6 @@ bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
         return true;
     }
 
-    return false; // The intersection is behind the ray's origin
+    return false; // Snittet är bakom ray origin (t < 0)
 }
 

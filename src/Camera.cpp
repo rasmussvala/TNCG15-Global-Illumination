@@ -25,7 +25,7 @@ glm::vec3 Camera::getLocation() {
 
 void Camera::saveImage(std::string filename) {
 
-	std::ofstream ppmFile(filename); // Open a file for writing
+	std::ofstream ppmFile(filename); // Öppnar/skapar filen
 
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
