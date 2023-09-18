@@ -21,5 +21,5 @@ public:
 private:
 	int width;
 	int height;
-	glm::vec3 location;
+	glm::vec3 location{ -1.0f, 0.0f, 0.0f };
 };

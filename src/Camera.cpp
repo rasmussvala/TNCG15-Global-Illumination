@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 
-Camera::Camera(int w, int h) : width(w), height(h), location(-1, 0, 0) {
+Camera::Camera(int w, int h) : width(w), height(h) {
 	// Allokera minne för pixels
 	pixels.resize(height);
 
@@ -83,5 +83,6 @@ glm::vec3 Camera::calculateRayDirection(int i, int j) {
 	float u = (2.0f * i) / width - 1.0f;
 	float v = (2.0f * j) / height - 1.0f;
 
-	return glm::vec3(0.0f, u, v);
+	// Returnerar en normaliserad vektor från kamerans position till u och v
+	return glm::normalize(glm::vec3(0.0f, u, v) - location);
 }
