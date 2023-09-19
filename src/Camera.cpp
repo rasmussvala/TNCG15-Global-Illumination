@@ -58,20 +58,14 @@ void Camera::traceRays(const std::vector<Polygon*>& objects) {
 			glm::vec3 intersectionPoint;
 
 			// Kollar om ray intersectar något objekt
-			bool hit = false;
 			for (const auto& obj : objects) {
 				if (obj->intersect(ray, intersectionPoint)) {
-					hit = true;
+
+					// Ansätter färgen på pixeln 
+					pixels[j][i] = obj->getColor();
+
 					break;
 				}
-			}
-
-			// Ansätter färgen på pixeln 
-			if (hit) {
-				pixels[j][i] = ColorRGB(0.0, 1.0, 0.0); // Grön för hit
-			}
-			else {
-				pixels[j][i] = ColorRGB(1.0, 0.0, 0.0); // Röd för miss
 			}
 		}
 	}

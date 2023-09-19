@@ -9,8 +9,8 @@ bool Rectangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
 	return false;
 }
 
-Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3)
-	: vertex1(p1), vertex2(p2), vertex3(p3) {}
+Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const ColorRGB& col)
+	: vertex1(p1), vertex2(p2), vertex3(p3), color(col) {}
 
 bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
     // Möller–Trumbore algoritm för att hitta snitt mellan ray och triangel
