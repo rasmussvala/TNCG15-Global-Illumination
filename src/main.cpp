@@ -8,7 +8,7 @@
 int main() {
 	Camera camera{ 600, 600 };
 
-	Triangle triangle1{ glm::vec3{ 3, 0, 0 }, glm::vec3{ 3, 1, 0 }, glm::vec3{ 3, 0, 1 } };
+	Triangle triangle1{ glm::vec3{ 3, 0, 0 }, glm::vec3{ 3, 1, 0 }, glm::vec3{ 3, 0, 1 }, {0.0,0.0,1.0} };
 
 	camera.traceRays({ &triangle1 });
 
