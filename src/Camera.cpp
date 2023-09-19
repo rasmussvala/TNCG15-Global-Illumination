@@ -3,7 +3,7 @@
 #include <iostream>
 
 Camera::Camera(int w, int h) : width(w), height(h) {
-	// Allokera minne för pixels
+	// Allokera minne fï¿½r pixels
 	pixels.resize(height);
 
 	for (int i = 0; i < height; ++i) {
@@ -25,7 +25,7 @@ glm::vec3 Camera::getLocation() {
 
 void Camera::saveImage(std::string filename) {
 
-	std::ofstream ppmFile(filename); // Öppnar/skapar filen
+	std::ofstream ppmFile(filename); // ï¿½ppnar/skapar filen
 
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
@@ -53,15 +53,15 @@ void Camera::traceRays(const std::vector<Polygon*>& objects) {
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			// Skapar en ray för varje pixel
+			// Skapar en ray fï¿½r varje pixel
 			Ray ray(location, calculateRayDirection(i, j));
 			glm::vec3 intersectionPoint;
 
-			// Kollar om ray intersectar något objekt
+			// Kollar om ray intersectar nï¿½got objekt
 			for (const auto& obj : objects) {
 				if (obj->intersect(ray, intersectionPoint)) {
 
-					// Ansätter färgen på pixeln 
+					// Ansï¿½tter fï¿½rgen pï¿½ pixeln 
 					pixels[j][i] = obj->getColor();
 
 					break;
@@ -72,11 +72,11 @@ void Camera::traceRays(const std::vector<Polygon*>& objects) {
 }
 
 glm::vec3 Camera::calculateRayDirection(int i, int j) {
-	// Beräknar u och v (positionen i world coordinates)
-	// u och v är mellan -1 och 1
-	float u = (2.0f * i) / width - 1.0f; // går från -1 -> 1
-	float v = 1.0f - (2.0f * j) / height; // går från 1 -> -1
+	// Berï¿½knar u och v (positionen i world coordinates)
+	// u och v ï¿½r mellan -1 och 1
+	float u = (2.0f * i) / width - 1.0f; // gï¿½r frï¿½n -1 -> 1
+	float v = 1.0f - (2.0f * j) / height; // gï¿½r frï¿½n 1 -> -1
 
-	// Returnerar en normaliserad vektor från kamerans position till u och v
+	// Returnerar en normaliserad vektor frï¿½n kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
 }

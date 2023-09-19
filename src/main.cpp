@@ -1,16 +1,12 @@
 #include "../include/glm/glm.hpp"
-#include "../include/Camera.h"
-#include "../include/ColorRGB.h"
+//#include "../include/Camera.h"
+#include "../include/Scene.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
 
 int main() {
-	Camera camera{ 600, 600 };
+	Scene renderScene;
+	renderScene.addScene(); // Scenen renderar alla object och likanade
 
-	Triangle triangle1{ glm::vec3{ 3, 0, 0 }, glm::vec3{ 3, 1, 0 }, glm::vec3{ 3, 0, 1 }, {0.0,0.0,1.0} };
-
-	camera.traceRays({ &triangle1 });
-
-	camera.saveImage("../images/test.ppm");
 }

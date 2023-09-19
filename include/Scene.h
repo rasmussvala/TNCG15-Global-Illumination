@@ -2,5 +2,5 @@
 
 class Scene {
 public:
-	// Implementera
+	void addScene();
 };

@@ -11,9 +11,10 @@ public:
 
 class Rectangle : public Polygon {
 public:
-	Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4);
-
+	Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const ColorRGB& col);
+	
 	bool intersect(const Ray& ray, glm::vec3& intersectionPoint) const override;
+
 	ColorRGB getColor() const override{
 		return color;
 	}
@@ -23,6 +24,8 @@ private:
 	glm::vec3 vertex2;
 	glm::vec3 vertex3;
 	glm::vec3 vertex4;
+	glm::vec3 normal;
+	glm::vec3 c1, c2;
 	ColorRGB color{ 0.0,0.0,0.0 };
 };
 
