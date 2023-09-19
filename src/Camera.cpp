@@ -1,37 +1,45 @@
 #include "../include/Camera.h"
+#include <fstream>
+#include <iostream>
 
-Camera::Camera(int w, int h) : width(w), height(h), Location(-1, 0, 0, 1) {
-	pixels.resize(width, std::vector<ColorRGB>(height, ColorRGB(0.0, 0.0, 0.0)));
+Camera::Camera(int w, int h) : width(w), height(h), location(-1, 0, 0, 1) {
 }
 
-int Camera::GetWidth() {
+int Camera::getWidth() {
 	return width;
 }
 
-int Camera::GetHeight() {
+int Camera::getHeight() {
 	return height;
 }
 
-glm::vec4 Camera::GetLocation(int x, int y) {
-	return glm::vec4(x, y, 0, 1);
-}
-
-glm::vec4 Camera::SetLocation(int x, int y, int z) {
-	Location = glm::vec4(x, y, z, 1);
-	return Location;
+glm::vec3 Camera::getLocation() {
+	return glm::vec3();
 }
 
 void Camera::saveImage(std::string filename, int width, int height, const std::vector<std::vector<ColorRGB>>& pixels) {
-	std::ofstream ofs;
-	ofs.open(filename, std::ios::binary);
-	ofs << "P6\n" << width << " " << height << "\n255\n";
 
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			ofs.put(static_cast<char>(pixels[x][y].r * 255));
-			ofs.put(static_cast<char>(pixels[x][y].g * 255));
-			ofs.put(static_cast<char>(pixels[x][y].b * 255));
+	std::ofstream ppmFile(filename); // Open a file for writing
+
+	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
+
+	for (int j = 0; j < height; ++j) {
+		for (int i = 0; i < width; ++i) {
+
+			auto r = double(i) / (width - 1);
+			auto g = double(j) / (height - 1);
+			auto b = 0;
+
+			// Convert to 0-255
+			int ir = static_cast<int>(255.999 * r);
+			int ig = static_cast<int>(255.999 * g);
+			int ib = static_cast<int>(255.999 * b);
+
+			ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
 		}
 	}
-	ofs.close();
+
+	ppmFile.close();
 }
+
+
