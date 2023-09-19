@@ -74,8 +74,8 @@ void Camera::traceRays(const std::vector<Polygon*>& objects) {
 glm::vec3 Camera::calculateRayDirection(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
 	// u och v är mellan -1 och 1
-	float u = (2.0f * i) / width - 1.0f;
-	float v = (2.0f * j) / height - 1.0f;
+	float u = (2.0f * i) / width - 1.0f; // går från -1 -> 1
+	float v = 1.0f - (2.0f * j) / height; // går från 1 -> -1
 
 	// Returnerar en normaliserad vektor från kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
