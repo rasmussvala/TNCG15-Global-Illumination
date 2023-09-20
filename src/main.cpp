@@ -1,12 +1,12 @@
-#include "../include/glm/glm.hpp"
-//#include "../include/Camera.h"
 #include "../include/Scene.h"
-#include <vector>
-#include <iostream>
-#include <fstream>
+#include "../include/Polygon.h"
 
 int main() {
-	Scene renderScene;
-	renderScene.addScene(); // Scenen renderar alla object och likanade
+	Scene myScene(600, 600);
 
+	Triangle triangle1{ glm::vec3{3.0f, 0.0f, 0.0f}, glm::vec3{3.0f, 2.0f, 0.0f}, glm::vec3{3.0f, 0.0f, 2.0f},ColorRGB(0.0,0.0,0.5) };
+	myScene.addPolygon(&triangle1);
+
+	myScene.render();
+	return 0;
 }
