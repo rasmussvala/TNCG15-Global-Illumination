@@ -63,8 +63,6 @@ void Camera::traceRays(const std::vector<Polygon*>& objects) {
 
 					// Ans�tter f�rgen p� pixeln 
 					pixels[j][i] = obj->getColor();
-
-					break;
 				}
 			}
 		}
