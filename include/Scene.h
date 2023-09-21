@@ -21,6 +21,11 @@ public:
         camera.saveImage("../images/test.ppm");
     }
 
+    void HemisphericalToLocalCartesian(double inclination, double azimuth, glm::vec3& cartesian);     
+    void LocalCartesianToHemispherical(const glm::vec3& cartesian, double& inclination, double& azimuth);
+    void LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal, glm::vec3& world);
+    void WorldCartesianToLocalCartesian(const glm::vec3& world, const glm::vec3& normal, glm::vec3& local);
+
 private:
     Camera camera;
     std::vector<Polygon*> objects;

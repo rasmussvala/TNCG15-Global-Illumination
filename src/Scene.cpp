@@ -31,3 +31,24 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	Triangle triangle_ceilingF{ glm::vec3{ 0, 6, 5 }, glm::vec3{ 0, -6, 5 }, glm::vec3{ -3, 0, 5 }, {1.0, 1.0 ,1.0} };
 	objects.push_back(&triangle_ceilingF);
 }
+
+void Scene::HemisphericalToLocalCartesian(double phi, double omega, glm::vec3& cartesian) {
+	// phi = inclination
+	// omega = azimuth
+	cartesian.x = cos(phi) * sin(omega);
+	cartesian.y = sin(phi) * sin(omega);
+	cartesian.z = cos(omega);
+}
+
+void Scene::LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal, glm::vec3& world) {
+	// Implementera
+}
+
+void Scene::LocalCartesianToHemispherical(const glm::vec3& cartesian, double& inclination, double& azimuth) {
+	// Implementera
+}
+
+
+void Scene::WorldCartesianToLocalCartesian(const glm::vec3& world, const glm::vec3& normal, glm::vec3& local) {
+	// Implementera
+}
