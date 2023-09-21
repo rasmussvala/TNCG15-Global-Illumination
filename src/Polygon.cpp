@@ -5,7 +5,7 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
 	: vertex1(p1), vertex2(p2), vertex3(p3), vertex4(p4), color(col) {
         // Beräkna c1 och c2, som är de två kantvektorerna som utgår från en av hörnen.
         c1 = vertex2 - vertex1;
-        c2 = vertex3 - vertex1;
+        c2 = vertex3 - vertex1; // Kan vara vertex4 - vertex1 också.
 
         // Beräkna normalen N till rektangeln som är c1 × c2.
         normal = glm::normalize(glm::cross(c1, c2));
