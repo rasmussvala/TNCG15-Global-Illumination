@@ -60,13 +60,13 @@ void Camera::traceRays(const std::vector<Polygon*>& objects, const std::vector<L
 			// Kollar om ray intersectar n�got objekt
 			for (const auto& obj : objects) {
 				// Intersection point manipuleras i intersect funktionen
-				if (obj->intersect(ray, intersectionPoint)) {
+				if (obj->intersect(ray, ray.intersectionPoint)) {
 
 					glm::vec3 intersectionPointNormal = obj->getNormal();
 					float irradiance = 0.0f;
 
 					for (const auto& light : lights) {
-						irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
+						irradiance = light->calculateLight(ray.intersectionPoint, intersectionPointNormal);
 					}
 
 					// Ans�tter f�rgen p� pixeln 
