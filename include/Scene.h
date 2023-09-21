@@ -17,7 +17,7 @@ public:
 	}
 
     void render() {
-        camera.traceRays(objects);
+        camera.traceRays(objects, lights);
         camera.saveImage("../images/test.ppm");
     }
 

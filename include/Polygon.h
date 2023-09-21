@@ -7,6 +7,7 @@ class Polygon {
 public:
 	virtual bool intersect(const Ray& ray, glm::vec3& intersectionPoint) const = 0;
 	virtual ColorRGB getColor() const = 0;
+	virtual glm::vec3 getNormal() const = 0;
 };
 
 class Rectangle : public Polygon {
@@ -17,6 +18,10 @@ public:
 
 	ColorRGB getColor() const override {
 		return color;
+	}
+
+	glm::vec3 getNormal() const {
+		return normal;
 	}
 
 private:
@@ -40,9 +45,14 @@ public:
 		return color;
 	}
 
+	glm::vec3 getNormal() const {
+		return normal;
+	}	
+
 private:
 	glm::vec3 vertex1;
 	glm::vec3 vertex2;
 	glm::vec3 vertex3;
+	glm::vec3 normal; 
 	ColorRGB color{ 0.0,0.0,0.0 };
 };

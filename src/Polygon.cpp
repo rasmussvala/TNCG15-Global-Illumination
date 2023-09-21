@@ -11,7 +11,7 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
         normal = glm::normalize(glm::cross(c1, c2));
     }
 
-
+// Kolla om ray intersectar rektangeln. Om den gör det, returnera true och sätt intersectionPoint till snittpunkten.
 bool Rectangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
 
     const float EPSILON = 1e-6;
@@ -49,8 +49,12 @@ bool Rectangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
 }
 
 Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const ColorRGB& col)
-	: vertex1(p1), vertex2(p2), vertex3(p3), color(col) {}
+	: vertex1(p1), vertex2(p2), vertex3(p3), color(col) {
 
+    normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
+}
+
+// Kolla om ray intersectar triangeln. Om den gör det, returnera true och sätt intersectionPoint till snittpunkten.
 bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
     // M�ller�Trumbore algoritm f�r att hitta snitt mellan ray och triangel
 

@@ -1,4 +1,5 @@
 #include "../include/Camera.h"
+#include "../include/Light.h"
 #include <fstream>
 #include <iostream>
 
@@ -48,21 +49,30 @@ void Camera::saveImage(std::string filename) {
 	ppmFile.close();
 }
 
-void Camera::traceRays(const std::vector<Polygon*>& objects) {
+void Camera::traceRays(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights) {
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
 			// Skapar en ray f�r varje pixel
 			Ray ray(location, calculateRayDirection(i, j));
-			glm::vec3 intersectionPoint;
 
 			// Kollar om ray intersectar n�got objekt
 			for (const auto& obj : objects) {
+				// Intersection point manipuleras i intersect funktionen
 				if (obj->intersect(ray, intersectionPoint)) {
 
+					glm::vec3 intersectionPointNormal = obj->getNormal();
+					float irradiance = 0.0f;
+
+					for (const auto& light : lights) {
+						irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
+					}
+
 					// Ans�tter f�rgen p� pixeln 
-					pixels[j][i] = obj->getColor();
+					pixels[j][i] = { obj->getColor().r * irradiance,
+						obj->getColor().g * irradiance, 
+						obj->getColor().b * irradiance };
 				}
 			}
 		}

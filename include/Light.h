@@ -15,13 +15,12 @@ public:
 		normal = glm::normalize(glm::cross(e1, e2));
 	}
 
-	void calculateLight(const glm::vec3& intersectionPoint); 
+	float calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
 
 private:
 	glm::vec3 v1, v2, v3, v4;
 	glm::vec3 e1, e2;
 	float area;
 	glm::vec3 normal;
-	glm::vec3 distance; // distance to point
-	float irradiance; // light intensity W/m^2
+	float irradiance = 0.0f; // light intensity W/m^2
 };
