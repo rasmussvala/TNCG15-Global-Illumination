@@ -1,94 +1,74 @@
 #include "../include/Polygon.h"
 #include "../include/glm/glm.hpp"
+#include <iostream>
 
 Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const ColorRGB& col)
 	: vertex1(p1), vertex2(p2), vertex3(p3), vertex4(p4), color(col) {
-        // Beräkna c1 och c2, som är de två kantvektorerna som utgår från en av hörnen.
-        c1 = vertex2 - vertex1;
-        c2 = vertex3 - vertex1; // Kan vara vertex4 - vertex1 också.
+	// Beräkna c1 och c2, som är de två kantvektorerna som utgår från en av hörnen.
+	c1 = vertex2 - vertex1;
+	c2 = vertex3 - vertex1; // Kan vara vertex4 - vertex1 också.
 
-        // Beräkna normalen N till rektangeln som är c1 × c2.
-        normal = glm::normalize(glm::cross(c1, c2));
-    }
-
-// Kolla om ray intersectar rektangeln. Om den gör det, returnera true och sätt intersectionPoint till snittpunkten.
-bool Rectangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
-
-    const float EPSILON = 1e-6;
-
-	const glm::vec3& p1 = vertex1;
-    const glm::vec3& p2 = vertex2;
-    const glm::vec3& p3 = vertex3;
-    const glm::vec3& p4 = vertex4;
-
-
-    float denom = glm::dot(normal, ray.getDirection());
-    float t = glm::dot(p1 - ray.getOrigin(), normal) / denom;
-
-    // Om strålen är parallell med rektangelns plan, finns det ingen snittpunkt.
-    // Om t är negativt eller nära noll, ligger snittpunkten bakom strålen.
-    if ((std::abs(denom) < EPSILON) || (t < 0.0f)) {
-        return false;
-    }
-
-    // Beräkna snittpunkten.
-    glm::vec3 intersection = ray.getOrigin() + t * ray.getDirection();
-
-    // Beräkna a och b.
-    float a = glm::dot(intersection - vertex1, c1) / glm::dot(c1, c1);
-    float b = glm::dot(intersection - vertex1, c2) / glm::dot(c2, c2);
-
-    // Kontrollera om a och b är inom intervallet [0, 1].
-    if (a >= 0.0f && a <= 1.0f && b >= 0.0f && b <= 1.0f) {
-        // Snittpunkten är inom rektangeln.
-        intersectionPoint = intersection;
-        return true;
-    }
-
-	return false;
+	// Beräkna normalen N till rektangeln som är c1 × c2.
+	normal = glm::normalize(glm::cross(c1, c2));
 }
+
+float Rectangle::intersect(const Ray& ray) {
+
+	Triangle triangle1(vertex1, vertex2, vertex3, color);
+	Triangle triangle2(vertex1, vertex3, vertex4, color);
+
+	// Call the triangle intersection function for both triangles
+	float t1 = triangle1.intersect(ray);
+	float t2 = triangle2.intersect(ray);
+
+	const float EPSILON = 1e-6;
+
+	// Check if either triangle intersected the ray and return the closest intersection
+	if (t1 >= EPSILON && t2 >= EPSILON) {
+		return std::min(t1, t2); // Return the closest intersection
+	}
+	else if (t1 >= EPSILON) {
+		return t1;
+	}
+	else if (t2 >= EPSILON) {
+		return t2;
+	}
+	else {
+		return -1.0f; // No intersection
+	}
+}
+
 
 Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const ColorRGB& col)
 	: vertex1(p1), vertex2(p2), vertex3(p3), color(col) {
 
-    normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
+	normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
 }
 
-// Kolla om ray intersectar triangeln. Om den gör det, returnera true och sätt intersectionPoint till snittpunkten.
-bool Triangle::intersect(const Ray& ray, glm::vec3& intersectionPoint) const {
-    // M�ller�Trumbore algoritm f�r att hitta snitt mellan ray och triangel
+float Triangle::intersect(const Ray& ray) {
+	// Möller-Trumbore algoritm f�r att hitta snitt mellan ray och triangel
 
-    const float EPSILON = 1e-6;
+	const float EPSILON = 1e-6;
 
-    glm::vec3 edge1 = vertex2 - vertex1;
-    glm::vec3 edge2 = vertex3 - vertex1;
-    glm::vec3 h = glm::cross(ray.getDirection(), edge2);
-    float a = glm::dot(edge1, h);
+	glm::vec3 E1 = vertex2 - vertex1;
+	glm::vec3 E2 = vertex3 - vertex1;
+	glm::vec3 T = ray.getOrigin() - vertex1;
+	glm::vec3 D = ray.getDirection();
+	glm::vec3 P = glm::cross(D, E2);
+	glm::vec3 Q = glm::cross(T, E1);
 
-    if (a > -EPSILON && a < EPSILON)
-        return false; // Ray �r parallell med triangeln
+	float u = (glm::dot(P, T) / glm::dot(P, E1));
+	float v = (glm::dot(Q, D) / glm::dot(P, E1));
 
-    float f = 1.0f / a;
-    glm::vec3 s = ray.getOrigin() - vertex1;
-    float u = f * glm::dot(s, h);
+	if (u + v > 1.0f || u < EPSILON || v < EPSILON) {// Maybe use EPSILON?
+		return -INFINITY;
+	}
+	float t = (glm::dot(Q, E2) / glm::dot(P, E1));
 
-    if (u < 0.0 || u > 1.0)
-        return false;
+	if (t < EPSILON) {
+		return -INFINITY;
+	}
 
-    glm::vec3 q = glm::cross(s, edge1);
-    float v = f * glm::dot(ray.getDirection(), q);
-
-    if (v < 0.0 || u + v > 1.0)
-        return false;
-
-    // Vi har ett snitt, ber�kna t f�r att hitta snittpunkten
-    float t = f * glm::dot(edge2, q);
-
-    if (t > EPSILON) {
-        intersectionPoint = ray.at(t);
-        return true;
-    }
-
-    return false; // Snittet �r bakom ray origin (t < 0)
+	return t;
 }
 

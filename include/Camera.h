@@ -16,6 +16,7 @@ public:
 	glm::vec3 getLocation();
 	void saveImage(std::string filename);
 	void traceRays(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights);
+	void checkIntersection(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights, int j, int i);
 	glm::vec3 calculateRayDirection(int i, int j);
 	std::vector<std::vector<ColorRGB>> pixels;
 

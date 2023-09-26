@@ -12,8 +12,6 @@ public:
 		return origin + t * direction;
 	}
 
-	glm::vec3 intersectionPoint{ 0.0f, 0.0f, 0.0f };
-
 private:
 	glm::vec3 origin;
 	glm::vec3 direction;

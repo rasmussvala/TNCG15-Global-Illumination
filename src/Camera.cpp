@@ -54,27 +54,38 @@ void Camera::traceRays(const std::vector<Polygon*>& objects, const std::vector<L
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			// Skapar en ray f�r varje pixel
-			Ray ray(location, calculateRayDirection(i, j));
+			// Kollar om ray intersectar något objekt
+			checkIntersection(objects, lights, j, i);
+		}
+	}
+}
 
-			// Kollar om ray intersectar n�got objekt
-			for (const auto& obj : objects) {
-				// Intersection point manipuleras i intersect funktionen
-				if (obj->intersect(ray, ray.intersectionPoint)) {
+void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights, int j, int i) {
 
-					glm::vec3 intersectionPointNormal = obj->getNormal();
-					float irradiance = 0.0f;
+	// Skapar en ray för varje pixel
+	Ray ray(location, calculateRayDirection(i, j));
 
-					for (const auto& light : lights) {
-						irradiance = light->calculateLight(ray.intersectionPoint, intersectionPointNormal);
-					}
 
-					// Ans�tter f�rgen p� pixeln 
-					pixels[j][i] = { obj->getColor().r * irradiance,
-						obj->getColor().g * irradiance, 
-						obj->getColor().b * irradiance };
-				}
+	// Kollar om ray intersectar n�got objekt
+	for (const auto& obj : objects) {
+
+		const float EPSILON = 1e-6;
+		float t = obj->intersect(ray);
+
+		if (t > EPSILON) {
+
+			glm::vec3 intersectionPoint = ray.at(t);
+			glm::vec3 intersectionPointNormal = obj->getNormal();
+			float irradiance = 0.0f;
+
+			for (const auto& light : lights) {
+				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
 			}
+
+			// Ans�tter f�rgen p� pixeln 
+			pixels[j][i] = { obj->getColor().r * irradiance,
+				obj->getColor().g * irradiance,
+				obj->getColor().b * irradiance };
 		}
 	}
 }

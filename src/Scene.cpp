@@ -4,7 +4,7 @@
 #include "../include/Camera.h"
 
 Scene::Scene(int width, int height) : camera(width, height) {
-	Triangle triangle_floorB{ glm::vec3{ 13, 0, -5 }, glm::vec3{ 10, 6, -5 }, glm::vec3{ 10, -6, -5 }, {1.0, 1.0, 1.0} };
+	/*Triangle triangle_floorB{glm::vec3{13, 0, -5}, glm::vec3{10, 6, -5}, glm::vec3{10, -6, -5}, {1.0, 1.0, 1.0}};
 	objects.push_back(&triangle_floorB);
 	Triangle triangle_floorF{ glm::vec3{ 0, 6, -5 }, glm::vec3{ 0, -6, -5 }, glm::vec3{ -3, 0, -5 }, {1.0, 1.0 ,1.0} };
 	objects.push_back(&triangle_floorF);
@@ -29,7 +29,7 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	Triangle triangle_ceilingB{ glm::vec3{ 13, 0, 5 }, glm::vec3{ 10, 6, 5 }, glm::vec3{ 10, -6, 5 }, {1.0, 1.0 ,1.0} };
 	objects.push_back(&triangle_ceilingB);
 	Triangle triangle_ceilingF{ glm::vec3{ 0, 6, 5 }, glm::vec3{ 0, -6, 5 }, glm::vec3{ -3, 0, 5 }, {1.0, 1.0 ,1.0} };
-	objects.push_back(&triangle_ceilingF);
+	objects.push_back(&triangle_ceilingF);*/
 }
 
 void Scene::HemisphericalToLocalCartesian(double phi, double omega, glm::vec3& cartesian) {
