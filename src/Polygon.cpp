@@ -12,7 +12,7 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
 	normal = glm::normalize(glm::cross(c1, c2));
 }
 
-float Rectangle::intersect(const Ray& ray) {
+float Rectangle::intersect(const Ray& ray) const {
 
 	Triangle triangle1(vertex1, vertex2, vertex3, color);
 	Triangle triangle2(vertex1, vertex3, vertex4, color);
@@ -45,10 +45,10 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 	normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
 }
 
-float Triangle::intersect(const Ray& ray) {
+float Triangle::intersect(const Ray& ray) const {
 	// Möller-Trumbore algoritm f�r att hitta snitt mellan ray och triangel
 
-	const float EPSILON = 1e-6;
+	const float EPSILON = 1e-4;
 
 	glm::vec3 E1 = vertex2 - vertex1;
 	glm::vec3 E2 = vertex3 - vertex1;

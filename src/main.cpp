@@ -5,16 +5,16 @@ int main() {
 	Scene myScene(600, 600);
 
 	Triangle triangle1{ glm::vec3{6.0f, 0.0f, 0.0f},
-		glm::vec3{7.0f, 0.0f, 2.0f},
-		glm::vec3{6.0f, 2.0f, 0.0f},
-		ColorRGB(1.0, 1.0, 1.0) };
+		glm::vec3{7.0f, 0.0f, 6.0f},
+		glm::vec3{6.0f, 6.0f, 0.0f},
+		ColorRGB(0.5, 0.0, 0.5) };
 
 	myScene.addPolygon(&triangle1);
 
-	Light light1{ glm::vec3{5.0f, 2.0f, 8.0f},
-		glm::vec3{5.0f, 2.0f, 10.0f},
-		glm::vec3{5.0f, -2.0f, 10.0f},
-		glm::vec3{5.0f, -2.0f, 8.0f} };
+	Light light1{ glm::vec3{4.9f, 2.0f, 8.0f},
+		glm::vec3{4.9f, 2.0f, 10.0f},
+		glm::vec3{4.9f, -2.0f, 10.0f},
+		glm::vec3{4.9f, -2.0f, 8.0f} };
 
 	myScene.addLight(&light1);
 

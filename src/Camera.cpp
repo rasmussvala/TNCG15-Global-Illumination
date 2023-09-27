@@ -26,36 +26,81 @@ glm::vec3 Camera::getLocation() {
 
 void Camera::saveImage(std::string filename) {
 
-	std::ofstream ppmFile(filename); // �ppnar/skapar filen
+	// NO CONTRAST STRETCHING
+
+	//std::ofstream ppmFile(filename); // �ppnar/skapar filen
+
+	//ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
+
+	//for (int j = 0; j < height; ++j) {
+	//	for (int i = 0; i < width; ++i) {
+
+	//		auto r = pixels[j][i].r;
+	//		auto g = pixels[j][i].g;
+	//		auto b = pixels[j][i].b;
+
+	//		// Convert from floats [0,1] to ints [0,255]
+	//		int ir = static_cast<int>(255.999 * r);
+	//		int ig = static_cast<int>(255.999 * g);
+	//		int ib = static_cast<int>(255.999 * b);
+
+	//		ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
+	//	}
+	//}
+
+	//ppmFile.close();
+
+	// CONTRAST STRETCHING
+
+	std::ofstream ppmFile(filename); // Opens/creates the file
 
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
+	// Find the maximum pixel value among all channels
+	float maxRGB = -FLT_MAX;
+
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
-
 			auto r = pixels[j][i].r;
 			auto g = pixels[j][i].g;
 			auto b = pixels[j][i].b;
 
-			// Convert to 0-255
-			int ir = static_cast<int>(255.999 * r);
-			int ig = static_cast<int>(255.999 * g);
-			int ib = static_cast<int>(255.999 * b);
+			float maxChannel = std::max({ r, g, b });
+			maxRGB = std::max(maxRGB, maxChannel);
+		}
+	}
+
+	// Calculate the stretching factor
+	float stretchFactor = 255.0 / maxRGB;
+
+	// Write the stretched pixel values to the output file
+	for (int j = 0; j < height; ++j) {
+		for (int i = 0; i < width; ++i) {
+			auto r = pixels[j][i].r;
+			auto g = pixels[j][i].g;
+			auto b = pixels[j][i].b;
+
+			// Apply contrast stretching using the brightest channel
+			int ir = static_cast<int>(stretchFactor * r);
+			int ig = static_cast<int>(stretchFactor * g);
+			int ib = static_cast<int>(stretchFactor * b);
 
 			ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
 		}
 	}
 
 	ppmFile.close();
+
+
 }
 
-void Camera::traceRays(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights) {
+void Camera::traceRays(const std::vector<Polygon*>& objects, const std::vector<Light*>& ligths) {
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
 			// Kollar om ray intersectar något objekt
-			checkIntersection(objects, lights, j, i);
+			checkIntersection(objects, ligths, j, i);
 		}
 	}
 }
@@ -65,11 +110,11 @@ void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::
 	// Skapar en ray för varje pixel
 	Ray ray(location, calculateRayDirection(i, j));
 
+	// Kollar om ray intersectar något objekt
+	for (const Polygon* obj : objects) {
 
-	// Kollar om ray intersectar n�got objekt
-	for (const auto& obj : objects) {
+		const float EPSILON = 0.0004f;
 
-		const float EPSILON = 1e-6;
 		float t = obj->intersect(ray);
 
 		if (t > EPSILON) {
@@ -78,7 +123,7 @@ void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::
 			glm::vec3 intersectionPointNormal = obj->getNormal();
 			float irradiance = 0.0f;
 
-			for (const auto& light : lights) {
+			for (Light* light : lights) {
 				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
 			}
 

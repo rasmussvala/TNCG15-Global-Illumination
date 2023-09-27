@@ -3,7 +3,8 @@
 
 float Light::calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
 	int N = 100; // antal samples
-	float Le = 3200.0f; // radiance
+	float Le = 100.0f; // radiance
+	float irradiance = 0.0f;
 
 	for (int i = 0; i < N; i++) {
 		// Värde mellan 0 - 1 

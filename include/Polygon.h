@@ -5,7 +5,7 @@
 
 class Polygon {
 public:
-	virtual float intersect(const Ray& ray) = 0;
+	virtual float intersect(const Ray& ray) const = 0;
 	virtual ColorRGB getColor() const = 0;
 	virtual glm::vec3 getNormal() const = 0;
 };
@@ -14,13 +14,13 @@ class Rectangle : public Polygon {
 public:
 	Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const ColorRGB& col);
 
-	float intersect(const Ray& ray) override;
+	float intersect(const Ray& ray) const override;
 
 	ColorRGB getColor() const override {
 		return color;
 	}
 
-	glm::vec3 getNormal() const {
+	glm::vec3 getNormal() const override {
 		return normal;
 	}
 
@@ -40,12 +40,12 @@ class Triangle : public Polygon {
 public:
 	Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const ColorRGB& color);
 
-	float intersect(const Ray& ray) override;
+	float intersect(const Ray& ray) const override;
 	ColorRGB getColor() const override {
 		return color;
 	}
 
-	glm::vec3 getNormal() const {
+	glm::vec3 getNormal() const override {
 		return normal;
 	}	
 

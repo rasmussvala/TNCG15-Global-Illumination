@@ -10,7 +10,7 @@ public:
 	// räkna ut irradiance 
 	Light (glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4) : v1(v1), v2(v2), v3(v3), v4(v4) {
 		e1 = v2 - v1;
-		e2 = v3 - v1; // e2 = v4 - v1 kanske 
+		e2 = v4 - v1; // e2 = v3 - v1 kanske 
 		area = glm::length(e1) * glm::length(e2);
 		normal = glm::normalize(glm::cross(e1, e2));
 	}
@@ -22,5 +22,5 @@ private:
 	glm::vec3 e1, e2;
 	float area;
 	glm::vec3 normal;
-	float irradiance = 0.0f; // light intensity W/m^2
+	// float irradiance = 0.0f; // light intensity W/m^2
 };
