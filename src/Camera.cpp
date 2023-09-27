@@ -52,11 +52,11 @@ void Camera::saveImage(std::string filename) {
 
 	// CONTRAST STRETCHING
 
-	std::ofstream ppmFile(filename); // Opens/creates the file
+	std::ofstream ppmFile(filename); // Öppnar/skapar filen
 
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
-	// Find the maximum pixel value among all channels
+	// Hittar den starkaste färgen i bilden
 	float maxRGB = -FLT_MAX;
 
 	for (int j = 0; j < height; ++j) {
@@ -70,17 +70,17 @@ void Camera::saveImage(std::string filename) {
 		}
 	}
 
-	// Calculate the stretching factor
+	// Beräknar faktorn som ska användas för att stretcha färgerna
 	float stretchFactor = 255.0 / maxRGB;
 
-	// Write the stretched pixel values to the output file
+	// Skriver ut färgerna till filen
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 			auto r = pixels[j][i].r;
 			auto g = pixels[j][i].g;
 			auto b = pixels[j][i].b;
 
-			// Apply contrast stretching using the brightest channel
+			// Applicerar faktorn på färgerna
 			int ir = static_cast<int>(stretchFactor * r);
 			int ig = static_cast<int>(stretchFactor * g);
 			int ib = static_cast<int>(stretchFactor * b);
