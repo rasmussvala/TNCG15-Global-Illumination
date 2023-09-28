@@ -3,6 +3,7 @@
 #include "../include/ColorRGB.h"
 #include "../include/Polygon.h"
 #include "../include/Light.h"
+#include "../include/Object.h"
 #include <fstream>
 #include <vector>
 #include <string>
@@ -15,8 +16,8 @@ public:
 	int getHeight();
 	glm::vec3 getLocation();
 	void saveImage(std::string filename);
-	void traceRays(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights);
-	void checkIntersection(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights, int j, int i);
+	void traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects);
+	void checkIntersection(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i);
 	glm::vec3 calculateRayDirection(int i, int j);
 	std::vector<std::vector<ColorRGB>> pixels;
 

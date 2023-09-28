@@ -1,5 +1,6 @@
 #include "../include/Scene.h"
 #include "../include/Polygon.h"
+#include "../include/Object.h"
 
 int main() {
 	Scene myScene(600, 600);
@@ -57,6 +58,12 @@ int main() {
 	myScene.addPolygon(&triangle_ceilingF);
 	myScene.addPolygon(&rectangle_ceiling);
 
+	// ----------------------------------------------
+
+	Cube cube1{};
+
+	myScene.addObjects(&cube1);
+
 	Light light1{ glm::vec3{4.9f, 2.0f, 8.0f},
 		glm::vec3{4.9f, 2.0f, 10.0f},
 		glm::vec3{4.9f, -2.0f, 10.0f},
@@ -67,4 +74,7 @@ int main() {
 	myScene.render();
 
 	return 0;
+
+	// @TODO - Kolla varför scenen är flippad vertikalt
+	// @TODO - Kolla varför scenen inte kan skrivas i konstruktorn
 }

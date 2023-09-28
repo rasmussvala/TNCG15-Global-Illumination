@@ -1,5 +1,6 @@
 #include "../include/Camera.h"
 #include "../include/Light.h"
+#include "../include/Object.h"
 #include <fstream>
 #include <iostream>
 
@@ -94,24 +95,24 @@ void Camera::saveImage(std::string filename) {
 
 }
 
-void Camera::traceRays(const std::vector<Polygon*>& objects, const std::vector<Light*>& ligths) {
+void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& ligths, const std::vector<Object*>& objects) {
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
 			// Kollar om ray intersectar något objekt
-			checkIntersection(objects, ligths, j, i);
+			checkIntersection(polygons, ligths, objects, j, i);
 		}
 	}
 }
 
-void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::vector<Light*>& lights, int j, int i) {
+void Camera::checkIntersection(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i) {
 
 	// Skapar en ray för varje pixel
 	Ray ray(location, calculateRayDirection(i, j));
 
 	// Kollar om ray intersectar något objekt
-	for (const Polygon* obj : objects) {
+	for (const Polygon* obj : polygons) {
 
 		const float EPSILON = 1e-6;
 
@@ -124,7 +125,7 @@ void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::
 			float irradiance = 0.0f;
 
 			for (Light* light : lights) {
-				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
+				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal, objects);
 			}
 
 			// Ansätter färgen på pixeln 

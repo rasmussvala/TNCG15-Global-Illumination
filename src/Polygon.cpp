@@ -46,7 +46,7 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 }
 
 float Triangle::intersect(const Ray& ray) const {
-	// Möller-Trumbore algoritm f�r att hitta snitt mellan ray och triangel
+	// Möller-Trumbore algoritm för att hitta snitt mellan ray och triangel
 
 	const float EPSILON = 1e-6;
 

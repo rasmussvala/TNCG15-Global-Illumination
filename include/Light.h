@@ -2,6 +2,9 @@
 #include "../include/glm/glm.hpp"
 #include "../include/ColorRGB.h"
 #include "../include/Polygon.h"
+#include "../include/Ray.h"
+#include "../include/Object.h"
+#include <vector>
 
 // Area light
 class Light {
@@ -15,7 +18,7 @@ public:
 		normal = glm::normalize(glm::cross(e1, e2));
 	}
 
-	float calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
+	float calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const std::vector<Object*>& objects);
 
 private:
 	glm::vec3 v1, v2, v3, v4;

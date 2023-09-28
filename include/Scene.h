@@ -3,21 +3,26 @@
 #include "Camera.h"
 #include "Light.h"
 #include <vector>
+#include "Object.h"
 
 class Scene {
 public:
     Scene(int width, int height);
 
     void addPolygon(Polygon* polygon) {
-        objects.push_back(polygon);
+        polygons.push_back(polygon);
     }
 
     void addLight(Light* light) {
 		lights.push_back(light);
 	}
 
+    void addObjects(Cube* cude) {
+        objects.push_back(cude);
+	}
+
     void render() {
-        camera.traceRays(objects, lights);
+        camera.traceRays(polygons, lights, objects);
         camera.saveImage("../images/test.ppm");
     }
 
@@ -28,6 +33,7 @@ public:
 
 private:
     Camera camera;
-    std::vector<Polygon*> objects;
+    std::vector<Polygon*> polygons;
     std::vector<Light*> lights;
+    std::vector<Object*> objects;
 };
