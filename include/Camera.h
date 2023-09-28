@@ -17,7 +17,7 @@ public:
 	glm::vec3 getLocation();
 	void saveImage(std::string filename);
 	void traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects);
-	void checkIntersection(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i);
+	void renderRoom(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i);
 	glm::vec3 calculateRayDirection(int i, int j);
 	std::vector<std::vector<ColorRGB>> pixels;
 

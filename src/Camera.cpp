@@ -101,12 +101,34 @@ void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<
 		for (int i = 0; i < width; ++i) {
 
 			// Kollar om ray intersectar något objekt
-			checkIntersection(polygons, ligths, objects, j, i);
+			renderRoom(polygons, ligths, objects, j, i);
+
+			const float EPSILON = 1e-6;
+
+			for (const auto& obj : objects) {
+				float t = obj->intersect(Ray(location, calculateRayDirection(i, j)));
+
+				if (t > EPSILON) {
+					glm::vec3 intersectionPoint = Ray(location, calculateRayDirection(i, j)).at(t);
+					/*glm::vec3 intersectionPointNormal = obj->getNormal(intersectionPoint);
+					float irradiance = 0.0f;
+
+					for (Light* light : ligths) {
+						irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal, objects);
+					}*/
+
+					// Ansätter färgen på pixeln 
+					pixels[j][i] = { obj->getColor().r,
+						obj->getColor().g,
+						obj->getColor().b
+					};
+				}
+			}
 		}
 	}
 }
 
-void Camera::checkIntersection(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i) {
+void Camera::renderRoom(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i) {
 
 	// Skapar en ray för varje pixel
 	Ray ray(location, calculateRayDirection(i, j));
