@@ -17,15 +17,15 @@ float Rectangle::intersect(const Ray& ray) const {
 	Triangle triangle1(vertex1, vertex2, vertex3, color);
 	Triangle triangle2(vertex1, vertex3, vertex4, color);
 
-	// Call the triangle intersection function for both triangles
+	// Kollar snittet mellan ray och de två trianglarna som utgör rektangeln
 	float t1 = triangle1.intersect(ray);
 	float t2 = triangle2.intersect(ray);
 
 	const float EPSILON = 1e-6;
 
-	// Check if either triangle intersected the ray and return the closest intersection
+	// Kollar om snittet är större än EPSILON
 	if (t1 >= EPSILON && t2 >= EPSILON) {
-		return std::min(t1, t2); // Return the closest intersection
+		return std::min(t1, t2); // Returnerar det minsta snittet
 	}
 	else if (t1 >= EPSILON) {
 		return t1;
@@ -34,7 +34,7 @@ float Rectangle::intersect(const Ray& ray) const {
 		return t2;
 	}
 	else {
-		return -INFINITY; // No intersection
+		return -INFINITY; // Inget snitt
 	}
 }
 
@@ -60,7 +60,7 @@ float Triangle::intersect(const Ray& ray) const {
 	float u = (glm::dot(P, T) / glm::dot(P, E1));
 	float v = (glm::dot(Q, D) / glm::dot(P, E1));
 
-	if (u + v > 1.0f + EPSILON || u < EPSILON || v < EPSILON) {
+	if (u + v > 1.0f || u < 0.0f || v < 0.0f) {
 		return -INFINITY;
 	}
 	float t = (glm::dot(Q, E2) / glm::dot(P, E1));

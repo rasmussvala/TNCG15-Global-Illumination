@@ -25,7 +25,6 @@ int main() {
 	glm::vec3 p10(0.0f, -6.0f, 5.0f);
 	glm::vec3 p11(-3.0f, 0.0f, 5.0f);
 
-
 	// Glov
 	Triangle triangle_floorB{ p0, p4, p5, white };
 	Triangle triangle_floorF{ p1, p3, p2, white };

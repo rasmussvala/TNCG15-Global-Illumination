@@ -57,7 +57,7 @@ void Camera::saveImage(std::string filename) {
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
 	// Hittar den starkaste färgen i bilden
-	float maxRGB = -FLT_MAX;
+	float maxRGB = -INFINITY;
 
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
@@ -127,7 +127,7 @@ void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::
 				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
 			}
 
-			// Ans�tter f�rgen p� pixeln 
+			// Ansätter färgen på pixeln 
 			pixels[j][i] = { obj->getColor().r * irradiance,
 				obj->getColor().g * irradiance,
 				obj->getColor().b * irradiance };
@@ -137,9 +137,9 @@ void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::
 
 glm::vec3 Camera::calculateRayDirection(int i, int j) {
 	// Ber�knar u och v (positionen i world coordinates)
-	// u och v �r mellan -1 och 1
-	float u = (2.0f * i) / width - 1.0f; // g�r fr�n -1 -> 1
-	float v = 1.0f - (2.0f * j) / height; // g�r fr�n 1 -> -1
+	// u och v är mellan -1 och 1
+	float u = (2.0f * i) / width - 1.0f; // går från -1 -> 1
+	float v = 1.0f - (2.0f * j) / height; // går från 1 -> -1
 
 	// Returnerar en normaliserad vektor fr�n kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
