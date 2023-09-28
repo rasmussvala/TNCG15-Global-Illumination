@@ -113,7 +113,7 @@ void Camera::checkIntersection(const std::vector<Polygon*>& objects, const std::
 	// Kollar om ray intersectar något objekt
 	for (const Polygon* obj : objects) {
 
-		const float EPSILON = 0.0004f;
+		const float EPSILON = 1e-6;
 
 		float t = obj->intersect(ray);
 

@@ -6,7 +6,7 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
 	: vertex1(p1), vertex2(p2), vertex3(p3), vertex4(p4), color(col) {
 	// Beräkna c1 och c2, som är de två kantvektorerna som utgår från en av hörnen.
 	c1 = vertex2 - vertex1;
-	c2 = vertex3 - vertex1; // Kan vara vertex4 - vertex1 också.
+	c2 = vertex4 - vertex1; 
 
 	// Beräkna normalen N till rektangeln som är c1 × c2.
 	normal = glm::normalize(glm::cross(c1, c2));
@@ -34,7 +34,7 @@ float Rectangle::intersect(const Ray& ray) const {
 		return t2;
 	}
 	else {
-		return -1.0f; // No intersection
+		return -INFINITY; // No intersection
 	}
 }
 
@@ -48,7 +48,7 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 float Triangle::intersect(const Ray& ray) const {
 	// Möller-Trumbore algoritm f�r att hitta snitt mellan ray och triangel
 
-	const float EPSILON = 1e-4;
+	const float EPSILON = 1e-6;
 
 	glm::vec3 E1 = vertex2 - vertex1;
 	glm::vec3 E2 = vertex3 - vertex1;
@@ -60,7 +60,7 @@ float Triangle::intersect(const Ray& ray) const {
 	float u = (glm::dot(P, T) / glm::dot(P, E1));
 	float v = (glm::dot(Q, D) / glm::dot(P, E1));
 
-	if (u + v > 1.0f || u < EPSILON || v < EPSILON) {// Maybe use EPSILON?
+	if (u + v > 1.0f + EPSILON || u < EPSILON || v < EPSILON) {
 		return -INFINITY;
 	}
 	float t = (glm::dot(Q, E2) / glm::dot(P, E1));
