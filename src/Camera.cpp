@@ -72,21 +72,27 @@ void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<
 			// Rendrerar alla objekt i rummet 
 			renderObjects(objects, lights, ray, i, j);
 
-			// Rendrerar objektet i scenen
-			const float EPSILON = 1e-6;
-
-			// Rendrera obj 
-			for (const auto& light : lights) {
-				float t = light->getGeometry().intersect(ray);
-
-				if (t > EPSILON) {
-					pixels[j][i] = { 1.0f, 1.0f, 1.0f };
-				}
-			}
+			// Rendrerar ljuskällorna i rummet
+			renderLights(lights, ray, j, i);
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
 			progress += 1.0f;
+		}
+	}
+}
+
+void Camera::renderLights(const std::vector<Light*>& lights, Ray& ray, int j, int i)
+{
+	// Rendrerar objektet i scenen
+	const float EPSILON = 1e-6;
+
+	// Rendrera obj 
+	for (const auto& light : lights) {
+		float t = light->getGeometry().intersect(ray);
+
+		if (t > EPSILON) {
+			pixels[j][i] = { 1.0f, 1.0f, 1.0f };
 		}
 	}
 }

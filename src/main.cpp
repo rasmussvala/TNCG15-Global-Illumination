@@ -3,7 +3,7 @@
 #include "../include/Object.h"
 
 int main() {
-	Scene myScene(200, 200);
+	Scene myScene(600, 600);
 
 	// OBS!!! VÄNSTER ÄR HÖGER OCH HÖGER ÄR VÄNSTER NÄR DET RENDERAS
 
