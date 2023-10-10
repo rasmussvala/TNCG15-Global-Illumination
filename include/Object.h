@@ -19,7 +19,7 @@ public:
 	glm::vec3 getNormal(const glm::vec3& point) const override { return { 0,0,0 }; }
 	ColorRGB getColor() const override { return color; }
 private:
-	ColorRGB color{ 0.0,0.0,1.0 }; // blue
+	ColorRGB color{ 0.0,0.0,0.4 }; // blue
 
 	glm::vec3 p0{ 5.0f, 3.0f, 0.0f };
 	glm::vec3 p1{ 6.0f, 3.0f, 0.0f };

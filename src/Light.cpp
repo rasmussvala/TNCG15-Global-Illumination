@@ -4,8 +4,8 @@
 #include <vector>
 
 float Light::calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const std::vector<Object*>& objects) {
-	int N = 100; // antal samples
-	float Le = 100.0f; // radiance
+	int N = 10; // antal samples
+	float Le = 10.0f; // radiance
 	float irradiance = 0.0f;
 
 	// Lambertian reflectors: f(x, di, theta0) = 1 / pi
@@ -31,7 +31,7 @@ float Light::calculateLight(const glm::vec3& intersectionPoint, const glm::vec3&
 		float cosOmegaX = abs(glm::dot(intersectionPointNormal, glm::normalize(d)));
 		float cosOmegaY = abs(glm::dot(-normal, glm::normalize(d)));
 
-		irradiance += (cosOmegaX + cosOmegaY) / (glm::length(d) * glm::length(d));
+		irradiance += std::min(1.0f, (cosOmegaX + cosOmegaY) / (glm::length(d) * glm::length(d)));
 	}
 
 	irradiance = irradiance * area * Le / N;

@@ -8,9 +8,9 @@ int main() {
 	// OBS!!! VÄNSTER ÄR HÖGER OCH HÖGER ÄR VÄNSTER NÄR DET RENDERAS
 
 	// Färger
-	ColorRGB white = { 1.0, 1.0, 1.0 };
-	ColorRGB red = { 1.0, 0.0, 0.0 };
-	ColorRGB green = { 0.0, 1.0, 0.0 };
+	ColorRGB white = { 0.4, 0.4, 0.4 };
+	ColorRGB red = { 0.4, 0.0, 0.0 };
+	ColorRGB green = { 0.0, 0.4, 0.0 };
 
 	glm::vec3 p0(0.0f, 6.0f, -5.0f);
 	glm::vec3 p1(10.0f, 6.0f, -5.0f);
@@ -60,14 +60,15 @@ int main() {
 
 	// ----------------------------------------------
 
-	Cube cube1{};
+	/*Cube cube1{};
 
-	myScene.addObjects(&cube1);
+	myScene.addObjects(&cube1);*/
 
-	Light light1{ glm::vec3{4.9f, 2.0f, 8.0f},
-		glm::vec3{4.9f, 2.0f, 10.0f},
-		glm::vec3{4.9f, -2.0f, 10.0f},
-		glm::vec3{4.9f, -2.0f, 8.0f} };
+	Light light1{ glm::vec3{5.0f, 1.0f, 5.0f},
+		glm::vec3{3.0f, 1.0f, 5.0f},
+		glm::vec3{3.0f, -1.0f, 5.0f},
+		glm::vec3{5.0f, -1.0f, 5.0f}
+	};
 
 	myScene.addLight(&light1);
 
