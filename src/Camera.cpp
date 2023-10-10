@@ -56,7 +56,7 @@ void Camera::saveImage(std::string filename) {
 }
 
 
-void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& ligths, const std::vector<Object*>& objects) {
+void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects) {
 
 	float progress = 0.0f;
 
@@ -64,12 +64,26 @@ void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
+			Ray ray(location, calculateRayDirection(i, j));
+
 			// Rendrerar rummet
-			renderRoom(polygons, ligths, objects, j, i);
+			renderRoom(polygons, lights, objects, ray, i, j);
 
 			// Rendrerar alla objekt i rummet 
-			renderObjects(objects, i, j, ligths);
-			
+			renderObjects(objects, lights, ray, i, j);
+
+			// Rendrerar objektet i scenen
+			const float EPSILON = 1e-6;
+
+			// Rendrera obj 
+			for (const auto& light : lights) {
+				float t = light->getGeometry().intersect(ray);
+
+				if (t > EPSILON) {
+					pixels[j][i] = { 1.0f, 1.0f, 1.0f };
+				}
+			}
+
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
 			progress += 1.0f;
@@ -77,12 +91,10 @@ void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<
 	}
 }
 
-void Camera::renderObjects(const std::vector<Object*>& objects, int i, int j, const std::vector<Light*>& ligths)
+void Camera::renderObjects(const std::vector<Object*>& objects, const std::vector<Light*>& ligths, const Ray& ray, int i, int j)
 {
 	// Rendrerar objektet i scenen
 	const float EPSILON = 1e-6;
-
-	Ray ray(location, calculateRayDirection(i, j));
 
 	// Rendrera obj 
 	for (const auto& obj : objects) {
@@ -106,15 +118,12 @@ void Camera::renderObjects(const std::vector<Object*>& objects, int i, int j, co
 	}
 }
 
-void Camera::renderRoom(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, int j, int i) {
+void Camera::renderRoom(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, const Ray& ray, int i, int j) {
 
-	// Skapar en ray för varje pixel
-	Ray ray(location, calculateRayDirection(i, j));
+	const float EPSILON = 1e-6;
 
 	// Kollar om ray intersectar något objekt
 	for (const Polygon* obj : polygons) {
-
-		const float EPSILON = 1e-6;
 
 		float t = obj->intersect(ray);
 

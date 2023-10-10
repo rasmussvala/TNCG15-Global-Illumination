@@ -3,7 +3,7 @@
 #include "../include/Object.h"
 
 int main() {
-	Scene myScene(600, 600);
+	Scene myScene(200, 200);
 
 	// OBS!!! VÄNSTER ÄR HÖGER OCH HÖGER ÄR VÄNSTER NÄR DET RENDERAS
 
@@ -59,10 +59,11 @@ int main() {
 	myScene.addPolygon(&rectangle_ceiling);
 
 	// ----------------------------------------------
+	
+	// Default-konstruktor lägger till en liten blå kub
+	Cube cube1{};
 
-	/*Cube cube1{};
-
-	myScene.addObjects(&cube1);*/
+	myScene.addObjects(&cube1);
 
 	Light light1{ glm::vec3{5.0f, 1.0f, 5.0f},
 		glm::vec3{3.0f, 1.0f, 5.0f},
