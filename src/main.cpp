@@ -1,4 +1,6 @@
-#include "../include/includeAll.h"
+#include "../include/Scene.h"
+#include "../include/Polygon.h"
+#include "../include/Object.h"
 
 int main() {
 	Scene myScene(600, 600);

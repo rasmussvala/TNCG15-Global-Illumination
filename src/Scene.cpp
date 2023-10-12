@@ -1,5 +1,7 @@
-#include "../include/includeAll.h"
-
+#include "../include/Scene.h"
+#include "../include/ColorRGB.h"
+#include "../include/Polygon.h"
+#include "../include/Camera.h"
 
 Scene::Scene(int width, int height) : camera(width, height) {
 	// Här ska hela scenen skapas men fungerar inte för tillfäller när det skickas vidare till intersect
