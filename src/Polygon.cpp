@@ -2,8 +2,8 @@
 #include "../include/glm/glm.hpp"
 #include <iostream>
 
-Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const ColorRGB& col)
-	: vertex1(p1), vertex2(p2), vertex3(p3), vertex4(p4), color(col) {
+Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const Material& mat)
+	: vertex1(p1), vertex2(p2), vertex3(p3), vertex4(p4), material(mat) {
 	// Beräkna c1 och c2, som är de två kantvektorerna som utgår från en av hörnen.
 	c1 = vertex2 - vertex1;
 	c2 = vertex4 - vertex1; 
@@ -14,8 +14,8 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& 
 
 float Rectangle::intersect(const Ray& ray) const {
 
-	Triangle triangle1(vertex1, vertex2, vertex3, color);
-	Triangle triangle2(vertex1, vertex3, vertex4, color);
+	Triangle triangle1(vertex1, vertex2, vertex3, material);
+	Triangle triangle2(vertex1, vertex3, vertex4, material);
 
 	// Kollar snittet mellan ray och de två trianglarna som utgör rektangeln
 	float t1 = triangle1.intersect(ray);
@@ -39,8 +39,8 @@ float Rectangle::intersect(const Ray& ray) const {
 }
 
 
-Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const ColorRGB& col)
-	: vertex1(p1), vertex2(p2), vertex3(p3), color(col) {
+Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const Material& mat)
+	: vertex1(p1), vertex2(p2), vertex3(p3), material(mat) {
 
 	normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex3 - vertex1));
 }

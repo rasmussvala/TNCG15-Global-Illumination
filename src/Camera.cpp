@@ -116,9 +116,9 @@ void Camera::renderObjects(const std::vector<Object*>& objects, const std::vecto
 			}
 
 			// Ansätter färgen på pixeln 
-			pixels[j][i] = { obj->getColor().r * irradiance,
-				obj->getColor().g * irradiance,
-				obj->getColor().b * irradiance
+			pixels[j][i] = { obj->getMaterial().color.r * irradiance,
+				obj->getMaterial().color.g * irradiance,
+				obj->getMaterial().color.b * irradiance
 			};
 		}
 	}
@@ -144,9 +144,9 @@ void Camera::renderRoom(const std::vector<Polygon*>& polygons, const std::vector
 			}
 
 			// Ansätter färgen på pixeln 
-			pixels[j][i] = { obj->getColor().r * irradiance,
-				obj->getColor().g * irradiance,
-				obj->getColor().b * irradiance };
+			pixels[j][i] = { obj->getMaterial().color.r * irradiance,
+				obj->getMaterial().color.g * irradiance,
+				obj->getMaterial().color.b * irradiance };
 		}
 	}
 }
