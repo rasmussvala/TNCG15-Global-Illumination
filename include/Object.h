@@ -4,6 +4,7 @@
 #include "../include/ColorRGB.h"
 #include "../include/Polygon.h"
 #include "../include/Material.h"
+#include <vector>
 
 class Object {
 public:
@@ -17,6 +18,16 @@ public:
 	float intersect(const Ray& ray) const override;
 	glm::vec3 getNormal(const glm::vec3& point) const override { return { 0,0,0 }; }
 	Material getMaterial() const override { return material; }
+	std::vector<Rectangle> getSurfaces() {
+		return std::vector<Rectangle> {
+			surface1,
+			surface2,
+			surface3,
+			surface4,
+			surface5,
+			surface6
+		};
+	}
 private:
 	ColorRGB color{ 0.0,0.0,0.4 }; // blue DENNA SKA INTE FINNAS HÄR SENARE 
 
@@ -43,7 +54,7 @@ class Sphere : public Object {
 public:
 	float intersect(const Ray& ray) const override { return 0.0f; }
 	glm::vec3 getNormal(const glm::vec3& point) const override { return { 0,0,0 }; }
-	Material getMaterial() const override { return { ColorRGB({ 0.0,0.0,0.0 }), 0, 0, 0}; }
+	Material getMaterial() const override { return { ColorRGB({ 0.0,0.0,0.0 }), 0, 0, 0 }; }
 private:
 
 };
