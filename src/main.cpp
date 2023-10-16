@@ -1,9 +1,9 @@
 #include "../include/Scene.h"
 #include "../include/Polygon.h"
-#include "../include/Object.h"
+#include "../include/Cube.h"
 
 int main() {
-	Scene myScene(600, 600);
+	Scene myScene(200, 200);
 
 	// OBS!!! VÄNSTER ÄR HÖGER OCH HÖGER ÄR VÄNSTER NÄR DET RENDERAS
 
@@ -67,12 +67,12 @@ int main() {
 	// Default-konstruktor lägger till en liten blå kub
 	Cube cube1{};
 
-	myScene.addObjects(&cube1);
+	myScene.addCube(&cube1);
 
-	Light light1{ glm::vec3{5.0f, 1.0f, 5.0f},
-		glm::vec3{3.0f, 1.0f, 5.0f},
-		glm::vec3{3.0f, -1.0f, 5.0f},
-		glm::vec3{5.0f, -1.0f, 5.0f}
+	Light light1{ glm::vec3{5.0f, 1.0f, 4.9f},
+		glm::vec3{3.0f, 1.0f, 4.9f},
+		glm::vec3{3.0f, -1.0f, 4.9f},
+		glm::vec3{5.0f, -1.0f, 4.9f}
 	};
 
 	myScene.addLight(&light1);

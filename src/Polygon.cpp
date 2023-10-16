@@ -34,7 +34,7 @@ float Rectangle::intersect(const Ray& ray) const {
 		return t2;
 	}
 	else {
-		return -INFINITY; // Inget snitt
+		return -FLT_MAX; // Inget snitt
 	}
 }
 
@@ -46,8 +46,6 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 }
 
 float Triangle::intersect(const Ray& ray) const {
-	// Möller-Trumbore algoritm för att hitta snitt mellan ray och triangel
-
 	const float EPSILON = 1e-6;
 
 	glm::vec3 E1 = vertex2 - vertex1;
@@ -55,20 +53,29 @@ float Triangle::intersect(const Ray& ray) const {
 	glm::vec3 T = ray.getOrigin() - vertex1;
 	glm::vec3 D = ray.getDirection();
 	glm::vec3 P = glm::cross(D, E2);
-	glm::vec3 Q = glm::cross(T, E1);
+	float determinant = glm::dot(P, E1);
 
-	float u = (glm::dot(P, T) / glm::dot(P, E1));
-	float v = (glm::dot(Q, D) / glm::dot(P, E1));
-
-	if (u + v > 1.0f || u < 0.0f || v < 0.0f) {
-		return -INFINITY;
+	if (std::abs(determinant) < EPSILON) {
+		return -FLT_MAX; // Ray is parallel to the triangle.
 	}
-	float t = (glm::dot(Q, E2) / glm::dot(P, E1));
 
+	float invDeterminant = 1.0f / determinant;
+
+	float u = glm::dot(P, T) * invDeterminant;
+	if (u < 0.0f || u > 1.0f) {
+		return -FLT_MAX;
+	}
+
+	glm::vec3 Q = glm::cross(T, E1);
+	float v = glm::dot(Q, D) * invDeterminant;
+	if (v < 0.0f || u + v > 1.0f) {
+		return -FLT_MAX;
+	}
+
+	float t = glm::dot(Q, E2) * invDeterminant;
 	if (t < EPSILON) {
-		return -INFINITY;
+		return -FLT_MAX; // Intersection point is too close to the ray's origin.
 	}
 
 	return t;
 }
-

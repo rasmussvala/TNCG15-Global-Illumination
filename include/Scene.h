@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include <vector>
-#include "Object.h"
+#include "Cube.h"
 
 class Scene {
 public:
@@ -17,12 +17,15 @@ public:
 		lights.push_back(light);
 	}
 
-    void addObjects(Cube* cude) {
-        objects.push_back(cude);
-	}
+    void addCube(Cube* cube) {
+        std::vector<Polygon*> surfaces = cube->getSurfaces();
+        for (Polygon* surface : surfaces) {
+            polygons.push_back(surface);
+        }
+    }
 
     void render() {
-        camera.traceRays(polygons, lights, objects);
+        camera.traceRays(polygons, lights);
         camera.saveImage("../images/test.ppm");
     }
 
@@ -35,5 +38,4 @@ private:
     Camera camera;
     std::vector<Polygon*> polygons;
     std::vector<Light*> lights;
-    std::vector<Object*> objects;
 };

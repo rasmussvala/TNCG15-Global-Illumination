@@ -1,8 +1,10 @@
 #include "../include/Camera.h"
 #include "../include/Light.h"
-#include "../include/Object.h"
+#include "../include/Cube.h"
 #include <fstream>
 #include <iostream>
+#include <vector>
+#include <algorithm>
 
 Camera::Camera(int w, int h) : width(w), height(h) {
 	// Allokera minne för pixels
@@ -24,9 +26,6 @@ int Camera::getHeight() {
 glm::vec3 Camera::getLocation() {
 	return glm::vec3();
 }
-
-#include <vector>
-#include <algorithm>
 
 void Camera::saveImage(std::string filename) {
 
@@ -56,7 +55,7 @@ void Camera::saveImage(std::string filename) {
 }
 
 
-void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects) {
+void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights) {
 
 	float progress = 0.0f;
 
@@ -67,10 +66,7 @@ void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<
 			Ray ray(location, calculateRayDirection(i, j));
 
 			// Rendrerar rummet
-			renderRoom(polygons, lights, objects, ray, i, j);
-
-			// Rendrerar alla objekt i rummet 
-			renderObjects(objects, lights, ray, i, j);
+			renderPolygons(polygons, lights, ray, i, j);
 
 			// Rendrerar ljuskällorna i rummet
 			renderLights(lights, ray, j, i);
@@ -97,58 +93,88 @@ void Camera::renderLights(const std::vector<Light*>& lights, Ray& ray, int j, in
 	}
 }
 
-void Camera::renderObjects(const std::vector<Object*>& objects, const std::vector<Light*>& ligths, const Ray& ray, int i, int j)
-{
-	// Rendrerar objektet i scenen
+//void Camera::renderObjects(const std::vector<Light*>& ligths, const Ray& ray, int i, int j)
+//{
+//	// Rendrerar objektet i scenen
+//	const float EPSILON = 1e-6;
+//
+//	// Rendrera obj 
+//	for (const auto& obj : objects) {
+//		float t = obj->intersect(ray);
+//
+//		if (t > EPSILON) {
+//			glm::vec3 intersectionPoint = ray.at(t);
+//			glm::vec3 intersectionPointNormal = obj->getNormal(intersectionPoint);
+//			ColorRGB color = obj->getMaterial().color;
+//
+//			// Materialet är reflektivt 
+//			if (obj->getMaterial().reflectivity > 0.0) {
+//				glm::vec3 reflectedDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
+//				Ray reflectedRay{ intersectionPoint, reflectedDirection };
+//
+//				pixels[j][i] += (1.0 - obj->getMaterial().reflectivity) * color;
+//
+//				renderObjects(ligths, reflectedRay, i, j);
+//			}
+//
+//			float irradiance = 0.0f;
+//
+//			for (Light* light : ligths) {
+//				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal);
+//			}
+//
+//			// Non-reflective objects
+//			pixels[j][i] += color * irradiance;
+//
+//
+//			//// Ansätter färgen på pixeln 
+//			//pixels[j][i] = { obj->getMaterial().color.r * irradiance,
+//			//	obj->getMaterial().color.g * irradiance,
+//			//	obj->getMaterial().color.b * irradiance
+//			//};
+//		}
+//	}
+//}
+
+void Camera::renderPolygons(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const Ray& ray, int i, int j) {
+
 	const float EPSILON = 1e-6;
+	float smallestT = FLT_MAX;
+	std::vector<float> t_values{};
 
-	// Rendrera obj 
-	for (const auto& obj : objects) {
-		float t = obj->intersect(ray);
+	// Kollar igenom alla polygons, och hittar alla snitt
+	for (const auto& poly : polygons) {
+		t_values.push_back(poly->intersect(ray));
+	}
 
-		if (t > EPSILON) {
-			glm::vec3 intersectionPoint = ray.at(t);
-			glm::vec3 intersectionPointNormal = obj->getNormal(intersectionPoint);
-			float irradiance = 0.0f;
+	int index;
 
-			for (Light* light : ligths) {
-				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal, objects);
-			}
-
-			// Ansätter färgen på pixeln 
-			pixels[j][i] = { obj->getMaterial().color.r * irradiance,
-				obj->getMaterial().color.g * irradiance,
-				obj->getMaterial().color.b * irradiance
-			};
+	// Ansätter det närmaste snittet 
+	for (int i = 0; i < t_values.size(); i++) {
+		if (t_values[i] > EPSILON && t_values[i] < smallestT) {
+			smallestT = t_values[i];
+			index = i;
 		}
 	}
-}
 
-void Camera::renderRoom(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const std::vector<Object*>& objects, const Ray& ray, int i, int j) {
+	if (smallestT > EPSILON && smallestT < FLT_MAX) {
 
-	const float EPSILON = 1e-6;
+		glm::vec3 intersectionPoint = ray.at(smallestT);
+		glm::vec3 intersectionPointNormal = polygons[index]->getNormal();
+		ColorRGB color = polygons[index]->getMaterial().color;
 
-	// Kollar om ray intersectar något objekt
-	for (const Polygon* obj : polygons) {
+		float irradiance = 0.0f;
 
-		float t = obj->intersect(ray);
-
-		if (t > EPSILON) {
-
-			glm::vec3 intersectionPoint = ray.at(t);
-			glm::vec3 intersectionPointNormal = obj->getNormal();
-			float irradiance = 0.0f;
-
-			for (Light* light : lights) {
-				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal, objects);
-			}
-
-			// Ansätter färgen på pixeln 
-			pixels[j][i] = { obj->getMaterial().color.r * irradiance,
-				obj->getMaterial().color.g * irradiance,
-				obj->getMaterial().color.b * irradiance };
+		for (Light* light : lights) {
+			irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal, polygons);
 		}
+
+		// Ansätter färgen på pixeln 
+		pixels[j][i] = color * irradiance;
 	}
+
+
+
 }
 
 glm::vec3 Camera::calculateRayDirection(int i, int j) {
