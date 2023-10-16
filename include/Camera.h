@@ -8,6 +8,13 @@
 #include <vector>
 #include <string>
 
+struct IntersectionResult {
+	float smallestT;
+	int smallestIndex;
+};
+
+IntersectionResult findSmallestTAndIndex(const std::vector<Polygon*>& polygons, const Ray& ray);
+
 class Camera {
 public:
 	Camera(int w, int h);
@@ -18,7 +25,6 @@ public:
 	void saveImage(std::string filename);
 	void traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights);
 	void renderLights(const std::vector<Light*>& lights, Ray& ray, int j, int i);
-	// void renderObjects(const std::vector<Light*>& ligths, const Ray& ray, int i, int j);
 	void renderPolygons(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const Ray& ray, int i, int j);
 	glm::vec3 calculateRayDirection(int i, int j);
 	void progressBar(float percent);
