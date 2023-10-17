@@ -20,7 +20,8 @@ public:
 		return surfaces;
 	}
 private:
-	ColorRGB color{ 0.0,0.0,0.4 }; // blue, DENNA SKA INTE FINNAS HÄR SENARE 
+	// DETTA SKA INTE VARA HÅRDKODAT I FRAMTIDEN 
+	ColorRGB color{ 0.0,0.0,0.4 }; 
 
 	Material material{ Diffuse, color };
 
@@ -40,3 +41,6 @@ private:
 	Rectangle surface5{ p0, p4, p5, p1, material }; // sidan mot vänster
 	Rectangle surface6{ p1, p5, p6, p2, material }; // sidan mot bortre väggen
 };
+
+// @TODO - gör en constructor med material och size som imput och sätt den i mitten av scenen
+// @TODO - skapa en function som translaterar kuben 
