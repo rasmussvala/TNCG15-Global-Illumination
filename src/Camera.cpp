@@ -96,7 +96,6 @@ void Camera::saveImage(std::string filename) {
 	ppmFile.close();
 }
 
-
 void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights) {
 
 	float progress = 0.0f;
@@ -150,7 +149,7 @@ void Camera::renderPolygons(const std::vector<Polygon*>& polygons, const std::ve
 		glm::vec3 intersectionPointNormal = polygons[smallestIndex]->getNormal();
 
 		// Spegel
-		if(polygons[smallestIndex]->getMaterial().reflectivity == 1.0f) {
+		if(polygons[smallestIndex]->getMaterial().type == Reflective) {
 			glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
 			Ray reflectedRay(intersectionPoint, reflectionDirection);
 
@@ -158,7 +157,7 @@ void Camera::renderPolygons(const std::vector<Polygon*>& polygons, const std::ve
 			renderPolygons(polygons, lights, reflectedRay, i, j);
 		}
 		else {
-			ColorRGB color = polygons[smallestIndex]->getMaterial().color;
+			ColorRGB color = polygons[smallestIndex]->getMaterial().diffuseData.color;
 
 			float irradiance = 0.0f;
 

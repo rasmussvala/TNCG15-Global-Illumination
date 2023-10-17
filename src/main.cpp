@@ -3,7 +3,7 @@
 #include "../include/Cube.h"
 
 int main() {
-	Scene myScene(600, 600);
+	Scene myScene(200, 200);
 
 	// OBS!!! VÄNSTER ÄR HÖGER OCH HÖGER ÄR VÄNSTER NÄR DET RENDERAS
 
@@ -12,10 +12,12 @@ int main() {
 	ColorRGB red = { 0.4, 0.0, 0.0 };
 	ColorRGB green = { 0.0, 0.4, 0.0 };
 
-	Material materialWhite = { white, 0.0f, 0.0f, 0.0f };
-	Material materialRed = { red, 0.0f, 0.0f, 0.0f };
-	Material materialGreen = { green, 0.0f, 0.0f, 0.0f };
-	Material Mirror = { white, 1.0f, 0.0f, 0.0f };
+	Material materialWhite(Diffuse, white); // White diffuse material
+	Material materialRed(Diffuse, red); // Red diffuse material
+	Material materialGreen(Diffuse, green); // Green diffuse material
+	Material mirror(Reflective); // mirror
+	Material glas(Transparent, 1.5); // glas with refractiveIndex 1.5
+	Material test(Reflective);
 
 	glm::vec3 p0(0.0f, 6.0f, -5.0f);
 	glm::vec3 p1(10.0f, 6.0f, -5.0f);
@@ -39,7 +41,7 @@ int main() {
 	// Väggar
 	Rectangle rectangle_wallH{ p3, p9, p10, p4, materialRed };
 	Rectangle rectangle_wallHB{ p4, p10, p11, p5, materialWhite };
-	Rectangle rectangle_wallHF{ p2, p3, p9, p8, Mirror };
+	Rectangle rectangle_wallHF{ p2, p3, p9, p8, mirror };
 	Rectangle rectangle_wallV{ p0, p1, p7, p6, materialGreen };
 	Rectangle rectangle_wallVB{ p0, p6, p11, p5, materialWhite };
 	Rectangle rectangle_wallVF{ p1, p2, p8, p7, materialWhite };

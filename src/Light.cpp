@@ -5,7 +5,7 @@
 #include <vector>
 
 float Light::calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const std::vector<Polygon*>& polygons) {
-	int N = 20; // antal samples
+	int N = 5; // antal samples
 	float Le = 3200.0f; // radiance
 	float irradiance = 0.0f;
 	const float EPSILON = 10e-4;

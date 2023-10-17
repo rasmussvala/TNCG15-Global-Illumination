@@ -4,6 +4,7 @@
 #include "../include/Polygon.h"
 #include "../include/Ray.h"
 #include "../include/Cube.h"
+#include "../include/Material.h"
 #include <vector>
 
 // Area light
@@ -28,6 +29,6 @@ private:
 	float area;
 	glm::vec3 normal;
 	ColorRGB white{ 1.0f, 1.0f ,1.0f };
-	Material materialWhite{ white, 0.0, 0.0, 0.0 };
+	Material materialWhite{ Diffuse, white };
 	Rectangle rectangle{ v1, v2, v3, v4, materialWhite };
 };

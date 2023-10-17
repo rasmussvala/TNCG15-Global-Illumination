@@ -22,7 +22,7 @@ public:
 private:
 	ColorRGB color{ 0.0,0.0,0.4 }; // blue, DENNA SKA INTE FINNAS HÄR SENARE 
 
-	Material material{ color, 0.0, 0.0, 0.0 };
+	Material material{ Diffuse, color };
 
 	glm::vec3 p0{ 5.0f, 3.0f, 0.0f };
 	glm::vec3 p1{ 6.0f, 3.0f, 0.0f };
