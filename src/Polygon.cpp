@@ -1,3 +1,5 @@
+#pragma once
+
 #include "../include/Polygon.h"
 #include "../include/glm/glm.hpp"
 #include <iostream>

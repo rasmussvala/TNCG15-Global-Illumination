@@ -1,6 +1,9 @@
+#pragma once
+
 #include "../include/Camera.h"
 #include "../include/Light.h"
 #include "../include/Cube.h"
+#include "../include/Sphere.h"
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -15,43 +18,9 @@ Camera::Camera(int w, int h) : width(w), height(h) {
 	}
 }
 
-int Camera::getWidth() {
-	return width;
-}
-
-int Camera::getHeight() {
-	return height;
-}
-
-glm::vec3 Camera::getLocation() {
-	return glm::vec3();
-}
-
-//void Camera::saveImage(std::string filename) {
-//	std::ofstream ppmFile(filename); // �ppnar/skapar filen
-//
-//	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
-//
-//	for (int j = 0; j < height; ++j) {
-//		for (int i = 0; i < width; ++i) {
-//
-//			auto r = pixels[j][i].r;
-//			auto g = pixels[j][i].g;
-//			auto b = pixels[j][i].b;
-//
-//			// Convert from floats [0,1] to ints [0,255]
-//			int ir = static_cast<int>(255.999 * r);
-//			int ig = static_cast<int>(255.999 * g);
-//			int ib = static_cast<int>(255.999 * b);
-//
-//			ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
-//		}
-//	}
-//	ppmFile.close();
-//}
-
-// CONTRAST STRETCHING
 void Camera::saveImage(std::string filename) {
+
+	// CONTRAST STRETCHING
 
 	std::ofstream ppmFile(filename); // Opens/creates the file
 
@@ -96,7 +65,7 @@ void Camera::saveImage(std::string filename) {
 	ppmFile.close();
 }
 
-void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights) {
+void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights) {
 
 	float progress = 0.0f;
 
@@ -107,7 +76,7 @@ void Camera::traceRays(const std::vector<Polygon*>& polygons, const std::vector<
 			Ray ray(location, calculateRayDirection(i, j));
 
 			// Rendrerar alla polygoner (rum + kub) 
-			renderPolygons(polygons, lights, ray, i, j);
+			handleIntersection(polygons, spheres, lights, ray, i, j);
 
 			// Rendrerar ljuskällorna i rummet
 			renderLights(lights, ray, j, i);
@@ -134,10 +103,10 @@ void Camera::renderLights(const std::vector<Light*>& lights, Ray& ray, int j, in
 	}
 }
 
-void Camera::renderPolygons(const std::vector<Polygon*>& polygons, const std::vector<Light*>& lights, const Ray& ray, int i, int j) {
+void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, int i, int j) {
 	const float EPSILON = 1e-4;
 
-	IntersectionResult result = findSmallestTAndIndex(polygons, ray);
+	IntersectionResult result = findSmallestTAndIndex(polygons, spheres, ray);
 
 	float smallestT = result.smallestT;
 	int smallestIndex = result.smallestIndex;
@@ -148,13 +117,13 @@ void Camera::renderPolygons(const std::vector<Polygon*>& polygons, const std::ve
 		glm::vec3 intersectionPoint = ray.at(smallestT);
 		glm::vec3 intersectionPointNormal = polygons[smallestIndex]->getNormal();
 
-		// Spegel
+		// Spegel för poly
 		if(polygons[smallestIndex]->getMaterial().type == Reflective) {
 			glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
 			Ray reflectedRay(intersectionPoint, reflectionDirection);
 
 			// Trace the reflected ray with increased depth
-			renderPolygons(polygons, lights, reflectedRay, i, j);
+			handleIntersection(polygons, spheres, lights, reflectedRay, i, j);
 		}
 		else {
 			ColorRGB color = polygons[smallestIndex]->getMaterial().diffuseData.color;
@@ -162,7 +131,7 @@ void Camera::renderPolygons(const std::vector<Polygon*>& polygons, const std::ve
 			float irradiance = 0.0f;
 
 			for (Light* light : lights) {
-				irradiance = light->calculateLight(intersectionPoint, intersectionPointNormal, polygons);
+				irradiance = light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
 			}
 
 			// Ansätter färgen på pixeln 
@@ -197,7 +166,7 @@ void Camera::progressBar(float percent) {
 	std::cout.flush();
 }
 
-IntersectionResult findSmallestTAndIndex(const std::vector<Polygon*>& polygons, const Ray& ray) {
+IntersectionResult findSmallestTAndIndex(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const Ray& ray) {
 	const float EPSILON = 1e-4;
 	float smallestT = FLT_MAX;
 	std::vector<float> t_values;
@@ -206,6 +175,11 @@ IntersectionResult findSmallestTAndIndex(const std::vector<Polygon*>& polygons, 
 	for (const auto& poly : polygons) {
 		t_values.push_back(poly->intersect(ray));
 	}
+
+	// @TODO - Fixa så att istället har vi Shape som base class 
+	/*for (const auto& sphere : spheres) {
+		t_values.push_back(sphere->intersect(ray));
+	}*/
 
 	int smallestIndex = -1; // Initialize to an invalid index
 

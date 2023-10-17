@@ -1,44 +1,59 @@
+#pragma once
+
 #include "../include/Light.h"
 #include "../include/glm/glm.hpp"
 #include "../include/Cube.h"
 #include "../include/Camera.h"
+#include "../include/Sphere.h"
 #include <vector>
+#include <cstdlib>  // for rand function
 
-float Light::calculateLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const std::vector<Polygon*>& polygons) {
-	int N = 5; // antal samples
-	float Le = 3200.0f; // radiance
-	float irradiance = 0.0f;
-	const float EPSILON = 10e-4;
-	const float PI = 3.14159265f;
+Light::Light(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4) : v1(v1), v2(v2), v3(v3), v4(v4) {
+    e1 = v2 - v1;
+    e2 = v4 - v1;
+    area = glm::length(e1) * glm::length(e2);
+    normal = glm::normalize(glm::cross(e1, e2));
+}
 
-	// Lambertian reflectors: f(x, di, theta0) = 1 / pi
+Rectangle Light::getGeometry() {
+    return rectangle;
+}
 
-	for (int i = 0; i < N; i++) {
-		// Värde mellan 0 - 1 
-		float S = (float)rand() / RAND_MAX;
-		float T = (float)rand() / RAND_MAX;
+float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
+    int N = 5; // antal samples
+    float Le = 3200.0f; // radiance
+    float irradiance = 0.0f;
+    const float EPSILON = 10e-4;
+    const float PI = 3.14159265f;
 
-		glm::vec3 pointOnLight = v1 + S * e1 + T * e2; // random point på ljuskälla 
-		glm::vec3 direction = glm::normalize(pointOnLight - intersectionPoint);
-		float distanceToLight = glm::distance(pointOnLight, intersectionPoint);
-		Ray rayToLight(intersectionPoint, direction);
+    // Lambertian reflectors: f(x, di, theta0) = 1 / pi
 
-		// En struct som sparar kortaste avståndet och dess index i polygon-listan 
-		IntersectionResult result = findSmallestTAndIndex(polygons, rayToLight);
-		float smallestT = result.smallestT;
+    for (int i = 0; i < N; i++) {
+        // Värde mellan 0 - 1 
+        float S = static_cast<float>(rand()) / RAND_MAX;
+        float T = static_cast<float>(rand()) / RAND_MAX;
 
-		// Något finns ivägen för ljuskällan -> skugga 
-		if (smallestT > EPSILON && smallestT < distanceToLight) {
-			continue;
-		}
+        glm::vec3 pointOnLight = v1 + S * e1 + T * e2; // random point på ljuskälla 
+        glm::vec3 direction = glm::normalize(pointOnLight - intersectionPoint);
+        float distanceToLight = glm::distance(pointOnLight, intersectionPoint);
+        Ray rayToLight(intersectionPoint, direction);
 
-		float cosOmegaX = abs(glm::dot(intersectionPointNormal, glm::normalize(direction)));
-		float cosOmegaY = abs(glm::dot(-normal, glm::normalize(direction)));
+        // En struct som sparar kortaste avståndet och dess index i polygon-listan 
+        IntersectionResult result = findSmallestTAndIndex(polygons, spheres, rayToLight);
+        float smallestT = result.smallestT;
 
-		irradiance += (cosOmegaX + cosOmegaY) / (glm::length(direction) * glm::length(direction));
-	}
+        // Något finns ivägen för ljuskällan -> skugga 
+        if (smallestT > EPSILON && smallestT < distanceToLight) {
+            continue;
+        }
 
-	irradiance = (irradiance * area * Le) / (N * PI);
+        float cosOmegaX = std::abs(glm::dot(intersectionPointNormal, glm::normalize(direction)));
+        float cosOmegaY = std::abs(glm::dot(-normal, glm::normalize(direction)));
 
-	return irradiance;
+        irradiance += (cosOmegaX + cosOmegaY) / (glm::length(direction) * glm::length(direction));
+    }
+
+    irradiance = (irradiance * area * Le) / (N * PI);
+
+    return irradiance;
 }

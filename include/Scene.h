@@ -4,32 +4,18 @@
 #include "Light.h"
 #include <vector>
 #include "Cube.h"
+#include "Sphere.h"
 
 class Scene {
 public:
     Scene(int width, int height);
 
-    void addPolygon(Polygon* polygon) {
-        polygons.push_back(polygon);
-    }
-
-    void addLight(Light* light) {
-		lights.push_back(light);
-	}
-
-    void addCube(Cube* cube) {
-        std::vector<Polygon*> surfaces = cube->getSurfaces();
-        for (Polygon* surface : surfaces) {
-            polygons.push_back(surface);
-        }
-    }
-
-    void render() {
-        camera.traceRays(polygons, lights);
-        camera.saveImage("../images/test.ppm");
-    }
-
-    void HemisphericalToLocalCartesian(double inclination, double azimuth, glm::vec3& cartesian);     
+    void addPolygon(Polygon* polygon);
+    void addLight(Light* light);
+    void addSphere(Sphere* sphere);
+    void addCube(Cube* cube);
+    void render();
+    void HemisphericalToLocalCartesian(double inclination, double azimuth, glm::vec3& cartesian);
     void LocalCartesianToHemispherical(const glm::vec3& cartesian, double& inclination, double& azimuth);
     void LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal, glm::vec3& world);
     void WorldCartesianToLocalCartesian(const glm::vec3& world, const glm::vec3& normal, glm::vec3& local);
@@ -38,4 +24,5 @@ private:
     Camera camera;
     std::vector<Polygon*> polygons;
     std::vector<Light*> lights;
+    std::vector<Sphere*> spheres;
 };
