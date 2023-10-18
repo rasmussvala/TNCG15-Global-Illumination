@@ -23,7 +23,7 @@ float Rectangle::intersect(const Ray& ray) const {
 	float t1 = triangle1.intersect(ray);
 	float t2 = triangle2.intersect(ray);
 
-	const float EPSILON = 1e-4;
+	const float EPSILON = 1e-4f;
 
 	// Kollar om snittet är större än EPSILON
 	if (t1 >= EPSILON && t2 >= EPSILON) {
@@ -48,7 +48,7 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 }
 
 float Triangle::intersect(const Ray& ray) const {
-	const float EPSILON = 1e-4;
+	const float EPSILON = 1e-4f;
 
 	glm::vec3 E1 = vertex2 - vertex1;
 	glm::vec3 E2 = vertex3 - vertex1;
@@ -64,13 +64,13 @@ float Triangle::intersect(const Ray& ray) const {
 	float invDeterminant = 1.0f / determinant;
 
 	float u = glm::dot(P, T) * invDeterminant;
-	if (u < 0.0f || u > 1.0f) {
+	if (u < -EPSILON || u > 1.0f + EPSILON) {
 		return -FLT_MAX;
 	}
 
 	glm::vec3 Q = glm::cross(T, E1);
 	float v = glm::dot(Q, D) * invDeterminant;
-	if (v < 0.0f || u + v > 1.0f) {
+	if (v < -EPSILON || u + v > 1.0f + EPSILON) {
 		return -FLT_MAX;
 	}
 

@@ -8,7 +8,6 @@
 int main() {
 	Scene myScene(200, 200);
 
-	// Default-konstruktor lägger till en liten blå kub och en sfär i (5,0,2); 
 	Cube cube1{};
 	myScene.addCube(&cube1);
 
@@ -29,3 +28,7 @@ int main() {
 }
 
 // @TODO - fixa svarta prickar i rectanglar 
+// @TODO - fixa så att man ser ljuskällan
+// @TODO - fixa antialiasing
+// @TODO - fixa MC
+// @TODO - fixa rendering till glas
