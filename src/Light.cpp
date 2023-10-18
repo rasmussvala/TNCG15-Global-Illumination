@@ -20,7 +20,7 @@ Rectangle Light::getGeometry() {
 }
 
 float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
-    int N = 5; // antal samples
+    int N = 1; // antal samples
     float Le = 3200.0f; // radiance
     float irradiance = 0.0f;
     const float EPSILON = 10e-4;
@@ -38,12 +38,11 @@ float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<S
         float distanceToLight = glm::distance(pointOnLight, intersectionPoint);
         Ray rayToLight(intersectionPoint, direction);
 
-        // En struct som sparar kortaste avståndet och dess index i polygon-listan 
-        IntersectionResult result = findSmallestTAndIndex(polygons, spheres, rayToLight);
-        float smallestT = result.smallestT;
+        IntersectionResult result = findClosestIntersection(polygons, spheres, rayToLight);
+        float closestT = result.t;
 
         // Något finns ivägen för ljuskällan -> skugga 
-        if (smallestT > EPSILON && smallestT < distanceToLight) {
+        if (closestT > EPSILON && closestT < distanceToLight) {
             continue;
         }
 

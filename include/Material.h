@@ -3,9 +3,9 @@
 #include "ColorRGB.h" // Include necessary headers
 
 enum MaterialType {
-    Reflective,
-    Transparent,
-    Diffuse
+    REFLECTIVE,
+    TRANSPARENT,
+    DIFFUSE
 };
 
 struct Material {
@@ -22,28 +22,28 @@ struct Material {
     };
 
     Material(MaterialType t) : type(t) {
-        if (t == Diffuse) {
+        if (t == DIFFUSE) {
             diffuseData.color = ColorRGB(0.0, 0.0, 0.0); // Default color for Diffuse
         }
-        else if (t == Transparent) {
+        else if (t == TRANSPARENT) {
             transparentData.refractiveIndex = 1.0f; // Default refractive index for Transparent
         }
     }
 
     Material(MaterialType t, ColorRGB c) : type(t) {
-        if (t == Diffuse) {
+        if (t == DIFFUSE) {
             diffuseData.color = c;
         }
-        else if (t == Transparent) {
+        else if (t == TRANSPARENT) {
             transparentData.refractiveIndex = 1.0f; // Default refractive index for Transparent
         }
     }
 
     Material(MaterialType t, float ri) : type(t) {
-        if (t == Diffuse) {
+        if (t == DIFFUSE) {
             diffuseData.color = ColorRGB(0.0, 0.0, 0.0); // Default color for Diffuse
         }
-        else if (t == Transparent) {
+        else if (t == TRANSPARENT) {
             transparentData.refractiveIndex = ri;
         }
     }

@@ -68,15 +68,16 @@ void Camera::saveImage(std::string filename) {
 void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights) {
 
 	float progress = 0.0f;
+	int depth = 5;
 
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			Ray ray(location, calculateRayDirection(i, j));
+			Ray ray(location, calculateRayDirectionFromCamera(i, j));
 
-			// Rendrerar alla polygoner (rum + kub) 
-			handleIntersection(polygons, spheres, lights, ray, i, j);
+			// Kollar intersections som sker i scenen  
+			handleIntersection(polygons, spheres, lights, ray, i, j, depth);
 
 			// Rendrerar ljuskällorna i rummet
 			renderLights(lights, ray, j, i);
@@ -103,44 +104,72 @@ void Camera::renderLights(const std::vector<Light*>& lights, Ray& ray, int j, in
 	}
 }
 
-void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, int i, int j) {
+void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, int i, int j, int depth) {
 	const float EPSILON = 1e-4;
 
-	IntersectionResult result = findSmallestTAndIndex(polygons, spheres, ray);
+	IntersectionResult result = findClosestIntersection(polygons, spheres, ray);
 
-	float smallestT = result.smallestT;
-	int smallestIndex = result.smallestIndex;
+	float t = result.t;
+	int index = result.index;
+	IntersectionType type = result.type;
 
-	// Går in här om vi har hittat kortaste snittet
-	if (smallestT > EPSILON && smallestT < FLT_MAX) {
+	// Exit if the maximum recursion depth is reached
+	if (depth <= 0) {
+		return;
+	}
 
-		glm::vec3 intersectionPoint = ray.at(smallestT);
-		glm::vec3 intersectionPointNormal = polygons[smallestIndex]->getNormal();
+	// Check if there's a valid intersection
+	if (t > EPSILON && t < FLT_MAX) {
+		glm::vec3 intersectionPoint = ray.at(t);
+		glm::vec3 intersectionPointNormal;
 
-		// Spegel för poly
-		if(polygons[smallestIndex]->getMaterial().type == Reflective) {
-			glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
+		if (type == POLYGON) {
+			intersectionPointNormal = polygons[index]->getNormal();
+		}
+		else if (type == SPHERE) {
+			intersectionPointNormal = spheres[index]->getNormal(intersectionPoint);
+		}
+
+		// Handle reflections for both polygons and spheres
+		if (type == POLYGON && polygons[index]->getMaterial().type == REFLECTIVE ||
+			type == SPHERE && spheres[index]->getMaterial().type == REFLECTIVE) {
+			glm::vec3 reflectionDirection;
+
+			if (type == POLYGON) {
+				reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
+			}
+			else {
+				reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
+			}
+
 			Ray reflectedRay(intersectionPoint, reflectionDirection);
 
-			// Trace the reflected ray with increased depth
-			handleIntersection(polygons, spheres, lights, reflectedRay, i, j);
+			// Recursively trace the reflected ray with reduced depth
+			handleIntersection(polygons, spheres, lights, reflectedRay, i, j, depth - 1);
 		}
 		else {
-			ColorRGB color = polygons[smallestIndex]->getMaterial().diffuseData.color;
+			ColorRGB color;
+
+			if (type == POLYGON) {
+				color = polygons[index]->getMaterial().diffuseData.color;
+			}
+			else if (type == SPHERE) {
+				color = spheres[index]->getMaterial().diffuseData.color;
+			}
 
 			float irradiance = 0.0f;
 
 			for (Light* light : lights) {
-				irradiance = light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
+				irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
 			}
 
-			// Ansätter färgen på pixeln 
+			// Set the color of the pixel
 			pixels[j][i] = color * irradiance;
 		}
 	}
 }
 
-glm::vec3 Camera::calculateRayDirection(int i, int j) {
+glm::vec3 Camera::calculateRayDirectionFromCamera(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
 	// u och v är mellan -1 och 1
 	float u = (2.0f * i) / width - 1.0f; // går från -1 -> 1
@@ -166,30 +195,32 @@ void Camera::progressBar(float percent) {
 	std::cout.flush();
 }
 
-IntersectionResult findSmallestTAndIndex(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const Ray& ray) {
+IntersectionResult findClosestIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const Ray& ray) {
 	const float EPSILON = 1e-4;
-	float smallestT = FLT_MAX;
+	float closestT = FLT_MAX;
 	std::vector<float> t_values;
+	IntersectionType closestType = NONE;
+	int closestIndex = -1; // Initialize to an invalid index
 
-	// Kollar igenom alla polygons, och hittar alla snitt
-	for (const auto& poly : polygons) {
-		t_values.push_back(poly->intersect(ray));
-	}
-
-	// @TODO - Fixa så att istället har vi Shape som base class 
-	/*for (const auto& sphere : spheres) {
-		t_values.push_back(sphere->intersect(ray));
-	}*/
-
-	int smallestIndex = -1; // Initialize to an invalid index
-
-	// Ansätter det närmaste snittet
-	for (int i = 0; i < t_values.size(); i++) {
-		if (t_values[i] > EPSILON && t_values[i] < smallestT) {
-			smallestT = t_values[i];
-			smallestIndex = i;
+	// Check intersections with polygons
+	for (int i = 0; i < polygons.size(); i++) {
+		float t = polygons[i]->intersect(ray);
+		if (t > EPSILON && t < closestT) {
+			closestT = t;
+			closestType = POLYGON;
+			closestIndex = i;
 		}
 	}
 
-	return { smallestT, smallestIndex };
+	// Check intersections with spheres
+	for (int i = 0; i < spheres.size(); i++) {
+		float t = spheres[i]->intersect(ray);
+		if (t > EPSILON && t < closestT) {
+			closestT = t;
+			closestType = SPHERE;
+			closestIndex = i;
+		}
+	}
+
+	return { closestT, closestIndex, closestType };
 }

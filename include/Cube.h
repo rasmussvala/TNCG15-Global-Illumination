@@ -23,7 +23,7 @@ private:
 	// DETTA SKA INTE VARA HÅRDKODAT I FRAMTIDEN 
 	ColorRGB color{ 0.0,0.0,0.4 }; 
 
-	Material material{ Diffuse, color };
+	Material material{ DIFFUSE, color };
 
 	glm::vec3 p0{ 5.0f, 3.0f, 0.0f };
 	glm::vec3 p1{ 6.0f, 3.0f, 0.0f };

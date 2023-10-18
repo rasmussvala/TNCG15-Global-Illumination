@@ -2,45 +2,59 @@
 #include <limits>
 
 Sphere::Sphere() {
-    // center (x0,y0,z0)
-    x0 = 5.0f;
-    y0 = 0.0f;
-    z0 = 0.0f;
-    r = 2.0f;
+	// center (x0,y0,z0)
+	x0 = 8.0f;
+	y0 = 2.5f;
+	z0 = -3.5f;
+	r = 1.5f;
+	sphereOrigin = glm::vec3{ x0, y0, z0 };
 }
 
 glm::vec3 Sphere::getNormal(const glm::vec3& pointOnSphere) {
-    glm::vec3 pointCenter = pointOnSphere - glm::vec3(x0, y0, z0);
-    glm::vec3 normal = glm::normalize(pointCenter);
-    return normal;
+	glm::vec3 normal = glm::normalize(pointOnSphere - sphereOrigin);
+	return normal;
 }
 
 float Sphere::intersect(const Ray& ray) {
-    const float EPSILON = 1e-4;
-    glm::vec3 rayToCenter = glm::vec3(x0, y0, z0) - ray.getOrigin();
-    float a = glm::dot(ray.getDirection(), ray.getDirection());
-    float b = 2.0f * glm::dot(ray.getDirection(), rayToCenter);
-    float c = glm::dot(rayToCenter, rayToCenter) - (r * r);
-    float discriminant = (b * b) - (4.0f * a * c);
+	const float EPSILON = 1e-4;
 
-    if (discriminant < 0.0f) {
-        return -FLT_MAX; // No intersection
-    }
+	glm::vec3 D = glm::normalize(ray.getDirection());
+	glm::vec3 S = ray.getOrigin();
+	glm::vec3 C = sphereOrigin;
 
-    float t1 = (-b - glm::sqrt(discriminant)) / (2.0f * a);
-    float t2 = (-b + glm::sqrt(discriminant)) / (2.0f * a);
+	// Coefficients for the quadratic equation
+	float c1 = glm::dot(D, D);
+	float c2 = glm::dot(2.0f * D, S - C);
+	float c3 = glm::dot((S - C), (S - C)) - (r * r);
 
-    if (t1 >= EPSILON && t2 >= EPSILON) {
-        return glm::min(t1, t2);
-    }
+	// Calculate the discriminant
+	float arg = c2 * c2 - 4.0f * c1 * c3;
 
-    if (t1 >= EPSILON) {
-        return t1;
-    }
+	if (arg < 0.0f) {
+		// No intersection
+		return -FLT_MAX;
+	}
+	else {
+		// Two possible intersection points
+		float t1 = (-c2 - sqrt(arg)) / (2 * c1);
+		float t2 = (-c2 + sqrt(arg)) / (2 * c1);
 
-    if (t2 >= EPSILON) {
-        return t2;
-    }
+		if (t1 > EPSILON && t2 > EPSILON) {
+			return glm::min(t1, t2);
+		}
+		else if (t1 > EPSILON) {
+			return t1;
+		}
+		else if (t2 > EPSILON) {
+			return t2;
+		}
+		else {
+			// No valid intersection
+			return -FLT_MAX;
+		}
+	}
+}
 
-    return -FLT_MAX;
+Material Sphere::getMaterial() {
+	return material;
 }

@@ -15,12 +15,12 @@ int main() {
 	ColorRGB red = { 0.4, 0.0, 0.0 };
 	ColorRGB green = { 0.0, 0.4, 0.0 };
 
-	Material materialWhite(Diffuse, white); // White diffuse material
-	Material materialRed(Diffuse, red); // Red diffuse material
-	Material materialGreen(Diffuse, green); // Green diffuse material
-	Material mirror(Reflective); // mirror
-	Material glas(Transparent, 1.5); // glas with refractiveIndex 1.5
-	Material test(Reflective);
+	Material materialWhite(DIFFUSE, white); // White diffuse material
+	Material materialRed(DIFFUSE, red); // Red diffuse material
+	Material materialGreen(DIFFUSE, green); // Green diffuse material
+	Material mirror(REFLECTIVE); // mirror
+	Material glas(TRANSPARENT, 1.5); // glas with refractiveIndex 1.5
+	Material test(REFLECTIVE);
 
 	glm::vec3 p0(0.0f, 6.0f, -5.0f);
 	glm::vec3 p1(10.0f, 6.0f, -5.0f);
@@ -70,12 +70,12 @@ int main() {
 
 	// ----------------------------------------------
 
-	// Default-konstruktor lägger till en liten blå kub och en sfär i (5,0,0); 
+	// Default-konstruktor lägger till en liten blå kub och en sfär i (5,0,2); 
 	Cube cube1{};
 	myScene.addCube(&cube1);
 
-	/*Sphere sphere1{};
-	myScene.addSphere(&sphere1);*/
+	Sphere sphere1{};
+	myScene.addSphere(&sphere1);
 
 	Light light1{ glm::vec3{5.0f, 1.0f, 4.9999f},
 		glm::vec3{3.0f, 1.0f, 4.9999f},
