@@ -6,7 +6,7 @@
 #include "../include/Sphere.h"
 
 int main() {
-	Scene myScene(600, 600);
+	Scene myScene(200, 200);
 
 	Cube cube1{};
 	myScene.addCube(&cube1);

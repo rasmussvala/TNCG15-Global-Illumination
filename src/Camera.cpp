@@ -99,7 +99,6 @@ void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vect
 		return;
 	}
 
-	// Check if there's a valid intersection
 	if (t > EPSILON && t < FLT_MAX) {
 		glm::vec3 intersectionPoint = ray.at(t);
 		glm::vec3 intersectionPointNormal;
@@ -111,44 +110,44 @@ void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vect
 			intersectionPointNormal = spheres[index]->getNormal(intersectionPoint);
 		}
 
-		// Handle reflections for both polygons and spheres
 		if (type == POLYGON && polygons[index]->getMaterial().type == REFLECTIVE ||
 			type == SPHERE && spheres[index]->getMaterial().type == REFLECTIVE) {
-			glm::vec3 reflectionDirection;
-
-			if (type == POLYGON) {
-				reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
-			}
-			else {
-				reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
-			}
-
-			Ray reflectedRay(intersectionPoint, reflectionDirection);
-
-			// Recursively trace the reflected ray with reduced depth
-			handleIntersection(polygons, spheres, lights, reflectedRay, i, j, depth - 1);
+			handleReflection(polygons, spheres, lights, ray, intersectionPoint, intersectionPointNormal, i, j, depth);
 		}
 		else {
-			ColorRGB color;
-
-			if (type == POLYGON) {
-				color = polygons[index]->getMaterial().diffuseData.color;
-			}
-			else if (type == SPHERE) {
-				color = spheres[index]->getMaterial().diffuseData.color;
-			}
-
-			float irradiance = 0.0f;
-
-			for (Light* light : lights) {
-				irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
-			}
-
-			// Set the color of the pixel
-			pixels[j][i] = color * irradiance;
+			handleDiffuse(polygons, spheres, lights, intersectionPoint, intersectionPointNormal, type, index, i, j);
 		}
 	}
 }
+
+void Camera::handleReflection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int i, int j, int depth) {
+	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
+	Ray reflectedRay(intersectionPoint, reflectionDirection);
+
+	// Recursively trace the reflected ray with reduced depth
+	handleIntersection(polygons, spheres, lights, reflectedRay, i, j, depth - 1);
+}
+
+void Camera::handleDiffuse(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int i, int j) {
+	ColorRGB color;
+
+	if (type == POLYGON) {
+		color = polygons[index]->getMaterial().diffuseData.color;
+	}
+	else if (type == SPHERE) {
+		color = spheres[index]->getMaterial().diffuseData.color;
+	}
+
+	float irradiance = 0.0f;
+
+	for (Light* light : lights) {
+		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
+	}
+
+	// Set the color of the pixel
+	pixels[j][i] = color * irradiance;
+}
+
 
 glm::vec3 Camera::calculateRayDirectionFromCamera(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
