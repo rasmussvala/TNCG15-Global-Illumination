@@ -1,9 +1,9 @@
 #pragma once
-#include "../include/glm/glm.hpp"
-#include "../include/Ray.h"
-#include "../include/ColorRGB.h"
-#include "../include/Polygon.h"
-#include "../include/Material.h"
+#include "glm/glm.hpp"
+#include "Ray.h"
+#include "ColorRGB.h"
+#include "Polygon.h"
+#include "Material.h"
 #include <vector>
 
 class Cube {

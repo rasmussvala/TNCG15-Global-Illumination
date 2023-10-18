@@ -1,5 +1,5 @@
 #pragma once
-#include "../include/glm/glm.hpp"
+#include "glm/glm.hpp"
 
 class Ray {
 public:

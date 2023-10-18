@@ -1,10 +1,10 @@
 #pragma once
-#include "../include/glm/glm.hpp"
-#include "../include/ColorRGB.h"
-#include "../include/Polygon.h"
-#include "../include/Light.h"
-#include "../include/Cube.h"
-#include "../include/Sphere.h"
+#include "glm/glm.hpp"
+#include "ColorRGB.h"
+#include "Polygon.h"
+#include "Light.h"
+#include "Cube.h"
+#include "Sphere.h"
 #include <fstream>
 #include <vector>
 #include <string>

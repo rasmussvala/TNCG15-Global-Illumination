@@ -1,8 +1,8 @@
 #pragma once
-#include "../include/glm/glm.hpp"
-#include "../include/Ray.h"
-#include "../include/ColorRGB.h"
-#include "../include/Material.h"
+#include "glm/glm.hpp"
+#include "Ray.h"
+#include "ColorRGB.h"
+#include "Material.h"
 
 class Polygon {
 public:

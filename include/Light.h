@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../include/glm/glm.hpp"
-#include "../include/ColorRGB.h"
-#include "../include/Polygon.h"
-#include "../include/Ray.h"
-#include "../include/Cube.h"
-#include "../include/Material.h"
-#include "../include/Sphere.h"
+#include "glm/glm.hpp"
+#include "ColorRGB.h"
+#include "Polygon.h"
+#include "Ray.h"
+#include "Cube.h"
+#include "Material.h"
+#include "Sphere.h"
 #include <vector>
 
 // Area light
