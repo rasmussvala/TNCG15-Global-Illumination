@@ -21,7 +21,7 @@ public:
 	}
 private:
 	// DETTA SKA INTE VARA HÅRDKODAT I FRAMTIDEN 
-	ColorRGB color{ 0.0,0.0,0.4 }; 
+	ColorRGB color{ 0.0, 0.0, 0.4 }; 
 
 	Material material{ DIFFUSE, color };
 

@@ -2,9 +2,9 @@
 #include "Polygon.h"
 #include "Camera.h"
 #include "Light.h"
-#include <vector>
 #include "Cube.h"
 #include "Sphere.h"
+#include <vector>
 
 class Scene {
 public:
