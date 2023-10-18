@@ -6,7 +6,7 @@
 #include "../include/Sphere.h"
 
 int main() {
-	Scene myScene(200, 200);
+	Scene myScene(600, 600);
 
 	Cube cube1{};
 	myScene.addCube(&cube1);
@@ -27,8 +27,7 @@ int main() {
 	return 0;
 }
 
-// @TODO - fixa svarta prickar i rectanglar 
-// @TODO - fixa så att man ser ljuskällan
-// @TODO - fixa antialiasing
 // @TODO - fixa MC
 // @TODO - fixa rendering till glas
+// @TODO - fixa så att man ser ljuskällan (fixa senare)
+// @TODO - fixa antialiasing

@@ -25,7 +25,6 @@ public:
 
 	void saveImage(std::string filename);
 	void castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights);
-	void renderLights(const std::vector<Light*>& lights, Ray& ray, int j, int i);
 	void handleIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, int i, int j, int depth);
 	glm::vec3 calculateRayDirectionFromCamera(int i, int j);
 	void progressBar(float percent);

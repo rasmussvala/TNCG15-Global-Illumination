@@ -19,9 +19,7 @@ Camera::Camera(int w, int h) : width(w), height(h) {
 }
 
 void Camera::saveImage(std::string filename) {
-
 	// CONTRAST STRETCHING
-
 	std::ofstream ppmFile(filename); // Opens/creates the file
 
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
@@ -35,13 +33,13 @@ void Camera::saveImage(std::string filename) {
 			auto g = pixels[j][i].g;
 			auto b = pixels[j][i].b;
 
-			float maxChannel = std::max({ r, g, b });
-			maxRGB = std::max(maxRGB, maxChannel);
+			float maxChannel = (float)std::max({ r, g, b });
+			maxRGB = (float)std::max(maxRGB, maxChannel);
 		}
 	}
 
 	// Calculate the stretching factor
-	float stretchFactor = 255.0 / maxRGB;
+	float stretchFactor = 255.0f / maxRGB;
 
 	// Write the stretched pixel values to the output file
 	for (int j = 0; j < height; ++j) {
@@ -79,9 +77,6 @@ void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*
 			// Kollar intersections som sker i scenen  
 			handleIntersection(polygons, spheres, lights, ray, i, j, depth);
 
-			// Rendrerar ljuskällorna i rummet
-			renderLights(lights, ray, j, i);
-
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
 			progress += 1.0f;
@@ -89,23 +84,9 @@ void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*
 	}
 }
 
-void Camera::renderLights(const std::vector<Light*>& lights, Ray& ray, int j, int i)
-{
-	// Rendrerar objektet i scenen
-	const float EPSILON = 1e-4;
-
-	// Rendrera ljus 
-	for (const auto& light : lights) {
-		float t = light->getGeometry().intersect(ray);
-
-		if (t > EPSILON) {
-			pixels[j][i] = { 1.0f, 1.0f, 1.0f };
-		}
-	}
-}
 
 void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, int i, int j, int depth) {
-	const float EPSILON = 1e-4;
+	const float EPSILON = 1e-4f;
 
 	IntersectionResult result = findClosestIntersection(polygons, spheres, ray);
 
@@ -173,7 +154,7 @@ glm::vec3 Camera::calculateRayDirectionFromCamera(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
 	// u och v är mellan -1 och 1
 	float u = 1.0f - (2.0f * i) / width;
-	float v = 1.0f - (2.0f * j) / height; 
+	float v = 1.0f - (2.0f * j) / height;
 
 	// Returnerar en normaliserad vektor fr�n kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
@@ -196,7 +177,7 @@ void Camera::progressBar(float percent) {
 }
 
 IntersectionResult findClosestIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const Ray& ray) {
-	const float EPSILON = 1e-4;
+	const float EPSILON = 1e-4f;
 	float closestT = FLT_MAX;
 	std::vector<float> t_values;
 	IntersectionType closestType = NONE;

@@ -21,18 +21,18 @@ public:
 	}
 private:
 	// DETTA SKA INTE VARA HÅRDKODAT I FRAMTIDEN 
-	ColorRGB color{ 0.0, 0.0, 0.4 }; 
+	ColorRGB color{ 0.0, 0.0, 0.4 };
 
 	Material material{ DIFFUSE, color };
 
-	glm::vec3 p0{ 5.0f, 3.0f, 0.0f };
-	glm::vec3 p1{ 6.0f, 3.0f, 0.0f };
-	glm::vec3 p2{ 6.0f, 4.0f, 0.0f };
-	glm::vec3 p3{ 5.0f, 4.0f, 0.0f };
-	glm::vec3 p4{ 5.0f, 3.0f, 1.0f };
-	glm::vec3 p5{ 6.0f, 3.0f, 1.0f };
-	glm::vec3 p6{ 6.0f, 4.0f, 1.0f };
-	glm::vec3 p7{ 5.0f, 4.0f, 1.0f };
+	glm::vec3 p0{ 6.0f, -1.0f, -5.0f };
+	glm::vec3 p1{ 9.0f, -1.0f, -5.0f };
+	glm::vec3 p2{ 9.0f, -4.0f, -5.0f };
+	glm::vec3 p3{ 6.0f, -4.0f, -5.0f };
+	glm::vec3 p4{ 6.0f, -1.0f, -2.0f };
+	glm::vec3 p5{ 9.0f, -1.0f, -2.0f };
+	glm::vec3 p6{ 9.0f, -4.0f, -2.0f };
+	glm::vec3 p7{ 6.0f, -4.0f, -2.0f };
 
 	Rectangle surface1{ p0, p1, p2, p3, material }; // botten
 	Rectangle surface2{ p4, p7, p6, p5, material }; // toppen
@@ -41,6 +41,3 @@ private:
 	Rectangle surface5{ p0, p4, p5, p1, material }; // sidan mot vänster
 	Rectangle surface6{ p1, p5, p6, p2, material }; // sidan mot bortre väggen
 };
-
-// @TODO - gör en constructor med material och size som imput och sätt den i mitten av scenen
-// @TODO - skapa en function som translaterar kuben 
