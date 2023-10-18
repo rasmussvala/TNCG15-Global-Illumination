@@ -23,11 +23,9 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	myScene.render();
+	myScene.render(); 
 
 	return 0;
 }
 
-// @TODO - Kolla varför scenen är flippad vertikalt
-// @TODO - Kolla varför scenen inte kan skrivas i konstruktorn
-// @TODO - Polygons kan ibland få snitt i sig själv när shadow rays castas 
+// @TODO - fixa svarta prickar i rectanglar 

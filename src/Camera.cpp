@@ -172,8 +172,8 @@ void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vect
 glm::vec3 Camera::calculateRayDirectionFromCamera(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
 	// u och v är mellan -1 och 1
-	float u = (2.0f * i) / width - 1.0f; // går från -1 -> 1
-	float v = 1.0f - (2.0f * j) / height; // går från 1 -> -1
+	float u = 1.0f - (2.0f * i) / width;
+	float v = 1.0f - (2.0f * j) / height; 
 
 	// Returnerar en normaliserad vektor fr�n kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
