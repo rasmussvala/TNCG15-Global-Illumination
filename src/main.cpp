@@ -27,8 +27,8 @@ int main() {
 	return 0;
 }
 
-// @TODO - fixa MC
+// @TODO - fixa MC: flera rays per pixel, studs på diffusa ytor 
 // @TODO - fixa rendering till glas
 // @TODO - fixa så att man ser ljuskällan (fixa senare)
 // @TODO - fixa antialiasing
-// @TODO - tänk på att ytan vända fel kastas bort i traingle::intersect (hur glas ska hantera det) 
+// @TODO - tänk på att ytan vända fel kastas bort i traingle::intersect (hur glas ska hantera det) om bool insideObj = true, ignorera? 
