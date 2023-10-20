@@ -45,7 +45,7 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	// Tak
 	Triangle* triangle_ceilingB = new Triangle{ p6, p10, p11, materialWhite };
 	Triangle* triangle_ceilingF = new Triangle{ p7, p8, p9, materialWhite };
-	Rectangle* rectangle_ceiling = new Rectangle{p6, p7, p9, p10, materialWhite};
+	Rectangle* rectangle_ceiling = new Rectangle{ p6, p7, p9, p10, materialWhite };
 
 	// Lägger till alla polygoner i scenen
 	addPolygon(triangle_floorB);
@@ -82,7 +82,13 @@ void Scene::addCube(Cube* cube) {
 }
 
 void Scene::render() {
-	camera.castRays(polygons, spheres, lights);
+
+	// Adds all geometry to he camera
+	camera.setPolygons(polygons);
+	camera.setSpheres(spheres);
+	camera.setLights(lights);
+
+	camera.castRays();
 	camera.saveImage("../images/test.ppm");
 }
 

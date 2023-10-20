@@ -38,7 +38,7 @@ float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<S
         float distanceToLight = glm::distance(pointOnLight, intersectionPoint);
         Ray rayToLight(intersectionPoint, direction);
 
-        IntersectionResult result = findClosestIntersection(polygons, spheres, rayToLight);
+        IntersectionResult result = findClosestIntersection(rayToLight, polygons, spheres);
         float closestT = result.t;
 
         // Något finns ivägen för ljuskällan -> skugga 

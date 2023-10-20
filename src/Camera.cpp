@@ -63,7 +63,7 @@ void Camera::saveImage(std::string filename) {
 	ppmFile.close();
 }
 
-void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights) {
+void Camera::castRays() {
 
 	float progress = 0.0f;
 	int depth = 5;
@@ -75,7 +75,7 @@ void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*
 			Ray ray(location, calculateRayDirectionFromCamera(i, j));
 
 			// Kollar intersections som sker i scenen  
-			handleIntersection(polygons, spheres, lights, ray, i, j, depth);
+			handleIntersection(ray, i, j, depth);
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
@@ -85,10 +85,10 @@ void Camera::castRays(const std::vector<Polygon*>& polygons, std::vector<Sphere*
 }
 
 
-void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, int i, int j, int depth) {
+void Camera::handleIntersection(const Ray& ray, int i, int j, int depth) {
 	const float EPSILON = 1e-4f;
 
-	IntersectionResult result = findClosestIntersection(polygons, spheres, ray);
+	IntersectionResult result = findClosestIntersection(ray, polygons, spheres);
 
 	float t = result.t;
 	int index = result.index;
@@ -112,11 +112,11 @@ void Camera::handleIntersection(const std::vector<Polygon*>& polygons, std::vect
 
 		if (type == POLYGON && polygons[index]->getMaterial().type == REFLECTIVE ||
 			type == SPHERE && spheres[index]->getMaterial().type == REFLECTIVE) {
-			handleReflection(polygons, spheres, lights, ray, intersectionPoint, intersectionPointNormal, i, j, depth);
+			handleReflection(ray, intersectionPoint, intersectionPointNormal, i, j, depth);
 		}
 		else if (type == POLYGON && polygons[index]->getMaterial().type == DIFFUSE ||
 			type == SPHERE && spheres[index]->getMaterial().type == DIFFUSE) {
-			handleDiffuse(polygons, spheres, lights, intersectionPoint, intersectionPointNormal, type, index, i, j);
+			handleDiffuse(intersectionPoint, intersectionPointNormal, type, index, i, j);
 		}
 		else {
 			// TRANSPARENT
@@ -155,15 +155,15 @@ void Camera::handleTransparent(const Ray& ray, const glm::vec3& intersectionPoin
 	//// Apply the finalColor to the pixel.
 }
 
-void Camera::handleReflection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int i, int j, int depth) {
+void Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int i, int j, int depth) {
 	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
 	Ray reflectedRay(intersectionPoint, reflectionDirection);
 
 	// Recursively trace the reflected ray with reduced depth
-	handleIntersection(polygons, spheres, lights, reflectedRay, i, j, depth - 1);
+	handleIntersection(reflectedRay, i, j, depth - 1);
 }
 
-void Camera::handleDiffuse(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const std::vector<Light*>& lights, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int i, int j) {
+void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int i, int j) {
 	ColorRGB color;
 
 	if (type == POLYGON) {
@@ -210,7 +210,7 @@ void Camera::progressBar(float percent) {
 	std::cout.flush();
 }
 
-IntersectionResult findClosestIntersection(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const Ray& ray) {
+IntersectionResult findClosestIntersection(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres) {
 	const float EPSILON = 1e-4f;
 	float closestT = FLT_MAX;
 	std::vector<float> t_values;
