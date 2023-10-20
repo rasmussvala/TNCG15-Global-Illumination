@@ -91,19 +91,3 @@ void Scene::render() {
 	camera.castRays();
 	camera.saveImage("../images/test.ppm");
 }
-
-void Scene::HemisphericalToLocalCartesian(double phi, double omega, glm::vec3& cartesian) {
-	// Implementation for HemisphericalToLocalCartesian
-}
-
-void Scene::LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal, glm::vec3& world) {
-	// Implementation for LocalCartesianToWorldCartesian
-}
-
-void Scene::LocalCartesianToHemispherical(const glm::vec3& cartesian, double& inclination, double& azimuth) {
-	// Implementation for LocalCartesianToHemispherical
-}
-
-void Scene::WorldCartesianToLocalCartesian(const glm::vec3& world, const glm::vec3& normal, glm::vec3& local) {
-	// Implementation for WorldCartesianToLocalCartesian
-}

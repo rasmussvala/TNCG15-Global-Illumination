@@ -66,16 +66,18 @@ void Camera::saveImage(std::string filename) {
 void Camera::castRays() {
 
 	float progress = 0.0f;
-	int depth = 5;
+	const int depth = 5;
 
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			Ray ray(location, calculateRayDirectionFromCamera(i, j));
+			Ray ray(location, rayDirectionFromCamera(i, j));
 
 			// Kollar intersections som sker i scenen  
-			handleIntersection(ray, i, j, depth);
+			ColorRGB colorOfPixel = { 0.0, 0.0, 0.0 };
+			castRay(ray, depth, colorOfPixel);
+			pixels[j][i] = colorOfPixel;
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
@@ -85,38 +87,42 @@ void Camera::castRays() {
 }
 
 
-void Camera::handleIntersection(const Ray& ray, int i, int j, int depth) {
-	const float EPSILON = 1e-4f;
-
-	IntersectionResult result = findClosestIntersection(ray, polygons, spheres);
-
-	float t = result.t;
-	int index = result.index;
-	IntersectionType type = result.type;
-
+void Camera::castRay(const Ray& ray, int depth, ColorRGB& color) {
+	
 	// Exit if the maximum recursion depth is reached
 	if (depth <= 0) {
 		return;
 	}
 
+	const float EPSILON = 1e-4f;
+
+	IntersectionResult result = closestIntersection(ray, polygons, spheres);
+
+	float t = result.t;
+	int index = result.index;
+	IntersectionType type = result.type;
+
 	if (t > EPSILON && t < FLT_MAX) {
 		glm::vec3 intersectionPoint = ray.at(t);
 		glm::vec3 intersectionPointNormal;
+		MaterialType materialType;
 
 		if (type == POLYGON) {
 			intersectionPointNormal = polygons[index]->getNormal();
+			materialType = polygons[index]->getMaterial().type;
 		}
 		else if (type == SPHERE) {
 			intersectionPointNormal = spheres[index]->getNormal(intersectionPoint);
+			materialType = spheres[index]->getMaterial().type;
 		}
 
-		if (type == POLYGON && polygons[index]->getMaterial().type == REFLECTIVE ||
-			type == SPHERE && spheres[index]->getMaterial().type == REFLECTIVE) {
-			handleReflection(ray, intersectionPoint, intersectionPointNormal, i, j, depth);
+		if (type == POLYGON && materialType == REFLECTIVE ||
+			type == SPHERE && materialType == REFLECTIVE) {
+			handleReflection(ray, intersectionPoint, intersectionPointNormal, depth, color);
 		}
-		else if (type == POLYGON && polygons[index]->getMaterial().type == DIFFUSE ||
-			type == SPHERE && spheres[index]->getMaterial().type == DIFFUSE) {
-			handleDiffuse(intersectionPoint, intersectionPointNormal, type, index, i, j);
+		else if (type == POLYGON && materialType == DIFFUSE ||
+			type == SPHERE && materialType == DIFFUSE) {
+			handleDiffuse(intersectionPoint, intersectionPointNormal, type, index, depth, color);
 		}
 		else {
 			// TRANSPARENT
@@ -155,22 +161,22 @@ void Camera::handleTransparent(const Ray& ray, const glm::vec3& intersectionPoin
 	//// Apply the finalColor to the pixel.
 }
 
-void Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int i, int j, int depth) {
+void Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth, ColorRGB& color) {
 	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
 	Ray reflectedRay(intersectionPoint, reflectionDirection);
 
 	// Recursively trace the reflected ray with reduced depth
-	handleIntersection(reflectedRay, i, j, depth - 1);
+	castRay(reflectedRay, depth - 1, color);
 }
 
-void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int i, int j) {
-	ColorRGB color;
+void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth, ColorRGB& color) {
+	ColorRGB colorOfObject;
 
 	if (type == POLYGON) {
-		color = polygons[index]->getMaterial().diffuseData.color;
+		colorOfObject = polygons[index]->getMaterial().diffuseData.color;
 	}
 	else if (type == SPHERE) {
-		color = spheres[index]->getMaterial().diffuseData.color;
+		colorOfObject = spheres[index]->getMaterial().diffuseData.color;
 	}
 
 	float irradiance = 0.0f;
@@ -180,11 +186,19 @@ void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& 
 	}
 
 	// Set the color of the pixel
-	pixels[j][i] = color * irradiance;
+	color += colorOfObject * irradiance;
+
+	// ska skicka ut N antal nya rays från sig själv
+	const int N = 5;
+
+	for (int i = 0; i < N; ++i) {
+		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
+		castRay(randomRay, depth - 1, color);
+	}
 }
 
 
-glm::vec3 Camera::calculateRayDirectionFromCamera(int i, int j) {
+glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
 	// u och v är mellan -1 och 1
 	float u = 1.0f - (2.0f * i) / width;
@@ -193,6 +207,32 @@ glm::vec3 Camera::calculateRayDirectionFromCamera(int i, int j) {
 	// Returnerar en normaliserad vektor fr�n kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
 }
+
+glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
+
+	const float TWO_PI = 6.28318530718f;
+	const float PI = 3.14159265359f;
+
+	// Generate random spherical coordinates
+	float inclination = (static_cast<float>(rand()) / RAND_MAX) * TWO_PI;
+	float azimuth = (static_cast<float>(rand()) / RAND_MAX) * PI;
+
+	// Convert spherical coordinates to Cartesian coordinates in the local hemisphere
+	glm::vec3 localDirection = HemisphericalToLocalCartesian(azimuth, inclination);
+
+	// Convert the local direction to the world coordinate system
+	glm::vec3 worldDirection = LocalCartesianToWorldCartesian(localDirection, intersectionPointNormal);
+
+	// Make sure the direction is not pointing back into the surface
+	if (glm::dot(worldDirection, intersectionPointNormal) < 0.0f) {
+		worldDirection = -worldDirection;
+	}
+
+	worldDirection = glm::normalize(worldDirection);
+	return worldDirection;
+}
+
+
 
 void Camera::progressBar(float percent) {
 	const int BAR_WIDTH = 20;
@@ -210,7 +250,35 @@ void Camera::progressBar(float percent) {
 	std::cout.flush();
 }
 
-IntersectionResult findClosestIntersection(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres) {
+inline glm::vec3 Camera::HemisphericalToLocalCartesian(double phi, double omega) {
+	float sinOmega = sin(omega);
+	return glm::vec3(
+		sinOmega * cos(phi),
+		sinOmega * sin(phi),
+		cos(omega)
+	);
+}
+
+// WIP
+inline glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDirection, const glm::vec3& normal) {
+	float x0 = localDirection.x;
+	float y0 = localDirection.y;
+	float z0 = localDirection.z;
+
+	glm::vec3 c = normal;
+	glm::vec3 a = glm::normalize(-localDirection + glm::dot(normal, localDirection) * normal);
+	glm::vec3 b = glm::cross(c, a);
+
+	glm::vec3 worldDirection(
+		x0 * a.x + y0 * b.x + z0 * c.x,
+		x0 * a.y + y0 * b.y + z0 * c.y,
+		x0 * a.z + y0 * b.z + z0 * c.z
+	);
+
+	return worldDirection;
+}
+
+IntersectionResult closestIntersection(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres) {
 	const float EPSILON = 1e-4f;
 	float closestT = FLT_MAX;
 	std::vector<float> t_values;

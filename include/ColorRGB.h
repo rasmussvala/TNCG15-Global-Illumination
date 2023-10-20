@@ -21,6 +21,14 @@ public:
 		return *this;
 	}
 
+	// Overloaded + 
+	ColorRGB& operator+(const ColorRGB& other) {
+		r + other.r;
+		g + other.g;
+		b + other.b;
+		return *this;
+	}
+
 	// Overloaded *= 
 	ColorRGB& operator*=(const ColorRGB& other) {
 		r *= other.r;

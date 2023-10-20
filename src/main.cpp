@@ -28,6 +28,7 @@ int main() {
 }
 
 // @TODO - fixa MC: flera rays per pixel, studs på diffusa ytor 
+// @TODO - skulle kunna fixa så att MC på diffust är mer baserat på ingångsvectorn 
 // @TODO - fixa rendering till glas
 // @TODO - fixa så att man ser ljuskällan (fixa senare)
 // @TODO - fixa antialiasing
