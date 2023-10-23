@@ -37,16 +37,16 @@ public:
 	static inline glm::vec3 HemisphericalToLocalCartesian(double phi, double omega);
 	static inline glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal);
 
-	void setPolygons(const std::vector<Polygon*>& polygons) {
-		this->polygons = polygons;
+	void setPolygons(const std::vector<Polygon*>& newPolygons) {
+		polygons = newPolygons;
 	}
 
-	void setSpheres(const std::vector<Sphere*>& spheres) {
-		this->spheres = spheres;
+	void setSpheres(const std::vector<Sphere*>& newSpheres) {
+		spheres = newSpheres;
 	}
 
-	void setLights(const std::vector<Light*>& lights) {
-		this->lights = lights;
+	void setLights(const std::vector<Light*>& newLights) {
+		lights = newLights;
 	}
 
 private:

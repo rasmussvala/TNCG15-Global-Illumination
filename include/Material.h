@@ -21,30 +21,25 @@ struct Material {
         } transparentData;
     };
 
-    Material(MaterialType t) : type(t) {
-        if (t == DIFFUSE) {
-            diffuseData.color = ColorRGB(0.0, 0.0, 0.0); // Default color for Diffuse
-        }
-        else if (t == TRANSPARENT) {
+    // Constructor for MIRROR
+    Material(MaterialType t) : type(t), diffuseData({ ColorRGB(0.0, 0.0, 0.0) }) {
+        if (t == TRANSPARENT) {
             transparentData.refractiveIndex = 1.0f; // Default refractive index for Transparent
         }
     }
 
-    Material(MaterialType t, ColorRGB c) : type(t) {
-        if (t == DIFFUSE) {
-            diffuseData.color = c;
-        }
-        else if (t == TRANSPARENT) {
+    // Constructor for DIFFUSE
+    Material(MaterialType t, ColorRGB c) : type(t), diffuseData({ c }) {
+        if (t == TRANSPARENT) {
             transparentData.refractiveIndex = 1.0f; // Default refractive index for Transparent
         }
     }
 
-    Material(MaterialType t, float ri) : type(t) {
-        if (t == DIFFUSE) {
-            diffuseData.color = ColorRGB(0.0, 0.0, 0.0); // Default color for Diffuse
-        }
-        else if (t == TRANSPARENT) {
+    // Constructor for TRANSPARENT
+    Material(MaterialType t, float ri) : type(t), diffuseData({ ColorRGB(0.0, 0.0, 0.0) }) {
+        if (t == TRANSPARENT) {
             transparentData.refractiveIndex = ri;
         }
     }
+
 };

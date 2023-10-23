@@ -66,7 +66,7 @@ void Camera::saveImage(std::string filename) {
 void Camera::castRays() {
 
 	float progress = 0.0f;
-	const int depth = 5;
+	const int depth = 3;
 
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
@@ -88,7 +88,7 @@ void Camera::castRays() {
 
 
 void Camera::castRay(const Ray& ray, int depth, ColorRGB& color) {
-	
+
 	// Exit if the maximum recursion depth is reached
 	if (depth <= 0) {
 		return;
@@ -143,7 +143,7 @@ void Camera::handleTransparent(const Ray& ray, const glm::vec3& intersectionPoin
 	refractionDirection = glm::normalize(refractionDirection);
 	Ray refractedRay(intersectionPoint, refractionDirection);
 
-	
+
 	// Implement Fresnel equations to determine reflectance and transmittance
 	// float reflectance = calculateReflectance(ray.getDirection(), intersectionPointNormal, eta);
 
@@ -165,8 +165,13 @@ void Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint
 	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
 	Ray reflectedRay(intersectionPoint, reflectionDirection);
 
-	// Recursively trace the reflected ray with reduced depth
-	castRay(reflectedRay, depth - 1, color);
+	float randomValue = static_cast<float>(rand()) / RAND_MAX;
+	float deathProbability = 0.05f;
+
+	if (randomValue >= deathProbability) {
+		// Recursively trace the reflected ray with reduced depth
+		castRay(reflectedRay, depth, color);
+	}
 }
 
 void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth, ColorRGB& color) {
@@ -189,7 +194,7 @@ void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& 
 	color += colorOfObject * irradiance;
 
 	// ska skicka ut N antal nya rays från sig själv
-	const int N = 5;
+	const int N = 1;
 
 	for (int i = 0; i < N; ++i) {
 		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
@@ -211,11 +216,11 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
 
 	const float TWO_PI = 6.28318530718f;
-	const float PI = 3.14159265359f;
+	const float HALF_PI = 1.57079632679f;
 
 	// Generate random spherical coordinates
 	float inclination = (static_cast<float>(rand()) / RAND_MAX) * TWO_PI;
-	float azimuth = (static_cast<float>(rand()) / RAND_MAX) * PI;
+	float azimuth = (static_cast<float>(rand()) / RAND_MAX) * HALF_PI;
 
 	// Convert spherical coordinates to Cartesian coordinates in the local hemisphere
 	glm::vec3 localDirection = HemisphericalToLocalCartesian(azimuth, inclination);
@@ -251,10 +256,9 @@ void Camera::progressBar(float percent) {
 }
 
 inline glm::vec3 Camera::HemisphericalToLocalCartesian(double phi, double omega) {
-	float sinOmega = sin(omega);
 	return glm::vec3(
-		sinOmega * cos(phi),
-		sinOmega * sin(phi),
+		sin(omega) * cos(phi),
+		sin(omega) * sin(phi),
 		cos(omega)
 	);
 }

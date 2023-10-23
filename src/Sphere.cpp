@@ -16,7 +16,7 @@ glm::vec3 Sphere::getNormal(const glm::vec3& pointOnSphere) {
 }
 
 float Sphere::intersect(const Ray& ray) {
-	const float EPSILON = 1e-4;
+	const float EPSILON = 1e-4f;
 
 	glm::vec3 D = glm::normalize(ray.getDirection());
 	glm::vec3 S = ray.getOrigin();
