@@ -8,6 +8,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <cmath>
 
 Camera::Camera(int w, int h) : width(w), height(h) {
 	// Allokera minne för pixels
@@ -190,18 +191,27 @@ void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& 
 		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
 	}
 
+	float scalingFactor = std::pow(depth,2);
+
 	// Set the color of the pixel
-	color += colorOfObject * irradiance;
+	color += colorOfObject * irradiance * scalingFactor;
 
 	// ska skicka ut N antal nya rays från sig själv
-	const int N = 1;
+	const int N = 4;
 
-	for (int i = 0; i < N; ++i) {
+	// För simpel model? 
+	/*for (int i = 0; i < N; ++i) {
 		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
 		castRay(randomRay, depth - 1, color);
-	}
-}
+	}*/
 
+	// Fungerar nog enbart om man använder return ColorRGB
+	//for (int i = 0; i < N; ++i) {
+	//	Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
+	//	ColorRGB dividedColor = color / N;  // Create a temporary ColorRGB object
+	//	castRay(randomRay, depth - 1, dividedColor);
+	//}
+}
 
 glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 	// Beräknar u och v (positionen i world coordinates)
@@ -216,11 +226,11 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
 
 	const float TWO_PI = 6.28318530718f;
-	const float HALF_PI = 1.57079632679f;
+	const float PI = 3.14159265359f;
 
 	// Generate random spherical coordinates
 	float inclination = (static_cast<float>(rand()) / RAND_MAX) * TWO_PI;
-	float azimuth = (static_cast<float>(rand()) / RAND_MAX) * HALF_PI;
+	float azimuth = (static_cast<float>(rand()) / RAND_MAX) * PI;
 
 	// Convert spherical coordinates to Cartesian coordinates in the local hemisphere
 	glm::vec3 localDirection = HemisphericalToLocalCartesian(azimuth, inclination);
@@ -263,21 +273,13 @@ inline glm::vec3 Camera::HemisphericalToLocalCartesian(double phi, double omega)
 	);
 }
 
-// WIP
 inline glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDirection, const glm::vec3& normal) {
-	float x0 = localDirection.x;
-	float y0 = localDirection.y;
-	float z0 = localDirection.z;
-
 	glm::vec3 c = normal;
 	glm::vec3 a = glm::normalize(-localDirection + glm::dot(normal, localDirection) * normal);
 	glm::vec3 b = glm::cross(c, a);
 
-	glm::vec3 worldDirection(
-		x0 * a.x + y0 * b.x + z0 * c.x,
-		x0 * a.y + y0 * b.y + z0 * c.y,
-		x0 * a.z + y0 * b.z + z0 * c.z
-	);
+	glm::mat3 transformationMatrix(a, b, c);
+	glm::vec3 worldDirection = transformationMatrix * localDirection;
 
 	return worldDirection;
 }
