@@ -22,7 +22,7 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	const int depth = 3; 
+	int depth = 4; 
 	myScene.render(depth); 
 
 	return 0;

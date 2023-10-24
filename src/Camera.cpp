@@ -13,6 +13,7 @@
 Camera::Camera(int w, int h) : width(w), height(h) {
 	// Allokera minne för pixels
 	pixels.resize(height);
+	MAX_DEPTH = 0;
 
 	for (int i = 0; i < height; ++i) {
 		pixels[i].resize(width);
@@ -67,7 +68,6 @@ void Camera::saveImage(std::string filename) {
 void Camera::castRays() {
 
 	float progress = 0.0f;
-	ColorRGB colorOfPixel;
 
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
@@ -76,9 +76,7 @@ void Camera::castRays() {
 			Ray ray(location, rayDirectionFromCamera(i, j));
 
 			// Kollar intersections som sker i scenen  
-			colorOfPixel = { 0.0, 0.0, 0.0 };
-			castRay(ray, MAX_DEPTH, colorOfPixel);
-			pixels[j][i] = colorOfPixel;
+			pixels[j][i] = castRay(ray, MAX_DEPTH);
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
@@ -87,11 +85,12 @@ void Camera::castRays() {
 	}
 }
 
+ColorRGB Camera::castRay(const Ray& ray, int depth) {
 
-void Camera::castRay(const Ray& ray, int depth, ColorRGB& color) {
+	ColorRGB color;
 
 	if (depth <= 0) {
-		return;
+		return color;
 	}
 
 	const float EPSILON = 1e-4f;
@@ -118,65 +117,63 @@ void Camera::castRay(const Ray& ray, int depth, ColorRGB& color) {
 
 		if (type == POLYGON && materialType == REFLECTIVE ||
 			type == SPHERE && materialType == REFLECTIVE) {
-			handleReflection(ray, intersectionPoint, intersectionPointNormal, depth, color);
+			color = handleReflection(ray, intersectionPoint, intersectionPointNormal, depth);
 		}
 		else if (type == POLYGON && materialType == DIFFUSE ||
 			type == SPHERE && materialType == DIFFUSE) {
-			handleDiffuse(intersectionPoint, intersectionPointNormal, type, index, depth, color);
-		}
-		else {
-			// TRANSPARENT
-			// handleTransparent(/* add stuff */);
+			ColorRGB direct = directLight(intersectionPoint, intersectionPointNormal, type, index, depth);
+			ColorRGB indirect = indirectLight(depth, intersectionPoint, intersectionPointNormal);
+			
+			color = direct + indirect;
 		}
 	}
+
+	return color;
 }
 
-void Camera::handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& transparentMaterial, int depth) {
+//void Camera::handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& transparentMaterial, int depth) {
+//	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
+//	reflectionDirection = glm::normalize(reflectionDirection);
+//	Ray reflectedRay(intersectionPoint, reflectionDirection);
+//
+//	// Calculate the refraction direction using Snell's law
+//	float eta = transparentMaterial.transparentData.refractiveIndex;
+//
+//	glm::vec3 refractionDirection = glm::refract(ray.getDirection(), intersectionPointNormal, eta);
+//	refractionDirection = glm::normalize(refractionDirection);
+//	Ray refractedRay(intersectionPoint, refractionDirection);
+//
+//
+//	// Implement Fresnel equations to determine reflectance and transmittance
+//	// float reflectance = calculateReflectance(ray.getDirection(), intersectionPointNormal, eta);
+//
+//	//	// Trace both reflected and refracted rays recursively
+//	//	ColorRGB reflectedColor = traceRay(reflectedRay, depth - 1);
+//	//	ColorRGB refractedColor = traceRay(refractedRay, depth - 1);
+//
+//	//	// Combine the reflected and refracted colors based on Fresnel reflectance
+//	//	ColorRGB finalColor = reflectance * reflectedColor + (1.0 - reflectance) * refractedColor;
+//	//}
+//	//else {
+//	//	// Total internal reflection, only handle reflection
+//	//	ColorRGB finalColor = traceRay(reflectedRay, depth - 1);
+//
+//	//// Apply the finalColor to the pixel.
+//}
+
+ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth) {
 	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
-	reflectionDirection = glm::normalize(reflectionDirection);
 	Ray reflectedRay(intersectionPoint, reflectionDirection);
 
-	// Calculate the refraction direction using Snell's law
-	float eta = transparentMaterial.transparentData.refractiveIndex;
-
-	glm::vec3 refractionDirection = glm::refract(ray.getDirection(), intersectionPointNormal, eta);
-	refractionDirection = glm::normalize(refractionDirection);
-	Ray refractedRay(intersectionPoint, refractionDirection);
-
-
-	// Implement Fresnel equations to determine reflectance and transmittance
-	// float reflectance = calculateReflectance(ray.getDirection(), intersectionPointNormal, eta);
-
-	//	// Trace both reflected and refracted rays recursively
-	//	ColorRGB reflectedColor = traceRay(reflectedRay, depth - 1);
-	//	ColorRGB refractedColor = traceRay(refractedRay, depth - 1);
-
-	//	// Combine the reflected and refracted colors based on Fresnel reflectance
-	//	ColorRGB finalColor = reflectance * reflectedColor + (1.0 - reflectance) * refractedColor;
-	//}
-	//else {
-	//	// Total internal reflection, only handle reflection
-	//	ColorRGB finalColor = traceRay(reflectedRay, depth - 1);
-
-	//// Apply the finalColor to the pixel.
-}
-
-void Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth, ColorRGB& color) {
-	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
-	Ray reflectedRay(intersectionPoint, reflectionDirection);
-
-	/*float randomValue = static_cast<float>(rand()) / RAND_MAX;
-	float deathProbability = 0.1f;*/
-
-	if (depth == MAX_DEPTH) {
-		castRay(reflectedRay, depth, color);
+	if (depth == MAX_DEPTH && MAX_DEPTH != 1) {
+		return castRay(reflectedRay, depth);
 	}
 	else {
-		castRay(reflectedRay, depth - 1, color);
+		return castRay(reflectedRay, depth - 1);
 	}
 }
 
-void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth, ColorRGB& color) {
+ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth) {
 	ColorRGB colorOfObject;
 
 	if (type == POLYGON) {
@@ -192,25 +189,23 @@ void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& 
 		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
 	}
 
-	const float scalingFactor = std::pow(depth, 2);
+	// const float scalingFactor = std::pow(depth, 2);
 
 	// Set the color of the pixel
-	color += colorOfObject * irradiance;
+	return colorOfObject * irradiance;
+}
 
-	const int N = 1; // ska skicka ut N antal nya rays från sig själv
+ColorRGB Camera::indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
+	ColorRGB indirect;
+	Ray randomRay(intersectionPoint, randomRayDirection(intersectionPointNormal));
+	int n = 4;
 
-	// För simpel model? 
-	for (int i = 0; i < N; ++i) {
-		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
-		castRay(randomRay, depth - 1, color);
+	for (int i = 0; i < n; i++) {
+		indirect += castRay(randomRay, depth - 1) * 0.5;
 	}
-	
-	// Fungerar nog enbart om man använder return ColorRGB
-	/*color = color / N;
-	for (int i = 0; i < N; ++i) {
-		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
-		castRay(randomRay, depth - 1, color);
-	}*/
+
+	indirect = indirect / n;
+	return indirect;
 }
 
 glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
@@ -223,7 +218,7 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
 }
 
-glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
+glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPointNormal) {
 
 	const float TWO_PI = 6.28318530718f;
 	const float PI = 3.14159265359f;
@@ -246,8 +241,6 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPoint, const g
 	worldDirection = glm::normalize(worldDirection);
 	return worldDirection;
 }
-
-
 
 void Camera::progressBar(float percent) {
 	const int BAR_WIDTH = 20;

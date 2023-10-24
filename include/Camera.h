@@ -25,12 +25,13 @@ public:
 
 	void saveImage(std::string filename);
 	void castRays();
-	void castRay(const Ray& ray, int depth, ColorRGB& color);
-	void handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& glassMaterial, int depth);
-	void handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth, ColorRGB& color);
-	void handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth, ColorRGB& color);
+	ColorRGB castRay(const Ray& ray, int depth);
+	// void handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& glassMaterial, int depth);
+	ColorRGB handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth);
+	ColorRGB directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth);
+	ColorRGB indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
 	glm::vec3 rayDirectionFromCamera(int i, int j);
-	glm::vec3 randomRayDirection(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
+	glm::vec3 randomRayDirection(const glm::vec3& intersectionPointNormal);
 	void progressBar(float percent);
 	std::vector<std::vector<ColorRGB>> pixels;
 

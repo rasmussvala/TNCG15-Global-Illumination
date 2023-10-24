@@ -81,7 +81,7 @@ void Scene::addCube(Cube* cube) {
 	}
 }
 
-void Scene::render(const int depth) {
+void Scene::render(int depth) {
 
 	// Adds all geometry to he camera
 	camera.setPolygons(polygons);
