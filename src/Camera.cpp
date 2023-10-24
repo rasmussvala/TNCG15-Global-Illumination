@@ -197,10 +197,10 @@ ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3
 
 ColorRGB Camera::indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
 	ColorRGB indirect;
-	Ray randomRay(intersectionPoint, randomRayDirection(intersectionPointNormal));
 	int n = 4;
 
 	for (int i = 0; i < n; i++) {
+		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPointNormal));
 		indirect += castRay(randomRay, depth - 1) * 0.5;
 	}
 
