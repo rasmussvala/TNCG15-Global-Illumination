@@ -11,10 +11,10 @@
 #include <cmath>
 
 Camera::Camera(int w, int h) : width(w), height(h) {
-	// Allokera minne för pixels
-	pixels.resize(height);
 	MAX_DEPTH = 0;
 
+	// Allokera minne för pixels
+	pixels.resize(height);
 	for (int i = 0; i < height; ++i) {
 		pixels[i].resize(width);
 	}

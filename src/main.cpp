@@ -6,6 +6,7 @@
 #include "../include/Sphere.h"
 
 int main() {
+	// 150 x 150 är max atm
 	Scene myScene(150, 150);
 
 	Cube cube1{};
@@ -23,13 +24,14 @@ int main() {
 	myScene.addLight(&light1);
 
 	int depth = 4; 
+
 	myScene.render(depth); 
 
 	return 0;
 }
 
-// @TODO - fixa MC: flera rays per pixel, studs på diffusa ytor 
-// @TODO - skulle kunna fixa så att MC på diffust är mer baserat på ingångsvectorn 
+// @TODO - kontrollera ny direction för randomRays
+// @TODO - memoryleaks! 
 // @TODO - fixa rendering till glas
 // @TODO - fixa så att man ser ljuskällan (fixa senare)
 // @TODO - fixa antialiasing
