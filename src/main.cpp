@@ -23,7 +23,9 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	int depth = 4; 
+	int depth = 2; 
+	// int nrOfShadowRays;
+	// int nrOfIndirectRays;
 
 	myScene.render(depth); 
 

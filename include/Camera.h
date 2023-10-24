@@ -35,8 +35,8 @@ public:
 	void progressBar(float percent);
 	std::vector<std::vector<ColorRGB>> pixels;
 
-	static inline glm::vec3 HemisphericalToLocalCartesian(double phi, double omega);
-	static inline glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal);
+	glm::vec3 HemisphericalToLocalCartesian(float phi, float omega);
+	glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal);
 
 	void setPolygons(const std::vector<Polygon*>& newPolygons) {
 		polygons = newPolygons;

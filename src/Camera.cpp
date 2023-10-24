@@ -189,9 +189,6 @@ ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3
 		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
 	}
 
-	// const float scalingFactor = std::pow(depth, 2);
-
-	// Set the color of the pixel
 	return colorOfObject * irradiance;
 }
 
@@ -221,16 +218,15 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPointNormal) {
 
 	const float TWO_PI = 6.28318530718f;
+	const float HALF_PI = 1.57079632679f;
 	const float PI = 3.14159265359f;
 
 	// Generate random spherical coordinates
-	float inclination = (static_cast<float>(rand()) / RAND_MAX) * TWO_PI;
-	float azimuth = (static_cast<float>(rand()) / RAND_MAX) * PI;
+	float phi = (static_cast<float>(rand()) / RAND_MAX) * HALF_PI;
+	float theta = (static_cast<float>(rand()) / RAND_MAX) * TWO_PI;
 
-	// Convert spherical coordinates to Cartesian coordinates in the local hemisphere
-	glm::vec3 localDirection = HemisphericalToLocalCartesian(azimuth, inclination);
+	glm::vec3 localDirection = HemisphericalToLocalCartesian(phi, theta);
 
-	// Convert the local direction to the world coordinate system
 	glm::vec3 worldDirection = LocalCartesianToWorldCartesian(localDirection, intersectionPointNormal);
 
 	// Make sure the direction is not pointing back into the surface
@@ -258,15 +254,15 @@ void Camera::progressBar(float percent) {
 	std::cout.flush();
 }
 
-inline glm::vec3 Camera::HemisphericalToLocalCartesian(double phi, double omega) {
+glm::vec3 Camera::HemisphericalToLocalCartesian(float phi, float theta) {
 	return glm::vec3(
-		sin(omega) * cos(phi),
-		sin(omega) * sin(phi),
-		cos(omega)
+		sin(phi) * cos(theta),
+		sin(phi) * sin(theta),
+		cos(phi)
 	);
 }
 
-inline glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDirection, const glm::vec3& normal) {
+glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDirection, const glm::vec3& normal) {
 	glm::vec3 c = normal;
 	glm::vec3 a = glm::normalize(-localDirection + glm::dot(normal, localDirection) * normal);
 	glm::vec3 b = glm::cross(c, a);
