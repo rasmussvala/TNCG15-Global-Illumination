@@ -20,7 +20,7 @@ Rectangle Light::getGeometry() {
 }
 
 float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
-    int N = 10; // antal samples
+    int N = 3; // antal samples
     float Le = 3200.0f; // radiance
     float irradiance = 0.0f;
     const float EPSILON = 10e-4f;

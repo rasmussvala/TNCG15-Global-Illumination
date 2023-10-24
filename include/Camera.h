@@ -49,6 +49,10 @@ public:
 		lights = newLights;
 	}
 
+	void setDepth(const int newDepth) {
+		MAX_DEPTH = newDepth;
+	}
+
 private:
 	int width;
 	int height;
@@ -57,4 +61,6 @@ private:
 	std::vector<Polygon*> polygons;
 	std::vector<Sphere*> spheres;
 	std::vector<Light*> lights;
+
+	int MAX_DEPTH;
 };

@@ -67,7 +67,7 @@ void Camera::saveImage(std::string filename) {
 void Camera::castRays() {
 
 	float progress = 0.0f;
-	const int depth = 3;
+	ColorRGB colorOfPixel;
 
 	// Loopar igenom alla pixlar
 	for (int j = 0; j < height; ++j) {
@@ -76,8 +76,8 @@ void Camera::castRays() {
 			Ray ray(location, rayDirectionFromCamera(i, j));
 
 			// Kollar intersections som sker i scenen  
-			ColorRGB colorOfPixel = { 0.0, 0.0, 0.0 };
-			castRay(ray, depth, colorOfPixel);
+			colorOfPixel = { 0.0, 0.0, 0.0 };
+			castRay(ray, MAX_DEPTH, colorOfPixel);
 			pixels[j][i] = colorOfPixel;
 
 			// Visar progress under rendrering
@@ -90,7 +90,6 @@ void Camera::castRays() {
 
 void Camera::castRay(const Ray& ray, int depth, ColorRGB& color) {
 
-	// Exit if the maximum recursion depth is reached
 	if (depth <= 0) {
 		return;
 	}
@@ -166,12 +165,14 @@ void Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint
 	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
 	Ray reflectedRay(intersectionPoint, reflectionDirection);
 
-	float randomValue = static_cast<float>(rand()) / RAND_MAX;
-	float deathProbability = 0.05f;
+	/*float randomValue = static_cast<float>(rand()) / RAND_MAX;
+	float deathProbability = 0.1f;*/
 
-	if (randomValue >= deathProbability) {
-		// Recursively trace the reflected ray with reduced depth
+	if (depth == MAX_DEPTH) {
 		castRay(reflectedRay, depth, color);
+	}
+	else {
+		castRay(reflectedRay, depth - 1, color);
 	}
 }
 
@@ -191,26 +192,25 @@ void Camera::handleDiffuse(const glm::vec3& intersectionPoint, const glm::vec3& 
 		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
 	}
 
-	float scalingFactor = std::pow(depth,2);
+	const float scalingFactor = std::pow(depth, 2);
 
 	// Set the color of the pixel
-	color += colorOfObject * irradiance * scalingFactor;
+	color += colorOfObject * irradiance;
 
-	// ska skicka ut N antal nya rays från sig själv
-	const int N = 4;
+	const int N = 1; // ska skicka ut N antal nya rays från sig själv
 
 	// För simpel model? 
-	/*for (int i = 0; i < N; ++i) {
+	for (int i = 0; i < N; ++i) {
+		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
+		castRay(randomRay, depth - 1, color);
+	}
+	
+	// Fungerar nog enbart om man använder return ColorRGB
+	/*color = color / N;
+	for (int i = 0; i < N; ++i) {
 		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
 		castRay(randomRay, depth - 1, color);
 	}*/
-
-	// Fungerar nog enbart om man använder return ColorRGB
-	//for (int i = 0; i < N; ++i) {
-	//	Ray randomRay(intersectionPoint, randomRayDirection(intersectionPoint, intersectionPointNormal));
-	//	ColorRGB dividedColor = color / N;  // Create a temporary ColorRGB object
-	//	castRay(randomRay, depth - 1, dividedColor);
-	//}
 }
 
 glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {

@@ -6,7 +6,7 @@
 #include "../include/Sphere.h"
 
 int main() {
-	Scene myScene(200, 200);
+	Scene myScene(150, 150);
 
 	Cube cube1{};
 	myScene.addCube(&cube1);
@@ -22,7 +22,8 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	myScene.render(); 
+	const int depth = 3; 
+	myScene.render(depth); 
 
 	return 0;
 }
