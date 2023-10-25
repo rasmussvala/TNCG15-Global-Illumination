@@ -17,7 +17,7 @@ struct IntersectionResult {
 	IntersectionType type;
 };
 
-IntersectionResult closestIntersection(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres);
+IntersectionResult closestIntersect(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres);
 
 class Camera {
 public:
@@ -26,16 +26,16 @@ public:
 	void saveImage(std::string filename);
 	void castRays();
 	ColorRGB castRay(const Ray& ray, int depth);
-	ColorRGB handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth);
-	ColorRGB directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index);
-	ColorRGB indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
+	ColorRGB handleReflection(const Ray& ray, const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal, int depth);
+	ColorRGB directLight(const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal, IntersectionType type, int index);
+	ColorRGB indirectLight(int depth, const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal);
 	glm::vec3 rayDirectionFromCamera(int i, int j);
-	glm::vec3 randomRayDirection(const glm::vec3& intersectionPointNormal);
+	glm::vec3 randomRayDirection(const glm::vec3& intersectPtNormal);
 	void progressBar(float percent);
 	std::vector<std::vector<ColorRGB>> pixels;
 
 	glm::vec3 HemisphericalToLocalCartesian(float phi, float omega);
-	glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& local, const glm::vec3& normal);
+	glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& localDir, const glm::vec3& normal);
 
 	void setPolygons(const std::vector<Polygon*>& newPolygons) {
 		polygons = newPolygons;
