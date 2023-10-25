@@ -15,6 +15,7 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	Material mirror(REFLECTIVE);
 	Material glas(TRANSPARENT, 1.5); // glas with refractiveIndex 1.5
 
+	// Golv
 	glm::vec3 p0(0.0f, 6.0f, -5.0f);
 	glm::vec3 p1(10.0f, 6.0f, -5.0f);
 	glm::vec3 p2(13.0f, 0.0f, -5.0f);
@@ -22,6 +23,7 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	glm::vec3 p4(0.0f, -6.0f, -5.0f);
 	glm::vec3 p5(-3.0f, 0.0f, -5.0f);
 
+	// Tak
 	glm::vec3 p6(0.0f, 6.0f, 5.0f);
 	glm::vec3 p7(10.0f, 6.0f, 5.0f);
 	glm::vec3 p8(13.0f, 0.0f, 5.0f);
@@ -35,8 +37,8 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	Rectangle* rectangle_floor = new Rectangle{ p0, p4, p3, p1, materialWhite };
 
 	// Väggar
-	Rectangle* rectangle_wallH = new Rectangle{ p3, p9, p10, p4, materialRed };
-	Rectangle* rectangle_wallHB = new Rectangle{ p4, p10, p11, p5, materialWhite };
+	Rectangle* rectangle_wallH = new Rectangle{ p3, p4, p10, p9, materialRed };
+	Rectangle* rectangle_wallHB = new Rectangle{ p4, p5, p11, p10, materialWhite };
 	Rectangle* rectangle_wallHF = new Rectangle{ p2, p3, p9, p8, mirror };
 	Rectangle* rectangle_wallV = new Rectangle{ p0, p1, p7, p6, materialGreen };
 	Rectangle* rectangle_wallVB = new Rectangle{ p0, p6, p11, p5, materialWhite };
@@ -83,7 +85,7 @@ void Scene::addCube(Cube* cube) {
 
 void Scene::render(int depth) {
 
-	// Adds all geometry to he camera
+	// Adds all geometry to the camera
 	camera.setPolygons(polygons);
 	camera.setSpheres(spheres);
 	camera.setLights(lights);

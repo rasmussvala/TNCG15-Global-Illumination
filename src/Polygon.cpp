@@ -36,7 +36,7 @@ float Rectangle::intersect(const Ray& ray) const {
 		return t2;
 	}
 	else {
-		return -FLT_MAX; // Inget snitt
+		return -1.0f; // Inget snitt
 	}
 }
 
@@ -48,35 +48,28 @@ Triangle::Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3
 }
 
 float Triangle::intersect(const Ray& ray) const {
+
 	const float EPSILON = 1e-4f;
+	glm::vec3 D = ray.getDirection();
+	
+	// Vi träffar fel sida av triangeln eller är parallell med ytan 
+	if (glm::dot(D, normal) > -EPSILON) {
+		return -1.0f;
+	}
 
 	glm::vec3 E1 = vertex2 - vertex1;
 	glm::vec3 E2 = vertex3 - vertex1;
 	glm::vec3 T = ray.getOrigin() - vertex1;
-	glm::vec3 D = ray.getDirection();
 	glm::vec3 P = glm::cross(D, E2);
-	float determinant = glm::dot(P, E1);
-
-	if (std::abs(determinant) < EPSILON) {
-		return -FLT_MAX; // Ray is parallel to the triangle.
-	}
-
-	float invDeterminant = 1.0f / determinant;
-
-	float u = glm::dot(P, T) * invDeterminant;
-	if (u < -EPSILON || u > 1.0f + EPSILON) {
-		return -FLT_MAX;
-	}
-
 	glm::vec3 Q = glm::cross(T, E1);
-	float v = glm::dot(Q, D) * invDeterminant;
-	if (v < -EPSILON || u + v > 1.0f + EPSILON) {
-		return -FLT_MAX;
-	}
 
-	float t = glm::dot(Q, E2) * invDeterminant;
-	if (t < EPSILON) {
-		return -FLT_MAX; // Intersection point is too close to the ray's origin.
+	float u = (glm::dot(P, T) / glm::dot(P, E1));
+	float v = (glm::dot(Q, D) / glm::dot(P, E1));
+	float t = (glm::dot(Q, E2) / glm::dot(P, E1));
+
+	// VI träffar utanför trianeln eller är aldeles för nära (t < EPSILON)
+	if (u + v > 1.0f + EPSILON || u < -EPSILON || v < -EPSILON || t < EPSILON) {
+		return -1.0f;
 	}
 
 	return t;

@@ -23,7 +23,7 @@ float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<S
     int N = 3; // antal samples
     float Le = 3200.0f; // radiance
     float irradiance = 0.0f;
-    const float EPSILON = 10e-4f;
+    const float EPSILON = 1e-4f;
     const float PI = 3.14159265f;
 
     // Lambertian reflectors: f(x, di, theta0) = 1 / pi

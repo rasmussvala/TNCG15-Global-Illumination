@@ -32,7 +32,7 @@ float Sphere::intersect(const Ray& ray) {
 
 	if (arg < 0.0f) {
 		// No intersection
-		return -FLT_MAX;
+		return -1.0f;
 	}
 	else {
 		// Two possible intersection points
@@ -50,7 +50,7 @@ float Sphere::intersect(const Ray& ray) {
 		}
 		else {
 			// No valid intersection
-			return -FLT_MAX;
+			return -1.0f;
 		}
 	}
 }

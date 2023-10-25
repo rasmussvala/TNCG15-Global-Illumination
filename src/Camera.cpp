@@ -27,7 +27,7 @@ void Camera::saveImage(std::string filename) {
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
 	// Find the maximum pixel value among all channels
-	float maxRGB = -FLT_MAX;
+	float maxRGB = -1.0f;
 
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
