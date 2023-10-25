@@ -63,9 +63,9 @@ float Triangle::intersect(const Ray& ray) const {
 	glm::vec3 P = glm::cross(D, E2);
 	glm::vec3 Q = glm::cross(T, E1);
 
+	float t = (glm::dot(Q, E2) / glm::dot(P, E1));
 	float u = (glm::dot(P, T) / glm::dot(P, E1));
 	float v = (glm::dot(Q, D) / glm::dot(P, E1));
-	float t = (glm::dot(Q, E2) / glm::dot(P, E1));
 
 	// VI träffar utanför trianeln eller är aldeles för nära (t < EPSILON)
 	if (u + v > 1.0f + EPSILON || u < -EPSILON || v < -EPSILON || t < EPSILON) {

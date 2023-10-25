@@ -9,37 +9,17 @@ enum MaterialType {
 };
 
 struct Material {
-    MaterialType type;          // Type of the material
-
-    union {
-        struct {
-            ColorRGB color;             // The color of the material
-        } diffuseData;
-
-        struct {
-            float refractiveIndex;      // Refractive index for transparent materials
-        } transparentData;
-    };
+    MaterialType type;       
+    ColorRGB color;
+    float refractiveIndex;
 
     // Constructor for MIRROR
-    Material(MaterialType t) : type(t), diffuseData({ ColorRGB(0.0, 0.0, 0.0) }) {
-        if (t == TRANSPARENT) {
-            transparentData.refractiveIndex = 1.0f; // Default refractive index for Transparent
-        }
-    }
+    Material(MaterialType t) : type(t), color(ColorRGB(0.0, 0.0, 0.0)), refractiveIndex(1.0f) {}
 
     // Constructor for DIFFUSE
-    Material(MaterialType t, ColorRGB c) : type(t), diffuseData({ c }) {
-        if (t == TRANSPARENT) {
-            transparentData.refractiveIndex = 1.0f; // Default refractive index for Transparent
-        }
-    }
+    Material(MaterialType t, ColorRGB c) : type(t), color(c), refractiveIndex(1.0f) {}
 
     // Constructor for TRANSPARENT
-    Material(MaterialType t, float ri) : type(t), diffuseData({ ColorRGB(0.0, 0.0, 0.0) }) {
-        if (t == TRANSPARENT) {
-            transparentData.refractiveIndex = ri;
-        }
-    }
+    Material(MaterialType t, float ri) : type(t), color(ColorRGB(0.0, 0.0, 0.0)), refractiveIndex(ri){}
 
 };

@@ -7,7 +7,7 @@
 
 int main() {
 	// 150 x 150 är max atm
-	Scene myScene(170, 170);
+	Scene myScene(180, 180);
 
 	Cube cube1{};
 	myScene.addCube(&cube1);
@@ -23,9 +23,9 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	int depth = 2; // > 1
+	int depth = 3; // > 1
 	int nrOfShadowRays = 1; // > 1
-	int nrOfIndirectRays = 5;
+	int nrOfIndirectRays = 4;
 
 	myScene.render(depth, nrOfShadowRays, nrOfIndirectRays);
 

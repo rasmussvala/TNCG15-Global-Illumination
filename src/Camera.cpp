@@ -71,7 +71,7 @@ void Camera::castRays() {
 
 	float progress = 0.0f;
 
-	// Loopar igenom alla pixlar
+	// Loopar igenom alla pixlar och ansätter färger
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
@@ -89,7 +89,7 @@ void Camera::castRays() {
 
 ColorRGB Camera::castRay(const Ray& ray, int depth) {
 
-	ColorRGB color;
+	ColorRGB color{};
 
 	if (depth <= 0) {
 		return color;
@@ -105,7 +105,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 
 	if (t > EPSILON && t < FLT_MAX) {
 		glm::vec3 intersectPt = ray.at(t);
-		glm::vec3 intersectPtNormal;
+		glm::vec3 intersectPtNormal(0.0f);
 		MaterialType materialType;
 
 		if (type == POLYGON) {
@@ -149,10 +149,10 @@ ColorRGB Camera::directLight(const glm::vec3& intersectPt, const glm::vec3& inte
 	ColorRGB colorOfObject;
 
 	if (type == POLYGON) {
-		colorOfObject = polygons[index]->getMaterial().diffuseData.color;
+		colorOfObject = polygons[index]->getMaterial().color;
 	}
 	else if (type == SPHERE) {
-		colorOfObject = spheres[index]->getMaterial().diffuseData.color;
+		colorOfObject = spheres[index]->getMaterial().color;
 	}
 
 	float irradiance = 0.0f;
@@ -246,7 +246,6 @@ glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir, cons
 IntersectionResult closestIntersect(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres) {
 	const float EPSILON = 1e-4f;
 	float closestT = FLT_MAX;
-	std::vector<float> t_values;
 	IntersectionType closestType = NONE;
 	int closestIndex = -1; // Initialize to an invalid index
 
