@@ -124,7 +124,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 			ColorRGB direct = directLight(intersectionPoint, intersectionPointNormal, type, index, depth);
 			ColorRGB indirect = indirectLight(depth, intersectionPoint, intersectionPointNormal);
 			
-			color = direct + indirect;
+			color = direct + (indirect * 0.5f);
 		}
 	}
 
@@ -198,7 +198,7 @@ ColorRGB Camera::indirectLight(int depth, const glm::vec3& intersectionPoint, co
 
 	for (int i = 0; i < n; i++) {
 		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPointNormal));
-		indirect += castRay(randomRay, depth - 1) * 0.5;
+		indirect += castRay(randomRay, depth - 1);
 	}
 
 	indirect = indirect / n;
@@ -217,15 +217,13 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 
 glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectionPointNormal) {
 
-	const float TWO_PI = 6.28318530718f;
-	const float HALF_PI = 1.57079632679f;
 	const float PI = 3.14159265359f;
 
-	// Generate random spherical coordinates
-	float phi = (static_cast<float>(rand()) / RAND_MAX) * HALF_PI;
-	float theta = (static_cast<float>(rand()) / RAND_MAX) * TWO_PI;
+	float yi = static_cast<float>(rand()) / RAND_MAX; // random value [0,1]
+	float phi = 2.0f * PI * yi; // azimuth
+	float omega = acos(sqrt(1.0f - yi)); // inclination
 
-	glm::vec3 localDirection = HemisphericalToLocalCartesian(phi, theta);
+	glm::vec3 localDirection = HemisphericalToLocalCartesian(phi, omega);
 
 	glm::vec3 worldDirection = LocalCartesianToWorldCartesian(localDirection, intersectionPointNormal);
 
@@ -254,11 +252,12 @@ void Camera::progressBar(float percent) {
 	std::cout.flush();
 }
 
-glm::vec3 Camera::HemisphericalToLocalCartesian(float phi, float theta) {
+glm::vec3 Camera::HemisphericalToLocalCartesian(float phi, float omega) {
+	float sinOmega = sin(omega);
 	return glm::vec3(
-		sin(phi) * cos(theta),
-		sin(phi) * sin(theta),
-		cos(phi)
+		cos(phi) * sinOmega,
+		sin(phi) * sinOmega,
+		cos(omega)
 	);
 }
 
