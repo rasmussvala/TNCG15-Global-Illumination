@@ -11,7 +11,9 @@
 #include <cmath>
 
 Camera::Camera(int w, int h) : width(w), height(h) {
-	MAX_DEPTH = 0;
+	MAX_DEPTH = 0; 
+	MAX_SHADOWRAYS = 0;
+	MAX_INDIRECTRAYS = 0;
 
 	// Allokera minne för pixels
 	pixels.resize(height);
@@ -110,7 +112,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 			intersectionPointNormal = polygons[index]->getNormal();
 			materialType = polygons[index]->getMaterial().type;
 		}
-		else if (type == SPHERE) {
+		else { // SPHERE
 			intersectionPointNormal = spheres[index]->getNormal(intersectionPoint);
 			materialType = spheres[index]->getMaterial().type;
 		}
@@ -121,7 +123,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 		}
 		else if (type == POLYGON && materialType == DIFFUSE ||
 			type == SPHERE && materialType == DIFFUSE) {
-			ColorRGB direct = directLight(intersectionPoint, intersectionPointNormal, type, index, depth);
+			ColorRGB direct = directLight(intersectionPoint, intersectionPointNormal, type, index);
 			ColorRGB indirect = indirectLight(depth, intersectionPoint, intersectionPointNormal);
 			
 			color = direct + (indirect * 0.5f);
@@ -173,7 +175,7 @@ ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionP
 	}
 }
 
-ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth) {
+ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index) {
 	ColorRGB colorOfObject;
 
 	if (type == POLYGON) {
@@ -186,7 +188,7 @@ ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3
 	float irradiance = 0.0f;
 
 	for (Light* light : lights) {
-		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal);
+		irradiance += light->calculateLight(polygons, spheres, intersectionPoint, intersectionPointNormal, MAX_SHADOWRAYS);
 	}
 
 	return colorOfObject * irradiance;
@@ -194,14 +196,13 @@ ColorRGB Camera::directLight(const glm::vec3& intersectionPoint, const glm::vec3
 
 ColorRGB Camera::indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal) {
 	ColorRGB indirect;
-	int n = 4;
 
-	for (int i = 0; i < n; i++) {
+	for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
 		Ray randomRay(intersectionPoint, randomRayDirection(intersectionPointNormal));
 		indirect += castRay(randomRay, depth - 1);
 	}
 
-	indirect = indirect / n;
+	indirect = indirect / MAX_INDIRECTRAYS;
 	return indirect;
 }
 

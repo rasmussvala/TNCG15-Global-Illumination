@@ -14,7 +14,7 @@ public:
     void addLight(Light* light);
     void addSphere(Sphere* sphere);
     void addCube(Cube* cube);
-    void render(int depth);
+    void render(int depth, int nrOfShadowRays, int nrOfIndirectRays);
 
 private:
     Camera camera;

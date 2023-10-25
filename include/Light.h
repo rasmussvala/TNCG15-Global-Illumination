@@ -15,7 +15,7 @@ public:
     Light(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4);
 
     Rectangle getGeometry();
-    float calculateLight(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
+    float calculateLight(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int MAX_SHADOWRAYS);
 
 private:
     glm::vec3 v1, v2, v3, v4;

@@ -28,7 +28,7 @@ public:
 	ColorRGB castRay(const Ray& ray, int depth);
 	// void handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& glassMaterial, int depth);
 	ColorRGB handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth);
-	ColorRGB directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index, int depth);
+	ColorRGB directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index);
 	ColorRGB indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
 	glm::vec3 rayDirectionFromCamera(int i, int j);
 	glm::vec3 randomRayDirection(const glm::vec3& intersectionPointNormal);
@@ -54,6 +54,14 @@ public:
 		MAX_DEPTH = newDepth;
 	}
 
+	void setShadowRays(const int newShadowRays) {
+		MAX_SHADOWRAYS = newShadowRays;
+	}
+
+	void setIndirectRays(const int newIndirectRays) {
+		MAX_INDIRECTRAYS = newIndirectRays;
+	}
+
 private:
 	int width;
 	int height;
@@ -64,4 +72,6 @@ private:
 	std::vector<Light*> lights;
 
 	int MAX_DEPTH;
+	int MAX_SHADOWRAYS;
+	int MAX_INDIRECTRAYS;
 };

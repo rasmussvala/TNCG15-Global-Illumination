@@ -83,13 +83,15 @@ void Scene::addCube(Cube* cube) {
 	}
 }
 
-void Scene::render(int depth) {
+void Scene::render(int depth, int nrOfShadowRays, int nrOfIndirectRays) {
 
 	// Adds all geometry to the camera
 	camera.setPolygons(polygons);
 	camera.setSpheres(spheres);
 	camera.setLights(lights);
 	camera.setDepth(depth);
+	camera.setIndirectRays(nrOfIndirectRays);
+	camera.setShadowRays(nrOfShadowRays);
 
 	camera.castRays();
 	camera.saveImage("../images/test.ppm");
