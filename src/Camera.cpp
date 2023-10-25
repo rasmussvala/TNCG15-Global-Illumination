@@ -126,42 +126,12 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 			ColorRGB direct = directLight(intersectionPoint, intersectionPointNormal, type, index);
 			ColorRGB indirect = indirectLight(depth, intersectionPoint, intersectionPointNormal);
 			
-			color = direct + (indirect * 0.5f);
+			color = direct + (indirect * 0.3f);
 		}
 	}
 
 	return color;
 }
-
-//void Camera::handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& transparentMaterial, int depth) {
-//	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);
-//	reflectionDirection = glm::normalize(reflectionDirection);
-//	Ray reflectedRay(intersectionPoint, reflectionDirection);
-//
-//	// Calculate the refraction direction using Snell's law
-//	float eta = transparentMaterial.transparentData.refractiveIndex;
-//
-//	glm::vec3 refractionDirection = glm::refract(ray.getDirection(), intersectionPointNormal, eta);
-//	refractionDirection = glm::normalize(refractionDirection);
-//	Ray refractedRay(intersectionPoint, refractionDirection);
-//
-//
-//	// Implement Fresnel equations to determine reflectance and transmittance
-//	// float reflectance = calculateReflectance(ray.getDirection(), intersectionPointNormal, eta);
-//
-//	//	// Trace both reflected and refracted rays recursively
-//	//	ColorRGB reflectedColor = traceRay(reflectedRay, depth - 1);
-//	//	ColorRGB refractedColor = traceRay(refractedRay, depth - 1);
-//
-//	//	// Combine the reflected and refracted colors based on Fresnel reflectance
-//	//	ColorRGB finalColor = reflectance * reflectedColor + (1.0 - reflectance) * refractedColor;
-//	//}
-//	//else {
-//	//	// Total internal reflection, only handle reflection
-//	//	ColorRGB finalColor = traceRay(reflectedRay, depth - 1);
-//
-//	//// Apply the finalColor to the pixel.
-//}
 
 ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth) {
 	glm::vec3 reflectionDirection = glm::reflect(ray.getDirection(), intersectionPointNormal);

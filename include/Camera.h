@@ -26,7 +26,6 @@ public:
 	void saveImage(std::string filename);
 	void castRays();
 	ColorRGB castRay(const Ray& ray, int depth);
-	// void handleTransparent(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, const Material& glassMaterial, int depth);
 	ColorRGB handleReflection(const Ray& ray, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int depth);
 	ColorRGB directLight(const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, IntersectionType type, int index);
 	ColorRGB indirectLight(int depth, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal);
