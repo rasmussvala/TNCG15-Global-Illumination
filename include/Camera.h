@@ -16,7 +16,7 @@ struct IntersectionResult {
 	int index;
 };
 
-IntersectionResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries);
+IntersectionResult closestIntersect(const Ray* ray, const std::vector<Geometry*> geometries);
 
 class Camera {
 public:
@@ -24,8 +24,8 @@ public:
 
 	void saveImage(std::string filename);
 	void castRays();
-	ColorRGB castRay(const Ray& ray, int depth);
-	ColorRGB handleReflection(const Ray& ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth);
+	ColorRGB castRay(const Ray* ray, int depth);
+	ColorRGB handleReflection(const Ray* ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth);
 	ColorRGB directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index);
 	ColorRGB indirectLight(int depth, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal);
 	glm::vec3 rayDirectionFromCamera(int i, int j);

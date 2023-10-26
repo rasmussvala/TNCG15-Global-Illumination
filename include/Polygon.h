@@ -8,7 +8,7 @@ public:
     Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const Material& material);
     ~Triangle() {}
 
-    float intersect(const Ray& ray) const override;
+    float intersect(const Ray* ray) const override;
     glm::vec3 getNormal(const glm::vec3& point) const override;
     Material getMaterial() const override;
 
@@ -23,7 +23,7 @@ public:
     Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const Material& material);
     ~Rectangle() {}
 
-    float intersect(const Ray& ray) const override;
+    float intersect(const Ray* ray) const override;
     glm::vec3 getNormal(const glm::vec3& point) const override;
     Material getMaterial() const override;
 

@@ -32,7 +32,7 @@ class Geometry {
 public:
     virtual ~Geometry() {}
 
-    virtual float intersect(const Ray& ray) const = 0;
+    virtual float intersect(const Ray* ray) const = 0;
     virtual glm::vec3 getNormal(const glm::vec3& point) const = 0;
     virtual Material getMaterial() const = 0;
 };

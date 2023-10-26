@@ -7,7 +7,7 @@
 
 int main() {
 	// max 180 x 180 atm
-	Scene myScene(600, 600);
+	Scene myScene(200, 200);
 
 	// Default cube gets added to right hand side
 	Cube cube1{};
@@ -30,7 +30,7 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	int depth = 5; // > 1
+	int depth = 3; // > 1
 	int nrOfShadowRays = 1; // > 1
 	int nrOfIndirectRays = 1;
 
