@@ -7,7 +7,7 @@
 
 int main() {
 	// max 180 x 180 atm
-	Scene myScene(600, 600);
+	Scene myScene(300, 300);
 
 	// Default cube gets added to right hand side
 	Cube cube1{};
@@ -16,23 +16,23 @@ int main() {
 	// Settings for Sphere 
 	glm::vec3 center{ 8.0f, 2.5f, -3.5f };
 	float radius = 1.5f;
-	ColorRGB blue{ 0.0f,0.0f,0.4f };
-	Material materialBlue{ REFLECTIVE };
+	ColorRGB blue{ 0.0f, 0.0f, 0.4f };
+	Material materialBlue{ DIFFUSE, blue };
 
 	Sphere sphere1{center, radius, materialBlue};
 	myScene.addGeometry(&sphere1);
 
-	Light light1{ glm::vec3{5.0f, 1.0f, 4.9999f},
-		glm::vec3{3.0f, 1.0f, 4.9999f},
-		glm::vec3{3.0f, -1.0f, 4.9999f},
-		glm::vec3{5.0f, -1.0f, 4.9999f}
+	Light light1{ glm::vec3{5.0f, 1.0f, 4.9f},
+		glm::vec3{5.0f, -1.0f, 4.9f},
+		glm::vec3{3.0f, -1.0f, 4.9f},
+		glm::vec3{3.0f, 1.0f, 4.9f}
 	};
 
 	myScene.addLight(&light1);
 
-	int depth = 5; // > 1
-	int nrOfShadowRays = 1; // > 1
-	int nrOfIndirectRays = 1;
+	int depth = 3; // > 1
+	int nrOfShadowRays = 5; // > 1
+	int nrOfIndirectRays = 4;
 
 	myScene.render(depth, nrOfShadowRays, nrOfIndirectRays);
 

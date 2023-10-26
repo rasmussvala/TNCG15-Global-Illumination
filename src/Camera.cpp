@@ -108,7 +108,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 			ColorRGB direct = directLight(hitPoint, hitPointNormal, index);
 			ColorRGB indirect = indirectLight(depth, hitPoint, hitPointNormal);
 			
-			color = direct + (indirect * 0.3f);
+			color = direct + (indirect * 0.4f);
 		}
 	}
 

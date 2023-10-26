@@ -12,7 +12,7 @@ Light::Light(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4) : v1(v1), v
     e1 = v2 - v1;
     e2 = v4 - v1;
     area = glm::length(e1) * glm::length(e2);
-    normal = glm::normalize(glm::cross(e1, e2));
+    normal = rectangle.getNormal(v1);
 }
 
 Rectangle Light::getGeometry() {
@@ -20,10 +20,10 @@ Rectangle Light::getGeometry() {
 }
 
 float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int MAX_SHADOWRAYS) {
+    const float EPSILON = 1e-4f;
+    float irradiance = 0.0f;
     int N = MAX_SHADOWRAYS; // antal samples
     float Le = 3200.0f; // radiance
-    float irradiance = 0.0f;
-    const float EPSILON = 1e-4f;
     const float PI = 3.14159265f;
 
     for (int i = 0; i < N; i++) {
@@ -32,7 +32,8 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
         float T = static_cast<float>(rand()) / RAND_MAX;
 
         glm::vec3 pointOnLight = v1 + S * e1 + T * e2; // random point på ljuskälla 
-        glm::vec3 direction = glm::normalize(pointOnLight - hitPoint);
+        glm::vec3 direction = pointOnLight - hitPoint; //di 
+        glm::vec3 directionNormalized = glm::normalize(direction);
         float distanceToLight = glm::distance(pointOnLight, hitPoint);
         Ray rayToLight(hitPoint, direction);
 
@@ -44,10 +45,10 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
             continue;
         }
 
-        float cosOmegaX = std::abs(glm::dot(hitPointNormal, glm::normalize(direction)));
-        float cosOmegaY = std::abs(glm::dot(-normal, glm::normalize(direction)));
+        float cosOmegaX = glm::dot(hitPointNormal, directionNormalized);
+        float cosOmegaY = glm::dot(-normal, directionNormalized);
 
-        irradiance += (cosOmegaX + cosOmegaY) / (glm::length(direction) * glm::length(direction));
+        irradiance += (cosOmegaX + cosOmegaY) / (distanceToLight * distanceToLight);
     }
 
     irradiance = (irradiance * area * Le) / (N * PI);
