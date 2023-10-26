@@ -34,7 +34,6 @@ public:
 	glm::vec3 rayDirectionFromCamera(int i, int j);
 	glm::vec3 randomRayDirection(const glm::vec3& intersectPtNormal);
 	void progressBar(float percent);
-	std::vector<std::vector<ColorRGB>> pixels;
 
 	glm::vec3 HemisphericalToLocalCartesian(float phi, float omega);
 	glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& localDir, const glm::vec3& normal);
@@ -75,4 +74,6 @@ private:
 	int MAX_DEPTH;
 	int MAX_SHADOWRAYS;
 	int MAX_INDIRECTRAYS;
+	
+	std::vector<std::vector<ColorRGB>> pixels;
 };
