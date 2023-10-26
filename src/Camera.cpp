@@ -1,14 +1,7 @@
 #pragma once
 
 #include "../include/Camera.h"
-#include "../include/Light.h"
-#include "../include/Cube.h"
-#include "../include/Sphere.h"
-#include <fstream>
-#include <iostream>
-#include <vector>
-#include <algorithm>
-#include <cmath>
+
 
 Camera::Camera(int w, int h) : width(w), height(h) {
 	MAX_DEPTH = 0; 

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "glm/glm.hpp"
 #include "ColorRGB.h"
 #include "Polygon.h"
@@ -8,6 +9,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <iostream>
 
 enum IntersectionType { POLYGON, SPHERE, NONE };
 
