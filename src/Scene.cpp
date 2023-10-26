@@ -80,12 +80,13 @@ void Scene::addCube(Cube* cube) {
 	}
 }
 
-void Scene::render(int depth, int nrOfShadowRays, int nrOfIndirectRays) {
+void Scene::render(int depthDiffuse, int depthReflective, int nrOfShadowRays, int nrOfIndirectRays) {
 
 	// Adds all geometry to the camera
 	camera.setGeometries(geometries);
 	camera.setLights(lights);
-	camera.setDepth(depth);
+	camera.setDepthDiffuse(depthDiffuse);
+	camera.setDepthReflective(depthReflective);
 	camera.setIndirectRays(nrOfIndirectRays);
 	camera.setShadowRays(nrOfShadowRays);
 

@@ -24,10 +24,9 @@ public:
 
 	void saveImage(std::string filename);
 	void castRays();
-	ColorRGB castRay(const Ray& ray, int depth);
-	ColorRGB handleReflection(const Ray& ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth);
+	ColorRGB castRay(const Ray& ray, int depthDiffuse, int depthReflective);
 	ColorRGB directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index);
-	ColorRGB indirectLight(int depth, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal);
+	ColorRGB indirectLight(int depthDiffuse, int depthReflective, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal);
 	glm::vec3 rayDirectionFromCamera(int i, int j);
 	glm::vec3 randomRayDirection(const glm::vec3& hitPointNormal);
 	void progressBar(float percent);
@@ -43,8 +42,12 @@ public:
 		lights = newLights;
 	}
 
-	void setDepth(const int newDepth) {
-		MAX_DEPTH = newDepth;
+	void setDepthDiffuse(const int newDepthDiffuse) {
+		MAX_DEPTH_DIFFUSE = newDepthDiffuse;
+	}
+
+	void setDepthReflective(const int newDepthReflective) {
+		MAX_DEPTH_REFLECTIVE = newDepthReflective;
 	}
 
 	void setShadowRays(const int newShadowRays) {
@@ -63,7 +66,8 @@ private:
 	std::vector<Geometry*> geometries;
 	std::vector<Light*> lights;
 
-	int MAX_DEPTH;
+	int MAX_DEPTH_DIFFUSE;
+	int MAX_DEPTH_REFLECTIVE;
 	int MAX_SHADOWRAYS;
 	int MAX_INDIRECTRAYS;
 	

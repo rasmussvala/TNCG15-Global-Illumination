@@ -6,10 +6,9 @@
 #include "../include/Sphere.h"
 
 int main() {
-	// max 180 x 180 atm
 	Scene myScene(300, 300);
 
-	// Default cube gets added to right hand side
+	// Default cube adds a blue cube to right hand side
 	Cube cube1{};
 	myScene.addCube(&cube1);
 
@@ -17,7 +16,7 @@ int main() {
 	glm::vec3 center{ 8.0f, 2.5f, -3.5f };
 	float radius = 1.5f;
 	ColorRGB blue{ 0.0f, 0.0f, 0.4f };
-	Material materialBlue{ DIFFUSE, blue };
+	Material materialBlue{ REFLECTIVE };
 
 	Sphere sphere1{center, radius, materialBlue};
 	myScene.addGeometry(&sphere1);
@@ -30,11 +29,12 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	int depth = 3; // > 1
-	int nrOfShadowRays = 5; // > 1
-	int nrOfIndirectRays = 4;
+	int depthDiffuse = 2; // > 1
+	int depthReflective = 5; // > 1
+	int nrOfShadowRays = 20; // > 1
+	int nrOfIndirectRays = 20;
 
-	myScene.render(depth, nrOfShadowRays, nrOfIndirectRays);
+	myScene.render(depthDiffuse, depthReflective, nrOfShadowRays, nrOfIndirectRays);
 
 	return 0;
 }

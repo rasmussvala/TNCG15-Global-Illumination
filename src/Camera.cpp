@@ -4,7 +4,8 @@
 
 
 Camera::Camera(int w, int h) : width(w), height(h) {
-	MAX_DEPTH = 0; 
+	MAX_DEPTH_DIFFUSE = 0; 
+	MAX_DEPTH_REFLECTIVE = 0;
 	MAX_SHADOWRAYS = 0;
 	MAX_INDIRECTRAYS = 0;
 
@@ -71,7 +72,7 @@ void Camera::castRays() {
 			Ray ray(location, rayDirectionFromCamera(i, j));
 
 			// Kollar intersections som sker i scenen  
-			pixels[j][i] = castRay(ray, MAX_DEPTH);
+			pixels[j][i] = castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
@@ -80,11 +81,11 @@ void Camera::castRays() {
 	}
 }
 
-ColorRGB Camera::castRay(const Ray& ray, int depth) {
+ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse, int depthReflective) {
 
 	ColorRGB color{};
 
-	if (depth <= 0) {
+	if (depthDiffuse <= 0 || depthReflective <= 0) {
 		return color;
 	}
 
@@ -102,25 +103,20 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 		MaterialType materialType = geometries[index]->getMaterial().type;
 		
 		if (materialType == REFLECTIVE) {
-			color = handleReflection(ray, hitPoint, hitPointNormal, depth);
+			glm::vec3 reflectDir = glm::reflect(ray.getDirection(), hitPointNormal);
+			Ray reflectedRay(hitPoint, reflectDir);
+
+			color = castRay(reflectedRay, depthDiffuse, depthReflective - 1);
 		}
 		else { // DIFFUSE
 			ColorRGB direct = directLight(hitPoint, hitPointNormal, index);
-			ColorRGB indirect = indirectLight(depth, hitPoint, hitPointNormal);
+			ColorRGB indirect = indirectLight(depthDiffuse, depthReflective, hitPoint, hitPointNormal);
 			
 			color = direct + (indirect * 0.4f);
 		}
 	}
 
 	return color;
-}
-
-ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth) {
-	glm::vec3 reflectDir = glm::reflect(ray.getDirection(), hitPointNormal);
-	Ray reflectedRay(hitPoint, reflectDir);
-
-	return castRay(reflectedRay, depth - 1);
-	
 }
 
 ColorRGB Camera::directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index) {
@@ -136,12 +132,12 @@ ColorRGB Camera::directLight(const glm::vec3& hitPoint, const glm::vec3& hitPoin
 	return colorOfObject * irradiance;
 }
 
-ColorRGB Camera::indirectLight(int depth, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal) {
+ColorRGB Camera::indirectLight(int depthDiffuse, int depthReflective, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal) {
 	ColorRGB indirect;
 
 	for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
 		Ray randomRay(hitPoint, randomRayDirection(hitPointNormal));
-		indirect += castRay(randomRay, depth - 1);
+		indirect += castRay(randomRay, depthDiffuse - 1, depthReflective);
 	}
 
 	indirect = indirect / MAX_INDIRECTRAYS;
