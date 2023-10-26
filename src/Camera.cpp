@@ -97,17 +97,14 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 
 	if (t > EPSILON && t < FLT_MAX) {
 		glm::vec3 hitPoint = ray.at(t);
-		glm::vec3 hitPointNormal(0.0f);
-		MaterialType materialType;
 
-		hitPointNormal = geometries[index]->getNormal(hitPoint);
-		materialType = geometries[index]->getMaterial().type;
+		glm::vec3 hitPointNormal = geometries[index]->getNormal(hitPoint);
+		MaterialType materialType = geometries[index]->getMaterial().type;
 		
-
 		if (materialType == REFLECTIVE) {
 			color = handleReflection(ray, hitPoint, hitPointNormal, depth);
 		}
-		else if (materialType == DIFFUSE) {
+		else { // DIFFUSE
 			ColorRGB direct = directLight(hitPoint, hitPointNormal, index);
 			ColorRGB indirect = indirectLight(depth, hitPoint, hitPointNormal);
 			
@@ -122,12 +119,8 @@ ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& hitPoint, con
 	glm::vec3 reflectDir = glm::reflect(ray.getDirection(), hitPointNormal);
 	Ray reflectedRay(hitPoint, reflectDir);
 
-	if (depth == MAX_DEPTH && MAX_DEPTH != 1) {
-		return castRay(reflectedRay, depth);
-	}
-	else {
-		return castRay(reflectedRay, depth - 1);
-	}
+	return castRay(reflectedRay, depth - 1);
+	
 }
 
 ColorRGB Camera::directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index) {
@@ -161,7 +154,7 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 	float u = 1.0f - (2.0f * i) / width;
 	float v = 1.0f - (2.0f * j) / height;
 
-	// Returnerar en normaliserad vektor fr�n kamerans position till u och v
+	// Returnerar en normaliserad vektor från kamerans position till u och v
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
 }
 

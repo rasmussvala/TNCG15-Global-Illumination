@@ -26,8 +26,6 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
     const float EPSILON = 1e-4f;
     const float PI = 3.14159265f;
 
-    // Lambertian reflectors: f(x, di, theta0) = 1 / pi
-
     for (int i = 0; i < N; i++) {
         // Värde mellan 0 - 1 
         float S = static_cast<float>(rand()) / RAND_MAX;
