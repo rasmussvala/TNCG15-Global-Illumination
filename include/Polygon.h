@@ -32,7 +32,6 @@ private:
 	glm::vec3 vertex3;
 	glm::vec3 vertex4;
 	glm::vec3 normal;
-	glm::vec3 c1, c2;
 	Material material; 
 };
 

@@ -6,28 +6,27 @@
 
 Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3, const glm::vec3& p4, const Material& mat)
 	: vertex1(p1), vertex2(p2), vertex3(p3), vertex4(p4), material(mat) {
-	// Beräkna c1 och c2, som är de två kantvektorerna som utgår från en av hörnen.
-	c1 = vertex2 - vertex1;
-	c2 = vertex4 - vertex1; 
 
-	// Beräkna normalen N till rektangeln som är c1 × c2.
-	normal = glm::normalize(glm::cross(c1, c2));
+	normal = glm::normalize(glm::cross(vertex2 - vertex1, vertex4 - vertex1));
 }
 
 float Rectangle::intersect(const Ray& ray) const {
 
-	Triangle triangle1(vertex1, vertex2, vertex3, material);
-	Triangle triangle2(vertex1, vertex3, vertex4, material);
+	Triangle* triangle1 = new Triangle(vertex1, vertex2, vertex3, material);
+	Triangle* triangle2 = new Triangle(vertex1, vertex3, vertex4, material);
 
 	// Kollar snittet mellan ray och de två trianglarna som utgör rektangeln
-	float t1 = triangle1.intersect(ray);
-	float t2 = triangle2.intersect(ray);
+	float t1 = triangle1->intersect(ray);
+	float t2 = triangle2->intersect(ray);
+
+	delete triangle1, triangle2;
 
 	const float EPSILON = 1e-4f;
 
 	// Kollar om snittet är större än EPSILON
 	if (t1 >= EPSILON && t2 >= EPSILON) {
 		return std::min(t1, t2); // Returnerar det minsta snittet
+
 	}
 	else if (t1 >= EPSILON) {
 		return t1;
