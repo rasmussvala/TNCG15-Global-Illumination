@@ -6,14 +6,20 @@
 #include "../include/Sphere.h"
 
 int main() {
-	// 150 x 150 är max atm
+	// max 180 x 180 atm
 	Scene myScene(180, 180);
 
-	Cube cube1{};
-	myScene.addCube(&cube1);
+	/*Cube cube1{};
+	myScene.addCube(&cube1);*/
 
-	Sphere sphere1{};
-	myScene.addSphere(&sphere1);
+	// Settings for Sphere 
+	glm::vec3 center{ 8.0f, 2.5f, -3.5f };
+	float radius = 1.5f;
+	ColorRGB blue{ 0.0f,0.0f,0.4f };
+	Material materialBlue{ REFLECTIVE };
+
+	Sphere sphere1{center, radius, materialBlue};
+	myScene.addGeometry(&sphere1);
 
 	Light light1{ glm::vec3{5.0f, 1.0f, 4.9999f},
 		glm::vec3{3.0f, 1.0f, 4.9999f},
@@ -24,7 +30,7 @@ int main() {
 	myScene.addLight(&light1);
 
 	int depth = 3; // > 1
-	int nrOfShadowRays = 1; // > 1
+	int nrOfShadowRays = 10; // > 1
 	int nrOfIndirectRays = 4;
 
 	myScene.render(depth, nrOfShadowRays, nrOfIndirectRays);

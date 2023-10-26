@@ -90,34 +90,26 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 
 	const float EPSILON = 1e-4f;
 
-	IntersectionResult result = closestIntersect(ray, polygons, spheres);
+	IntersectionResult result = closestIntersect(ray, geometries);
 
 	float t = result.t;
 	int index = result.index;
-	IntersectionType type = result.type;
 
 	if (t > EPSILON && t < FLT_MAX) {
-		glm::vec3 intersectPt = ray.at(t);
-		glm::vec3 intersectPtNormal(0.0f);
+		glm::vec3 hitPoint = ray.at(t);
+		glm::vec3 hitPointNormal(0.0f);
 		MaterialType materialType;
 
-		if (type == POLYGON) {
-			intersectPtNormal = polygons[index]->getNormal();
-			materialType = polygons[index]->getMaterial().type;
-		}
-		else { // SPHERE
-			intersectPtNormal = spheres[index]->getNormal(intersectPt);
-			materialType = spheres[index]->getMaterial().type;
-		}
+		hitPointNormal = geometries[index]->getNormal(hitPoint);
+		materialType = geometries[index]->getMaterial().type;
+		
 
-		if (type == POLYGON && materialType == REFLECTIVE ||
-			type == SPHERE && materialType == REFLECTIVE) {
-			color = handleReflection(ray, intersectPt, intersectPtNormal, depth);
+		if (materialType == REFLECTIVE) {
+			color = handleReflection(ray, hitPoint, hitPointNormal, depth);
 		}
-		else if (type == POLYGON && materialType == DIFFUSE ||
-			type == SPHERE && materialType == DIFFUSE) {
-			ColorRGB direct = directLight(intersectPt, intersectPtNormal, type, index);
-			ColorRGB indirect = indirectLight(depth, intersectPt, intersectPtNormal);
+		else if (materialType == DIFFUSE) {
+			ColorRGB direct = directLight(hitPoint, hitPointNormal, index);
+			ColorRGB indirect = indirectLight(depth, hitPoint, hitPointNormal);
 			
 			color = direct + (indirect * 0.3f);
 		}
@@ -126,9 +118,9 @@ ColorRGB Camera::castRay(const Ray& ray, int depth) {
 	return color;
 }
 
-ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal, int depth) {
-	glm::vec3 reflectDir = glm::reflect(ray.getDirection(), intersectPtNormal);
-	Ray reflectedRay(intersectPt, reflectDir);
+ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth) {
+	glm::vec3 reflectDir = glm::reflect(ray.getDirection(), hitPointNormal);
+	Ray reflectedRay(hitPoint, reflectDir);
 
 	if (depth == MAX_DEPTH && MAX_DEPTH != 1) {
 		return castRay(reflectedRay, depth);
@@ -138,30 +130,24 @@ ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& intersectPt, 
 	}
 }
 
-ColorRGB Camera::directLight(const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal, IntersectionType type, int index) {
-	ColorRGB colorOfObject;
+ColorRGB Camera::directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index) {
 
-	if (type == POLYGON) {
-		colorOfObject = polygons[index]->getMaterial().color;
-	}
-	else if (type == SPHERE) {
-		colorOfObject = spheres[index]->getMaterial().color;
-	}
+	ColorRGB colorOfObject = geometries[index]->getMaterial().color;
 
 	float irradiance = 0.0f;
 
 	for (Light* light : lights) {
-		irradiance += light->calculateLight(polygons, spheres, intersectPt, intersectPtNormal, MAX_SHADOWRAYS);
+		irradiance += light->calculateLight(geometries, hitPoint, hitPointNormal, MAX_SHADOWRAYS);
 	}
 
 	return colorOfObject * irradiance;
 }
 
-ColorRGB Camera::indirectLight(int depth, const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal) {
+ColorRGB Camera::indirectLight(int depth, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal) {
 	ColorRGB indirect;
 
 	for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
-		Ray randomRay(intersectPt, randomRayDirection(intersectPtNormal));
+		Ray randomRay(hitPoint, randomRayDirection(hitPointNormal));
 		indirect += castRay(randomRay, depth - 1);
 	}
 
@@ -179,7 +165,7 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 	return glm::normalize(glm::vec3(0.0f, u, v) - location);
 }
 
-glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectPtNormal) {
+glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
 
 	const float PI = 3.14159265359f;
 
@@ -189,10 +175,10 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& intersectPtNormal) {
 
 	glm::vec3 localDir = HemisphericalToLocalCartesian(phi, omega);
 
-	glm::vec3 worldDir = LocalCartesianToWorldCartesian(localDir, intersectPtNormal);
+	glm::vec3 worldDir = LocalCartesianToWorldCartesian(localDir, hitPointNormal);
 
 	// Make sure the direction is not pointing back into the surface
-	if (glm::dot(worldDir, intersectPtNormal) < 0.0f) {
+	if (glm::dot(worldDir, hitPointNormal) < 0.0f) {
 		worldDir = -worldDir;
 	}
 
@@ -236,31 +222,20 @@ glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir, cons
 	return worldDir;
 }
 
-IntersectionResult closestIntersect(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres) {
+IntersectionResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries) {
 	const float EPSILON = 1e-4f;
+
 	float closestT = FLT_MAX;
-	IntersectionType closestType = NONE;
 	int closestIndex = -1; // Initialize to an invalid index
 
 	// Check intersections with polygons
-	for (int i = 0; i < polygons.size(); i++) {
-		float t = polygons[i]->intersect(ray);
+	for (int i = 0; i < geometries.size(); i++) {
+		float t = geometries[i]->intersect(ray);
 		if (t > EPSILON && t < closestT) {
 			closestT = t;
-			closestType = POLYGON;
 			closestIndex = i;
 		}
 	}
 
-	// Check intersections with spheres
-	for (int i = 0; i < spheres.size(); i++) {
-		float t = spheres[i]->intersect(ray);
-		if (t > EPSILON && t < closestT) {
-			closestT = t;
-			closestType = SPHERE;
-			closestIndex = i;
-		}
-	}
-
-	return { closestT, closestIndex, closestType };
+	return { closestT, closestIndex };
 }

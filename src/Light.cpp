@@ -19,7 +19,7 @@ Rectangle Light::getGeometry() {
     return rectangle;
 }
 
-float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<Sphere*> spheres, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int MAX_SHADOWRAYS) {
+float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int MAX_SHADOWRAYS) {
     int N = MAX_SHADOWRAYS; // antal samples
     float Le = 3200.0f; // radiance
     float irradiance = 0.0f;
@@ -38,7 +38,7 @@ float Light::calculateLight(const std::vector<Polygon*>& polygons, std::vector<S
         float distanceToLight = glm::distance(pointOnLight, intersectionPoint);
         Ray rayToLight(intersectionPoint, direction);
 
-        IntersectionResult result = closestIntersect(rayToLight, polygons, spheres);
+        IntersectionResult result = closestIntersect(rayToLight, geometries);
         float closestT = result.t;
 
         // Något finns ivägen för ljuskällan -> skugga 

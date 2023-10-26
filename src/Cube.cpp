@@ -6,8 +6,8 @@ Material Cube::getMaterial() const {
     return material;
 }
 
-std::vector<Polygon*> Cube::getSurfaces() {
-    std::vector<Polygon*> surfaces;
+std::vector<Geometry*> Cube::getSurfaces() {
+    std::vector<Geometry*> surfaces;
     surfaces.push_back(&surface1);
     surfaces.push_back(&surface2);
     surfaces.push_back(&surface3);

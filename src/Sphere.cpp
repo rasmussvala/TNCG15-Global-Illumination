@@ -1,31 +1,23 @@
 #include "../include/Sphere.h"
 #include <limits>
 
-Sphere::Sphere() {
-	// center (x0,y0,z0)
-	x0 = 8.0f;
-	y0 = 2.5f;
-	z0 = -3.5f;
-	r = 1.5f;
-	sphereOrigin = glm::vec3{ x0, y0, z0 };
-}
+#include "../include/Sphere.h"
 
-glm::vec3 Sphere::getNormal(const glm::vec3& pointOnSphere) {
-	glm::vec3 normal = glm::normalize(pointOnSphere - sphereOrigin);
-	return normal;
-}
+Sphere::Sphere(const glm::vec3& c, float r, const Material& mat)
+	: center(c), radius(r), material(mat) {}
 
-float Sphere::intersect(const Ray& ray) {
+float Sphere::intersect(const Ray& ray) const
+{
 	const float EPSILON = 1e-4f;
 
 	glm::vec3 D = glm::normalize(ray.getDirection());
 	glm::vec3 S = ray.getOrigin();
-	glm::vec3 C = sphereOrigin;
+	glm::vec3 C = center;
 
 	// Coefficients for the quadratic equation
 	float c1 = glm::dot(D, D);
 	float c2 = glm::dot(2.0f * D, S - C);
-	float c3 = glm::dot((S - C), (S - C)) - (r * r);
+	float c3 = glm::dot((S - C), (S - C)) - (radius * radius);
 
 	// Calculate the discriminant
 	float arg = c2 * c2 - 4.0f * c1 * c3;
@@ -55,6 +47,11 @@ float Sphere::intersect(const Ray& ray) {
 	}
 }
 
-Material Sphere::getMaterial() {
+glm::vec3 Sphere::getNormal(const glm::vec3& point) const {
+	glm::vec3 normal = glm::normalize(point - center);
+	return normal;
+}
+
+Material Sphere::getMaterial() const {
 	return material;
 }

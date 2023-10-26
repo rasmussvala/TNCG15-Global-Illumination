@@ -1,22 +1,18 @@
 #pragma once
 
-#include "glm/glm.hpp"
-#include "Ray.h"
-#include "ColorRGB.h"
-#include "Material.h"
+#include "Geometry.h"
 
-class Sphere
-{
+class Sphere : public Geometry {
 public:
-    Sphere();
+    Sphere(const glm::vec3& center, float radius, const Material& material);
+    ~Sphere() {}
 
-    glm::vec3 getNormal(const glm::vec3& pointOnSphere);
-    float intersect(const Ray& ray);
-    Material getMaterial();
+    float intersect(const Ray& ray) const override;
+    glm::vec3 getNormal(const glm::vec3& point) const override;
+    Material getMaterial() const override;
 
 private:
-    float x0, y0, z0, r;
-    ColorRGB blue{ 0.0f, 0.0f, 0.4f };
-    Material material{ REFLECTIVE };
-    glm::vec3 sphereOrigin;
+    glm::vec3 center;
+    float radius;
+    Material material;
 };

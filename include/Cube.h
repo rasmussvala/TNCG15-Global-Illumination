@@ -3,14 +3,14 @@
 #include "Ray.h"
 #include "ColorRGB.h"
 #include "Polygon.h"
-#include "Material.h"
+#include "Geometry.h"
 #include <vector>
 
 class Cube {
 public:
     Cube(); // Declare the constructor
     Material getMaterial() const;
-    std::vector<Polygon*> getSurfaces();
+    std::vector<Geometry*> getSurfaces();
 private:
     ColorRGB color;
     Material material;

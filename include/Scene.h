@@ -10,15 +10,12 @@ class Scene {
 public:
     Scene(int width, int height);
 
-    void addPolygon(Polygon* polygon);
     void addLight(Light* light);
-    void addSphere(Sphere* sphere);
-    void addCube(Cube* cube);
+    void addGeometry(Geometry* geometry);
     void render(int depth, int nrOfShadowRays, int nrOfIndirectRays);
 
 private:
     Camera camera;
-    std::vector<Polygon*> polygons;
+    std::vector<Geometry*> geometries;
     std::vector<Light*> lights;
-    std::vector<Sphere*> spheres;
 };

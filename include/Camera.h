@@ -11,15 +11,12 @@
 #include <string>
 #include <iostream>
 
-enum IntersectionType { POLYGON, SPHERE, NONE };
-
 struct IntersectionResult {
 	float t;
 	int index;
-	IntersectionType type;
 };
 
-IntersectionResult closestIntersect(const Ray& ray, const std::vector<Polygon*>& polygons, const std::vector<Sphere*> spheres);
+IntersectionResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries);
 
 class Camera {
 public:
@@ -28,22 +25,18 @@ public:
 	void saveImage(std::string filename);
 	void castRays();
 	ColorRGB castRay(const Ray& ray, int depth);
-	ColorRGB handleReflection(const Ray& ray, const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal, int depth);
-	ColorRGB directLight(const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal, IntersectionType type, int index);
-	ColorRGB indirectLight(int depth, const glm::vec3& intersectPt, const glm::vec3& intersectPtNormal);
+	ColorRGB handleReflection(const Ray& ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth);
+	ColorRGB directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index);
+	ColorRGB indirectLight(int depth, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal);
 	glm::vec3 rayDirectionFromCamera(int i, int j);
-	glm::vec3 randomRayDirection(const glm::vec3& intersectPtNormal);
+	glm::vec3 randomRayDirection(const glm::vec3& hitPointNormal);
 	void progressBar(float percent);
 
 	glm::vec3 HemisphericalToLocalCartesian(float phi, float omega);
 	glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& localDir, const glm::vec3& normal);
 
-	void setPolygons(const std::vector<Polygon*>& newPolygons) {
-		polygons = newPolygons;
-	}
-
-	void setSpheres(const std::vector<Sphere*>& newSpheres) {
-		spheres = newSpheres;
+	void setGeometries(const std::vector<Geometry*>& newGeometries) {
+		geometries = newGeometries;
 	}
 
 	void setLights(const std::vector<Light*>& newLights) {
@@ -67,8 +60,7 @@ private:
 	int height;
 	glm::vec3 location{ -1.0f, 0.0f, 0.0f };
 
-	std::vector<Polygon*> polygons;
-	std::vector<Sphere*> spheres;
+	std::vector<Geometry*> geometries;
 	std::vector<Light*> lights;
 
 	int MAX_DEPTH;

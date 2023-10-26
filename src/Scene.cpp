@@ -32,7 +32,7 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	glm::vec3 p11(-3.0f, 0.0f, 5.0f);
 
 	// Glov
-	Triangle* triangle_floorB = new Triangle{ p0, p4, p5, materialWhite };
+	Triangle* triangle_floorB = new Triangle{ p0, p5, p4, materialWhite };
 	Triangle* triangle_floorF = new Triangle{ p1, p3, p2, materialWhite };
 	Rectangle* rectangle_floor = new Rectangle{ p0, p4, p3, p1, materialWhite };
 
@@ -50,44 +50,41 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	Rectangle* rectangle_ceiling = new Rectangle{ p6, p7, p9, p10, materialWhite };
 
 	// Lägger till alla polygoner i scenen
-	addPolygon(triangle_floorB);
-	addPolygon(triangle_floorF);
-	addPolygon(rectangle_floor);
-	addPolygon(rectangle_wallH);
-	addPolygon(rectangle_wallHB);
-	addPolygon(rectangle_wallHF);
-	addPolygon(rectangle_wallV);
-	addPolygon(rectangle_wallVB);
-	addPolygon(rectangle_wallVF);
-	addPolygon(triangle_ceilingB);
-	addPolygon(triangle_ceilingF);
-	addPolygon(rectangle_ceiling);
+	addGeometry(triangle_floorB);
+	addGeometry(triangle_floorF);
+	addGeometry(rectangle_floor);
+	addGeometry(rectangle_wallH);
+	addGeometry(rectangle_wallHB);
+	addGeometry(rectangle_wallHF);
+	addGeometry(rectangle_wallV);
+	addGeometry(rectangle_wallVB);
+	addGeometry(rectangle_wallVF);
+	addGeometry(triangle_ceilingB);
+	addGeometry(triangle_ceilingF);
+	addGeometry(rectangle_ceiling);
 }
 
-void Scene::addPolygon(Polygon* polygon) {
-	polygons.push_back(polygon);
-}
 
 void Scene::addLight(Light* light) {
 	lights.push_back(light);
 }
 
-void Scene::addSphere(Sphere* sphere) {
-	spheres.push_back(sphere);
+void Scene::addGeometry(Geometry* geometry) {
+	geometries.push_back(geometry);
 }
 
-void Scene::addCube(Cube* cube) {
-	std::vector<Polygon*> surfaces = cube->getSurfaces();
-	for (Polygon* surface : surfaces) {
-		polygons.push_back(surface);
-	}
-}
+
+//void Scene::addCube(Cube* cube) {
+//	std::vector<Polygon*> surfaces = cube->getSurfaces();
+//	for (Polygon* surface : surfaces) {
+//		polygons.push_back(surface);
+//	}
+//}
 
 void Scene::render(int depth, int nrOfShadowRays, int nrOfIndirectRays) {
 
 	// Adds all geometry to the camera
-	camera.setPolygons(polygons);
-	camera.setSpheres(spheres);
+	camera.setGeometries(geometries);
 	camera.setLights(lights);
 	camera.setDepth(depth);
 	camera.setIndirectRays(nrOfIndirectRays);
