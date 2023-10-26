@@ -9,8 +9,9 @@ int main() {
 	// max 180 x 180 atm
 	Scene myScene(180, 180);
 
-	/*Cube cube1{};
-	myScene.addCube(&cube1);*/
+	// Default cube gets added to right hand side
+	Cube cube1{};
+	myScene.addCube(&cube1);
 
 	// Settings for Sphere 
 	glm::vec3 center{ 8.0f, 2.5f, -3.5f };

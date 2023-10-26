@@ -73,13 +73,12 @@ void Scene::addGeometry(Geometry* geometry) {
 	geometries.push_back(geometry);
 }
 
-
-//void Scene::addCube(Cube* cube) {
-//	std::vector<Polygon*> surfaces = cube->getSurfaces();
-//	for (Polygon* surface : surfaces) {
-//		polygons.push_back(surface);
-//	}
-//}
+void Scene::addCube(Cube* cube) {
+	std::vector<Geometry*> surfaces = cube->getSurfaces();
+	for (Geometry* surface : surfaces) {
+		geometries.push_back(surface);
+	}
+}
 
 void Scene::render(int depth, int nrOfShadowRays, int nrOfIndirectRays) {
 

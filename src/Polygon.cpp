@@ -20,7 +20,7 @@ float Triangle::intersect(const Ray& ray) const {
 	float u = (glm::dot(P, T) / glm::dot(P, E1));
 	float v = (glm::dot(Q, D) / glm::dot(P, E1));
 
-	// VI träffar utanför trianeln eller är aldeles för nära (t < EPSILON)
+	// Vi träffar utanför trianeln eller är alldeles för nära (t < EPSILON)
 	if (u + v > 1.0f + EPSILON || u < -EPSILON || v < -EPSILON || t < EPSILON) {
 		return -1.0f;
 	}
