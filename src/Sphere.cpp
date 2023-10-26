@@ -6,12 +6,12 @@
 Sphere::Sphere(const glm::vec3& c, float r, const Material& mat)
 	: center(c), radius(r), material(mat) {}
 
-float Sphere::intersect(const Ray* ray) const
+float Sphere::intersect(const Ray& ray) const
 {
 	const float EPSILON = 1e-4f;
 
-	glm::vec3 D = glm::normalize(ray->getDirection());
-	glm::vec3 S = ray->getOrigin();
+	glm::vec3 D = glm::normalize(ray.getDirection());
+	glm::vec3 S = ray.getOrigin();
 	glm::vec3 C = center;
 
 	// Coefficients for the quadratic equation

@@ -19,7 +19,7 @@ Rectangle Light::getGeometry() {
     return rectangle;
 }
 
-float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int MAX_SHADOWRAYS) {
+float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm::vec3& intersectionPoint, const glm::vec3& intersectionPointNormal, int MAX_SHADOWRAYS) {
     int N = MAX_SHADOWRAYS; // antal samples
     float Le = 3200.0f; // radiance
     float irradiance = 0.0f;
@@ -32,14 +32,11 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
         float T = static_cast<float>(rand()) / RAND_MAX;
 
         glm::vec3 pointOnLight = v1 + S * e1 + T * e2; // random point på ljuskälla 
-        glm::vec3 direction = glm::normalize(pointOnLight - hitPoint);
-        float distanceToLight = glm::distance(pointOnLight, hitPoint);
-        Ray* rayToLight = new Ray(hitPoint, direction);
+        glm::vec3 direction = glm::normalize(pointOnLight - intersectionPoint);
+        float distanceToLight = glm::distance(pointOnLight, intersectionPoint);
+        Ray rayToLight(intersectionPoint, direction);
 
         IntersectionResult result = closestIntersect(rayToLight, geometries);
-
-        delete rayToLight;
-
         float closestT = result.t;
 
         // Något finns ivägen för ljuskällan -> skugga 
@@ -47,7 +44,7 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
             continue;
         }
 
-        float cosOmegaX = std::abs(glm::dot(hitPointNormal, glm::normalize(direction)));
+        float cosOmegaX = std::abs(glm::dot(intersectionPointNormal, glm::normalize(direction)));
         float cosOmegaY = std::abs(glm::dot(-normal, glm::normalize(direction)));
 
         irradiance += (cosOmegaX + cosOmegaY) / (glm::length(direction) * glm::length(direction));

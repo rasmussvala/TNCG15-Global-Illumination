@@ -68,12 +68,10 @@ void Camera::castRays() {
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			Ray* ray = new Ray(location, rayDirectionFromCamera(i, j));
+			Ray ray(location, rayDirectionFromCamera(i, j));
 
 			// Kollar intersections som sker i scenen  
 			pixels[j][i] = castRay(ray, MAX_DEPTH);
-
-			delete ray;
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));
@@ -82,7 +80,7 @@ void Camera::castRays() {
 	}
 }
 
-ColorRGB Camera::castRay(const Ray* ray, int depth) {
+ColorRGB Camera::castRay(const Ray& ray, int depth) {
 
 	ColorRGB color{};
 
@@ -98,7 +96,7 @@ ColorRGB Camera::castRay(const Ray* ray, int depth) {
 	int index = result.index;
 
 	if (t > EPSILON && t < FLT_MAX) {
-		glm::vec3 hitPoint = ray->at(t);
+		glm::vec3 hitPoint = ray.at(t);
 
 		glm::vec3 hitPointNormal = geometries[index]->getNormal(hitPoint);
 		MaterialType materialType = geometries[index]->getMaterial().type;
@@ -117,17 +115,13 @@ ColorRGB Camera::castRay(const Ray* ray, int depth) {
 	return color;
 }
 
-ColorRGB Camera::handleReflection(const Ray* ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth) {
-	glm::vec3 reflectDir = glm::reflect(ray->getDirection(), hitPointNormal);
-	Ray* reflectedRay = new Ray(hitPoint, reflectDir);
+ColorRGB Camera::handleReflection(const Ray& ray, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int depth) {
+	glm::vec3 reflectDir = glm::reflect(ray.getDirection(), hitPointNormal);
+	Ray reflectedRay(hitPoint, reflectDir);
 
-	ColorRGB result = castRay(reflectedRay, depth - 1);
-
-	delete reflectedRay;
-
-	return result;
+	return castRay(reflectedRay, depth - 1);
+	
 }
-
 
 ColorRGB Camera::directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index) {
 
@@ -146,9 +140,8 @@ ColorRGB Camera::indirectLight(int depth, const glm::vec3& hitPoint, const glm::
 	ColorRGB indirect;
 
 	for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
-		Ray* randomRay = new Ray(hitPoint, randomRayDirection(hitPointNormal));
+		Ray randomRay(hitPoint, randomRayDirection(hitPointNormal));
 		indirect += castRay(randomRay, depth - 1);
-		delete randomRay;
 	}
 
 	indirect = indirect / MAX_INDIRECTRAYS;
@@ -222,7 +215,7 @@ glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir, cons
 	return worldDir;
 }
 
-IntersectionResult closestIntersect(const Ray* ray, const std::vector<Geometry*> geometries) {
+IntersectionResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries) {
 	const float EPSILON = 1e-4f;
 
 	float closestT = FLT_MAX;
