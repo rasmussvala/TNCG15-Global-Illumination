@@ -23,7 +23,7 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
     const float EPSILON = 1e-4f;
     float irradiance = 0.0f;
     int N = MAX_SHADOWRAYS; // antal samples
-    float Le = 3200.0f; // radiance
+    float Le = 130.0f; // radiance
     const float PI = 3.14159265f;
 
     for (int i = 0; i < N; i++) {

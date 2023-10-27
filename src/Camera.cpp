@@ -16,50 +16,74 @@ Camera::Camera(int w, int h) : width(w), height(h) {
 	}
 }
 
+//void Camera::saveImage(std::string filename) {
+//	// CONTRAST STRETCHING
+//	std::ofstream ppmFile(filename); // Opens/creates the file
+//
+//	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
+//
+//	// Find the maximum pixel value among all channels
+//	float maxRGB = -1.0f;
+//
+//	for (int j = 0; j < height; ++j) {
+//		for (int i = 0; i < width; ++i) {
+//			auto r = pixels[j][i].r;
+//			auto g = pixels[j][i].g;
+//			auto b = pixels[j][i].b;
+//
+//			float maxChannel = (float)std::max({ r, g, b });
+//			maxRGB = (float)std::max(maxRGB, maxChannel);
+//		}
+//	}
+//
+//	// Calculate the stretching factor
+//	float stretchFactor = 255.0f / maxRGB;
+//
+//	// Write the stretched pixel values to the output file
+//	for (int j = 0; j < height; ++j) {
+//		for (int i = 0; i < width; ++i) {
+//			auto r = pixels[j][i].r;
+//			auto g = pixels[j][i].g;
+//			auto b = pixels[j][i].b;
+//
+//			// Convert to 0-255
+//			int ir = static_cast<int>(255.999 * r);
+//			int ig = static_cast<int>(255.999 * g);
+//			int ib = static_cast<int>(255.999 * b);
+//			// Apply contrast stretching using the brightest channel
+//			ir = static_cast<int>(stretchFactor * r);
+//			ig = static_cast<int>(stretchFactor * g);
+//			ib = static_cast<int>(stretchFactor * b);
+//
+//			ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
+//		}
+//	}
+//	ppmFile.close();
+//}
+
 void Camera::saveImage(std::string filename) {
-	// CONTRAST STRETCHING
 	std::ofstream ppmFile(filename); // Opens/creates the file
 
 	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
-	// Find the maximum pixel value among all channels
-	float maxRGB = -1.0f;
-
+	// Write the clamped pixel values to the output file
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 			auto r = pixels[j][i].r;
 			auto g = pixels[j][i].g;
 			auto b = pixels[j][i].b;
 
-			float maxChannel = (float)std::max({ r, g, b });
-			maxRGB = (float)std::max(maxRGB, maxChannel);
-		}
-	}
-
-	// Calculate the stretching factor
-	float stretchFactor = 255.0f / maxRGB;
-
-	// Write the stretched pixel values to the output file
-	for (int j = 0; j < height; ++j) {
-		for (int i = 0; i < width; ++i) {
-			auto r = pixels[j][i].r;
-			auto g = pixels[j][i].g;
-			auto b = pixels[j][i].b;
-
-			// Convert to 0-255
-			int ir = static_cast<int>(255.999 * r);
-			int ig = static_cast<int>(255.999 * g);
-			int ib = static_cast<int>(255.999 * b);
-			// Apply contrast stretching using the brightest channel
-			ir = static_cast<int>(stretchFactor * r);
-			ig = static_cast<int>(stretchFactor * g);
-			ib = static_cast<int>(stretchFactor * b);
+			// Convert to 0-255 and clamp
+			int ir = std::min(static_cast<int>(255.999 * r), 255);
+			int ig = std::min(static_cast<int>(255.999 * g), 255);
+			int ib = std::min(static_cast<int>(255.999 * b), 255);
 
 			ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
 		}
 	}
 	ppmFile.close();
 }
+
 
 void Camera::castRays() {
 
