@@ -11,12 +11,12 @@
 #include <string>
 #include <iostream>
 
-struct IntersectionResult {
+struct hitResult {
 	float t;
 	int index;
 };
 
-IntersectionResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries);
+hitResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries);
 
 class Camera {
 public:
@@ -72,4 +72,7 @@ private:
 	int MAX_INDIRECTRAYS;
 	
 	std::vector<std::vector<ColorRGB>> pixels;
+
+	const float EPSILON = 1e-4f;
+	const float PI = 3.14159265f;
 };

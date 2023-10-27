@@ -26,27 +26,34 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
     float Le = 130.0f; // radiance
     const float PI = 3.14159265f;
 
+    glm::vec3 pointOnLight;
+    glm::vec3 direction;
+
+    float S;
+    float T;
+    float distanceToLight;
+
+    Ray rayToLight{};
+
     for (int i = 0; i < N; i++) {
         // Värde mellan 0 - 1 
-        float S = static_cast<float>(rand()) / RAND_MAX;
-        float T = static_cast<float>(rand()) / RAND_MAX;
+        S = static_cast<float>(rand()) / RAND_MAX;
+        T = static_cast<float>(rand()) / RAND_MAX;
 
-        glm::vec3 pointOnLight = v1 + S * e1 + T * e2; // random point på ljuskälla 
-        glm::vec3 direction = pointOnLight - hitPoint; //di 
-        glm::vec3 directionNormalized = glm::normalize(direction);
-        float distanceToLight = glm::distance(pointOnLight, hitPoint);
-        Ray rayToLight(hitPoint, direction);
+        pointOnLight = v1 + S * e1 + T * e2; // random point på ljuskälla 
+        direction = pointOnLight - hitPoint; //di 
+        distanceToLight = glm::distance(pointOnLight, hitPoint);
+        rayToLight.setRay(hitPoint, direction);
 
-        IntersectionResult result = closestIntersect(rayToLight, geometries);
-        float closestT = result.t;
+        hitResult hit = closestIntersect(rayToLight, geometries);
 
         // Något finns ivägen för ljuskällan -> skugga 
-        if (closestT > EPSILON && closestT < distanceToLight) {
+        if (hit.t > EPSILON && hit.t < distanceToLight) {
             continue;
         }
 
-        float cosOmegaX = glm::dot(hitPointNormal, directionNormalized);
-        float cosOmegaY = glm::dot(-normal, directionNormalized);
+        float cosOmegaX = glm::dot(hitPointNormal, glm::normalize(direction));
+        float cosOmegaY = glm::dot(-normal, glm::normalize(direction));
 
         irradiance += std::max(0.0f, (cosOmegaX * cosOmegaY) / (distanceToLight * distanceToLight));
     }

@@ -88,6 +88,7 @@ void Camera::saveImage(std::string filename) {
 void Camera::castRays(int samplesPerPixel) {
 
 	float progress = 0.0f;
+	Ray ray{};
 
 	// Loopar igenom alla pixlar och ansätter färger
 	for (int j = 0; j < height; ++j) {
@@ -95,7 +96,7 @@ void Camera::castRays(int samplesPerPixel) {
 
 			for (int k = 0; k < samplesPerPixel; k++) {
 				// Skapar en ray från kamerans position till pixlens position
-				Ray ray(location, rayDirectionFromCamera(i, j));
+				ray.setRay(location, rayDirectionFromCamera(i, j));
 
 				// Kollar intersections som sker i scenen  
 				pixels[j][i] += castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
@@ -113,34 +114,26 @@ void Camera::castRays(int samplesPerPixel) {
 
 ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse, int depthReflective) {
 
-	ColorRGB color{}; // Default color is black
+	ColorRGB color { 0.0f, 0.0f, 0.0f };
 
 	if (depthDiffuse <= 0 || depthReflective <= 0) {
 		return color;
 	}
 
-	const float EPSILON = 1e-4f;
+	hitResult hit = closestIntersect(ray, geometries);
 
-	IntersectionResult result = closestIntersect(ray, geometries);
-
-	float t = result.t;
-	int index = result.index;
-
-	if (t > EPSILON && t < FLT_MAX) {
-		glm::vec3 hitPoint = ray.at(t);
-
-		glm::vec3 hitPointNormal = geometries[index]->getNormal(hitPoint);
-		MaterialType materialType = geometries[index]->getMaterial().type;
+	if (hit.t > EPSILON && hit.t < FLT_MAX) {
+		glm::vec3 hitPoint = ray.at(hit.t);
 		
-		if (materialType == REFLECTIVE) {
-			glm::vec3 reflectDir = glm::reflect(ray.getDirection(), hitPointNormal);
+		if (geometries[hit.index]->getMaterial().type == REFLECTIVE) {
+			glm::vec3 reflectDir = glm::reflect(ray.getDirection(), geometries[hit.index]->getNormal(hitPoint));
 			Ray reflectedRay(hitPoint, reflectDir);
 
 			color = castRay(reflectedRay, depthDiffuse, depthReflective - 1);
 		}
 		else { // DIFFUSE
-			ColorRGB direct = directLight(hitPoint, hitPointNormal, index);
-			ColorRGB indirect = indirectLight(depthDiffuse, depthReflective, hitPoint, hitPointNormal);
+			ColorRGB direct = directLight(hitPoint, geometries[hit.index]->getNormal(hitPoint), hit.index);
+			ColorRGB indirect = indirectLight(depthDiffuse, depthReflective, hitPoint, geometries[hit.index]->getNormal(hitPoint));
 			
 			color = direct + (indirect * 0.4f);
 		}
@@ -185,8 +178,6 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
 }
 
 glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
-
-	const float PI = 3.14159265359f;
 
 	float yi = static_cast<float>(rand()) / RAND_MAX; // random value [0,1]
 	float phi = 2.0f * PI * yi; // azimuth [0, 2PI]
@@ -239,7 +230,7 @@ glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir, cons
 	return worldDir;
 }
 
-IntersectionResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries) {
+hitResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries) {
 	const float EPSILON = 1e-4f;
 
 	float closestT = FLT_MAX;
