@@ -39,9 +39,7 @@ int main() {
 	return 0;
 }
 
-// @TODO - kontrollera ny direction för randomRays
 // @TODO - memoryleaks! 
 // @TODO - fixa rendering till glas
-// @TODO - fixa så att man ser ljuskällan (fixa senare)
-// @TODO - fixa antialiasing
 // @TODO - tänk på att ytan vända fel kastas bort i traingle::intersect (hur glas ska hantera det) om bool insideObj = true, ignorera? 
+// @TODO - fixa så att man ser ljuskällan (fixa senare)

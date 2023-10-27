@@ -107,7 +107,7 @@ void Camera::castRays() {
 
 ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse, int depthReflective) {
 
-	ColorRGB color{};
+	ColorRGB color{}; // Default color is black
 
 	if (depthDiffuse <= 0 || depthReflective <= 0) {
 		return color;
@@ -183,11 +183,10 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
 	const float PI = 3.14159265359f;
 
 	float yi = static_cast<float>(rand()) / RAND_MAX; // random value [0,1]
-	float phi = 2.0f * PI * yi; // azimuth
-	float omega = acos(sqrt(1.0f - yi)); // inclination
+	float phi = 2.0f * PI * yi; // azimuth [0, 2PI]
+	float omega = acos(sqrt(1.0f - yi)); // inclination [0, PI/2]
 
 	glm::vec3 localDir = HemisphericalToLocalCartesian(phi, omega);
-
 	glm::vec3 worldDir = LocalCartesianToWorldCartesian(localDir, hitPointNormal);
 
 	// Make sure the direction is not pointing back into the surface
@@ -195,8 +194,7 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
 		worldDir = -worldDir;
 	}
 
-	worldDir = glm::normalize(worldDir);
-	return worldDir;
+	return glm::normalize(worldDir);
 }
 
 void Camera::progressBar(float percent) {
