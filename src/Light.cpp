@@ -48,7 +48,7 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
         float cosOmegaX = glm::dot(hitPointNormal, directionNormalized);
         float cosOmegaY = glm::dot(-normal, directionNormalized);
 
-        irradiance += (cosOmegaX + cosOmegaY) / (distanceToLight * distanceToLight);
+        irradiance += std::max(0.0f, (cosOmegaX * cosOmegaY) / (distanceToLight * distanceToLight));
     }
 
     irradiance = (irradiance * area * Le) / (N * PI);
