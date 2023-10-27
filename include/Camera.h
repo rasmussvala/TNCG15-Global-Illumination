@@ -23,7 +23,7 @@ public:
 	Camera(int w, int h);
 
 	void saveImage(std::string filename);
-	void castRays();
+	void castRays(int samplesPerPixel);
 	ColorRGB castRay(const Ray& ray, int depthDiffuse, int depthReflective);
 	ColorRGB directLight(const glm::vec3& hitPoint, const glm::vec3& hitPointNormal, int index);
 	ColorRGB indirectLight(int depthDiffuse, int depthReflective, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal);

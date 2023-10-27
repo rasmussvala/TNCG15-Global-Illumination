@@ -85,7 +85,7 @@ void Camera::saveImage(std::string filename) {
 }
 
 
-void Camera::castRays() {
+void Camera::castRays(int samplesPerPixel) {
 
 	float progress = 0.0f;
 
@@ -93,10 +93,16 @@ void Camera::castRays() {
 	for (int j = 0; j < height; ++j) {
 		for (int i = 0; i < width; ++i) {
 
-			Ray ray(location, rayDirectionFromCamera(i, j));
+			for (int k = 0; k < samplesPerPixel; k++) {
+				// Skapar en ray från kamerans position till pixlens position
+				Ray ray(location, rayDirectionFromCamera(i, j));
 
-			// Kollar intersections som sker i scenen  
-			pixels[j][i] = castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
+				// Kollar intersections som sker i scenen  
+				pixels[j][i] += castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
+			}
+
+			// Delar på antalet samplesPerPixel
+			pixels[j][i] = pixels[j][i] / samplesPerPixel;
 
 			// Visar progress under rendrering
 			progressBar(progress / (height * width));

@@ -13,7 +13,7 @@ public:
     void addLight(Light* light);
     void addGeometry(Geometry* geometry);
     void addCube(Cube* cube);
-    void render(int depthDiffuse, int depthReflective, int nrOfShadowRays, int nrOfIndirectRays);
+    void render(int depthDiffuse, int depthReflective, int nrOfShadowRays, int nrOfIndirectRays, int samplesPerPixel);
 
 private:
     Camera camera;

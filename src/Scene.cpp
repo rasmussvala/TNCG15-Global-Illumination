@@ -80,7 +80,7 @@ void Scene::addCube(Cube* cube) {
 	}
 }
 
-void Scene::render(int depthDiffuse, int depthReflective, int nrOfShadowRays, int nrOfIndirectRays) {
+void Scene::render(int depthDiffuse, int depthReflective, int nrOfShadowRays, int nrOfIndirectRays, int samplesPerPixel) {
 
 	// Adds all geometry to the camera
 	camera.setGeometries(geometries);
@@ -90,6 +90,6 @@ void Scene::render(int depthDiffuse, int depthReflective, int nrOfShadowRays, in
 	camera.setIndirectRays(nrOfIndirectRays);
 	camera.setShadowRays(nrOfShadowRays);
 
-	camera.castRays();
+	camera.castRays(samplesPerPixel);
 	camera.saveImage("../images/test.ppm");
 }

@@ -33,8 +33,9 @@ int main() {
 	int depthReflective = 5; // > 1
 	int nrOfShadowRays = 5; // > 1
 	int nrOfIndirectRays = 20;
+	int samplesPerPixel = 1;
 
-	myScene.render(depthDiffuse, depthReflective, nrOfShadowRays, nrOfIndirectRays);
+	myScene.render(depthDiffuse, depthReflective, nrOfShadowRays, nrOfIndirectRays, samplesPerPixel);
 
 	return 0;
 }
