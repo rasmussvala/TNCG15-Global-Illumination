@@ -135,7 +135,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse, int depthReflective) 
 			ColorRGB direct = directLight(hitPoint, geometries[hit.index]->getNormal(hitPoint), hit.index);
 			ColorRGB indirect = indirectLight(depthDiffuse, depthReflective, hitPoint, geometries[hit.index]->getNormal(hitPoint));
 			
-			color = direct + (indirect * 0.4f);
+			color = direct + (indirect * 0.1f);
 		}
 	}
 
@@ -182,6 +182,9 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
 	float yi = static_cast<float>(rand()) / RAND_MAX; // random value [0,1]
 	float phi = 2.0f * PI * yi; // azimuth [0, 2PI]
 	float omega = acos(sqrt(1.0f - yi)); // inclination [0, PI/2]
+
+	/*float phi = static_cast<float>(rand()) / RAND_MAX * 2.0f * PI;
+	float omega = static_cast<float>(rand()) / RAND_MAX * PI / 2.0f;*/
 
 	glm::vec3 localDir = HemisphericalToLocalCartesian(phi, omega);
 	glm::vec3 worldDir = LocalCartesianToWorldCartesian(localDir, hitPointNormal);

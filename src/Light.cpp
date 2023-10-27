@@ -32,6 +32,8 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
     float S;
     float T;
     float distanceToLight;
+    float cosOmegaX;
+    float cosOmegaY;
 
     Ray rayToLight{};
 
@@ -52,8 +54,8 @@ float Light::calculateLight(const std::vector<Geometry*>& geometries, const glm:
             continue;
         }
 
-        float cosOmegaX = glm::dot(hitPointNormal, glm::normalize(direction));
-        float cosOmegaY = glm::dot(-normal, glm::normalize(direction));
+        cosOmegaX = glm::dot(hitPointNormal, glm::normalize(direction));
+        cosOmegaY = glm::dot(-normal, glm::normalize(direction));
 
         irradiance += std::max(0.0f, (cosOmegaX * cosOmegaY) / (distanceToLight * distanceToLight));
     }

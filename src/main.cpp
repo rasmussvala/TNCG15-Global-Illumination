@@ -29,11 +29,11 @@ int main() {
 
 	myScene.addLight(&light1);
 
-	int depthDiffuse = 2; // > 1
-	int depthReflective = 5; // > 1
-	int nrOfShadowRays = 5; // > 1
+	int depthDiffuse = 2; 
+	int depthReflective = 5; 
+	int nrOfShadowRays = 5; 
 	int nrOfIndirectRays = 3;
-	int samplesPerPixel = 2;
+	int samplesPerPixel = 3;
 
 	myScene.render(depthDiffuse, depthReflective, nrOfShadowRays, nrOfIndirectRays, samplesPerPixel);
 
@@ -41,6 +41,7 @@ int main() {
 }
 
 // @TODO - memoryleaks! 
+// @TODO - Kolla hur färger blandas - direktljus och indirektljus
 // @TODO - fixa rendering till glas
 // @TODO - tänk på att ytan vända fel kastas bort i traingle::intersect (hur glas ska hantera det) om bool insideObj = true, ignorera? 
 // @TODO - fixa så att man ser ljuskällan (fixa senare)
