@@ -5,11 +5,13 @@
 
 Scene::Scene(int width, int height) : camera(width, height) {
 	// Färger
-	ColorRGB white = { 0.4, 0.4, 0.4 };
-	ColorRGB red = { 0.4, 0.0, 0.0 };
-	ColorRGB green = { 0.0, 0.4, 0.0 };
+	ColorRGB white( 0.4, 0.4, 0.4 );
+	ColorRGB blue( 0.0,0.0,0.4 );
+	ColorRGB red( 0.4, 0.0, 0.0 );
+	ColorRGB green( 0.0, 0.4, 0.0 );
 
 	Material materialWhite(DIFFUSE, white);
+	Material materialBlue(DIFFUSE, blue);
 	Material materialRed(DIFFUSE, red);
 	Material materialGreen(DIFFUSE, green);
 	Material mirror(REFLECTIVE);
@@ -32,22 +34,22 @@ Scene::Scene(int width, int height) : camera(width, height) {
 	glm::vec3 p11(-3.0f, 0.0f, 5.0f);
 
 	// Glov
-	Triangle* triangle_floorB = new Triangle{ p0, p5, p4, materialWhite };
-	Triangle* triangle_floorF = new Triangle{ p1, p3, p2, materialWhite };
-	Rectangle* rectangle_floor = new Rectangle{ p0, p4, p3, p1, materialWhite };
+	Triangle* triangle_floorB = new Triangle( p0, p5, p4, materialWhite );
+	Triangle* triangle_floorF = new Triangle( p1, p3, p2, materialWhite );
+	Rectangle* rectangle_floor = new Rectangle( p0, p4, p3, p1, materialWhite );
 
 	// Väggar
-	Rectangle* rectangle_wallH = new Rectangle{ p3, p4, p10, p9, materialRed };
-	Rectangle* rectangle_wallHB = new Rectangle{ p4, p5, p11, p10, materialWhite };
-	Rectangle* rectangle_wallHF = new Rectangle{ p2, p3, p9, p8, mirror };
-	Rectangle* rectangle_wallV = new Rectangle{ p0, p1, p7, p6, materialGreen };
-	Rectangle* rectangle_wallVB = new Rectangle{ p0, p6, p11, p5, materialWhite };
-	Rectangle* rectangle_wallVF = new Rectangle{ p1, p2, p8, p7, materialWhite };
+	Rectangle* rectangle_wallH = new Rectangle( p3, p4, p10, p9, materialRed );
+	Rectangle* rectangle_wallHB = new Rectangle( p4, p5, p11, p10, materialWhite );
+	Rectangle* rectangle_wallHF = new Rectangle( p2, p3, p9, p8, mirror );
+	Rectangle* rectangle_wallV = new Rectangle( p0, p1, p7, p6, materialGreen );
+	Rectangle* rectangle_wallVB = new Rectangle( p0, p6, p11, p5, materialWhite );
+	Rectangle* rectangle_wallVF = new Rectangle( p1, p2, p8, p7, materialWhite );
 
 	// Tak
-	Triangle* triangle_ceilingB = new Triangle{ p6, p10, p11, materialWhite };
-	Triangle* triangle_ceilingF = new Triangle{ p7, p8, p9, materialWhite };
-	Rectangle* rectangle_ceiling = new Rectangle{ p6, p7, p9, p10, materialWhite };
+	Triangle* triangle_ceilingB = new Triangle( p6, p10, p11, materialBlue );
+	Triangle* triangle_ceilingF = new Triangle( p7, p8, p9, materialBlue );
+	Rectangle* rectangle_ceiling = new Rectangle( p6, p7, p9, p10, materialBlue );
 
 	// Lägger till alla polygoner i scenen
 	addGeometry(triangle_floorB);

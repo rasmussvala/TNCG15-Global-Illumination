@@ -135,7 +135,7 @@ ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse, int depthReflective) 
 			ColorRGB direct = directLight(hitPoint, geometries[hit.index]->getNormal(hitPoint), hit.index);
 			ColorRGB indirect = indirectLight(depthDiffuse, depthReflective, hitPoint, geometries[hit.index]->getNormal(hitPoint));
 			
-			color = direct + (indirect * 0.1f);
+			color += direct + (indirect * geometries[hit.index]->getMaterial().color);
 		}
 	}
 
@@ -157,9 +157,10 @@ ColorRGB Camera::directLight(const glm::vec3& hitPoint, const glm::vec3& hitPoin
 
 ColorRGB Camera::indirectLight(int depthDiffuse, int depthReflective, const glm::vec3& hitPoint, const glm::vec3& hitPointNormal) {
 	ColorRGB indirect;
+	Ray randomRay{};
 
 	for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
-		Ray randomRay(hitPoint, randomRayDirection(hitPointNormal));
+		randomRay.setRay(hitPoint, randomRayDirection(hitPointNormal));
 		indirect += castRay(randomRay, depthDiffuse - 1, depthReflective);
 	}
 
@@ -228,9 +229,8 @@ glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir, cons
 	glm::vec3 b = glm::cross(c, a);
 
 	glm::mat3 transformationMatrix(a, b, c);
-	glm::vec3 worldDir = transformationMatrix * localDir;
 
-	return worldDir;
+	return transformationMatrix * localDir;
 }
 
 hitResult closestIntersect(const Ray& ray, const std::vector<Geometry*> geometries) {
