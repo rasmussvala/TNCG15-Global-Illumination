@@ -21,10 +21,10 @@ int main() {
 	Sphere sphere1{center, radius, materialBlue};
 	myScene.addGeometry(&sphere1);
 
-	Light light1{ glm::vec3{7.0f, 1.0f, 4.9999f},
-		glm::vec3{7.0f, -1.0f, 4.99999f},
-		glm::vec3{5.0f, -1.0f, 4.9999f},
-		glm::vec3{5.0f, 1.0f, 4.9999f}
+	Light light1{ glm::vec3{5.0f, 1.0f, 4.9999f},
+		glm::vec3{5.0f, -1.0f, 4.99999f},
+		glm::vec3{3.0f, -1.0f, 4.9999f},
+		glm::vec3{3.0f, 1.0f, 4.9999f}
 	};
 
 	myScene.addLight(&light1);
@@ -33,8 +33,8 @@ int main() {
 	int depthDiffuse = 2; // bestämmer antalet studsar på diffusa objekt, rekommendrar 2 och sen ha fler indirekt rays  
 	int depthReflective = 5; // bestämmer antalet studsar på speglar, rekommenderar 5 för då får man spegel i spegel i spegel osv effekt 
 	int nrOfShadowRays = 10; // bestämmer antalet shadowrays som ska skjutas till resp ljuskällor i scenen, mark rekommenderar 100 men jag skulle säga max 10 för vårt 
-	int nrOfIndirectRays = 2; // bestämmer antalet rays som ska skapas när det träffar ett diffust obj  
-	int samplesPerPixel = 2; // bestämmer antalet rays som skjuts ut från en och samma pixel, därefter görs ett medelvärde, krävande!
+	int nrOfIndirectRays = 1; // bestämmer antalet rays som ska skapas när det träffar ett diffust obj  
+	int samplesPerPixel = 4; // bestämmer antalet rays som skjuts ut från en och samma pixel, därefter görs ett medelvärde, krävande!
 
 	myScene.render(depthDiffuse, depthReflective, nrOfShadowRays, nrOfIndirectRays, samplesPerPixel);
 
