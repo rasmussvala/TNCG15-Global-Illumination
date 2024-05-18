@@ -1,9 +1,12 @@
 # RayTracing-TNGC15
 
-För att kunna köra detta repository behövs följande:
-1. Clona till lokal dator
-2. Skapa en build-mapp i projektet (i mappen RayTracing-TNGC15)
-3. Använd CMake för att skapa projektet.
-   3.1 Välj RayTracing-TNGC15-mappen som source
-   3.2 Välj build-mappen som skapades i steg 2.
-   3.3 Generera 
+**To run this repository, the following steps are required:**
+1. Clone to local machine.
+2. Create a build directory in the project.
+3. Use CMake to generate the project.
+4. Select the RayTracing-TNGC15 folder as the source.
+5. Choose the build directory created in step 2.
+6. Generate.
+
+![image](https://github.com/rasmussvala/TNGC15-Global-Illumination/assets/91534734/55274c7c-c49f-4176-8e36-110b211eec34)
+
