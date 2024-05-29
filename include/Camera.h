@@ -32,7 +32,7 @@ class Camera {
   ColorRGB indirectLight(int depthDiffuse, int depthReflective,
                          const glm::vec3& hitPoint,
                          const glm::vec3& hitPointNormal);
-  glm::vec3 rayDirectionFromCamera(int i, int j);
+  glm::vec3 rayDirectionFromCamera(int i, int j) const;
   glm::vec3 randomRayDirection(const glm::vec3& hitPointNormal);
   void progressBar(float percent);
 

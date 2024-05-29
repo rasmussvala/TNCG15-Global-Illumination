@@ -23,7 +23,7 @@ Rectangle Light::getGeometry() { return rectangle; }
 float Light::calculateLight(const std::vector<Geometry*>& geometries,
                             const glm::vec3& hitPoint,
                             const glm::vec3& hitPointNormal,
-                            int MAX_SHADOWRAYS) {
+                            int MAX_SHADOWRAYS) const {
   const float EPSILON = 1e-4f;
   float irradiance = 0.0f;
   int N = MAX_SHADOWRAYS;  // antal samples

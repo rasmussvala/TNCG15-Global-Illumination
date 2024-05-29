@@ -170,7 +170,7 @@ ColorRGB Camera::indirectLight(int depthDiffuse, int depthReflective,
   return indirect;
 }
 
-glm::vec3 Camera::rayDirectionFromCamera(int i, int j) {
+glm::vec3 Camera::rayDirectionFromCamera(int i, int j) const {
   // Beräknar u och v (positionen i world coordinates)
   // u och v är mellan -1 och 1
   float u = 1.0f - (2.0f * i) / width;

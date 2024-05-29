@@ -19,7 +19,7 @@ class Light {
   float calculateLight(const std::vector<Geometry*>& geometries,
                        const glm::vec3& intersectionPoint,
                        const glm::vec3& intersectionPointNormal,
-                       int MAX_SHADOWRAYS);
+                       int MAX_SHADOWRAYS) const;
 
  private:
   glm::vec3 v1, v2, v3, v4;

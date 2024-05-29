@@ -6,51 +6,55 @@
 #include "../include/Sphere.h"
 
 int main() {
-  Scene myScene(300, 300);  // högsta som fungerar på min dator har varit
-                            // 400x400 med låga settings
+  // 400x400 pixels is max on my pc with low settings
+  Scene myScene(100, 100);
 
   // Default cube adds a blue cube to right hand side
   Cube cube1{};
   myScene.addCube(&cube1);
 
-  // Settings for Sphere
+  // Create a sphere
   glm::vec3 center{8.0f, 2.5f, -3.5f};
   float radius = 1.5f;
-  // ColorRGB blue{ 0.0f, 0.0f, 0.4f };
-  Material materialBlue{REFLECTIVE};
+  Material material{REFLECTIVE};
+  Sphere sphere{center, radius, material};
+  myScene.addGeometry(&sphere);
 
-  Sphere sphere1{center, radius, materialBlue};
-  myScene.addGeometry(&sphere1);
+  // Create a rectangular light with a position just below the roof
+  Light light{glm::vec3{5.0f, 1.0f, 4.9999f}, glm::vec3{5.0f, -1.0f, 4.99999f},
+              glm::vec3{3.0f, -1.0f, 4.9999f}, glm::vec3{3.0f, 1.0f, 4.9999f}};
 
-  Light light1{glm::vec3{5.0f, 1.0f, 4.9999f}, glm::vec3{5.0f, -1.0f, 4.99999f},
-               glm::vec3{3.0f, -1.0f, 4.9999f}, glm::vec3{3.0f, 1.0f, 4.9999f}};
+  myScene.addLight(&light);
 
-  myScene.addLight(&light1);
+  // ----- Parameters to change -----
 
-  // Parametrar att ändra
-  int depthDiffuse = 2;  // bestämmer antalet studsar på diffusa objekt,
-                         // rekommendrar 2 och sen ha fler indirekt rays
-  int depthReflective =
-      5;  // bestämmer antalet studsar på speglar, rekommenderar 5 för då får
-          // man spegel i spegel i spegel osv effekt
-  int nrOfShadowRays = 10;  // bestämmer antalet shadowrays som ska skjutas till
-                            // resp ljuskällor i scenen, mark rekommenderar 100
-                            // men jag skulle säga max 10 för vårt
-  int nrOfIndirectRays = 1;  // bestämmer antalet rays som ska skapas när det
-                             // träffar ett diffust obj
-  int samplesPerPixel =
-      4;  // bestämmer antalet rays som skjuts ut från en och samma pixel,
-          // därefter görs ett medelvärde, krävande!
+  // Determines the number of bounces on diffuse objects, recommends 2
+  int diffuseBounceCount = 2;
 
-  myScene.render(depthDiffuse, depthReflective, nrOfShadowRays,
-                 nrOfIndirectRays, samplesPerPixel);
+  // Determines the number of bounces on mirrors, recommends 5 for
+  // mirror-in-mirror effect
+  int mirrorBounceCount = 5;
+
+  // Determines the number of shadow rays to shoot at each light source in the
+  // scene. Mark recommends 100, but I suggest a max of 10
+  int shadowRayCount = 10;
+
+  // Determines the number of rays to create when hitting a diffuse object
+  int indirectRayCount = 1;
+
+  // Determines the number of rays shot from a single pixel, then averages them
+  // Demanding!
+  int raysPerPixel = 1;
+
+  myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
+                 indirectRayCount, raysPerPixel);
 
   return 0;
 }
 
-// @TODO - memoryleaks!
-// @TODO - Kolla hur färger blandas - direktljus och indirektljus
-// @TODO - fixa rendering till glas
-// @TODO - tänk på att ytan vända fel kastas bort i traingle::intersect (hur
+// TODO: memoryleaks!
+// TODO: Kolla hur färger blandas - direktljus och indirektljus
+// TODO: fixa rendering till glas
+// TODO: tänk på att ytan vända fel kastas bort i traingle::intersect (hur
 // glas ska hantera det) om bool insideObj = true, ignorera?
-// @TODO - fixa så att man ser ljuskällan (fixa senare)
+// TODO: fixa så att man ser ljuskällan (fixa senare)
