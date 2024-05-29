@@ -23,7 +23,6 @@ int main() {
   // Create a rectangular light with a position just below the roof
   Light light{glm::vec3{5.0f, 1.0f, 4.9999f}, glm::vec3{5.0f, -1.0f, 4.99999f},
               glm::vec3{3.0f, -1.0f, 4.9999f}, glm::vec3{3.0f, 1.0f, 4.9999f}};
-
   myScene.addLight(&light);
 
   // ----- Parameters to change -----

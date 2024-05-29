@@ -23,7 +23,10 @@ class Camera {
  public:
   Camera(int w, int h);
 
+  // Save the image as a .ppm file to the specified
   void saveImage(std::string filename);
+
+  // Loop through all the pixels created for the cameras viewports and cast rays
   void castRays(int samplesPerPixel);
 
   // Cast a ray and return the color of that ray
@@ -47,31 +50,15 @@ class Camera {
   // Print the progress of the render in the console
   void progressBar(float percent);
 
-  glm::vec3 HemisphericalToLocalCartesian(float phi, float omega);
-  glm::vec3 LocalCartesianToWorldCartesian(const glm::vec3& localDir,
-                                           const glm::vec3& normal);
+  // Convert from hemispherical coordinate to world coordinate
+  glm::vec3 HemisphericalToWorld(float phi, float omega,
+                                 const glm::vec3& normal);
 
-  void setGeometries(const std::vector<Geometry*>& newGeometries) {
-    geometries = newGeometries;
-  }
-
-  void setLights(const std::vector<Light*>& newLights) { lights = newLights; }
-
-  void setDepthDiffuse(const int newDepthDiffuse) {
-    MAX_DEPTH_DIFFUSE = newDepthDiffuse;
-  }
-
-  void setDepthReflective(const int newDepthReflective) {
-    MAX_DEPTH_REFLECTIVE = newDepthReflective;
-  }
-
-  void setShadowRays(const int newShadowRays) {
-    MAX_SHADOWRAYS = newShadowRays;
-  }
-
-  void setIndirectRays(const int newIndirectRays) {
-    MAX_INDIRECTRAYS = newIndirectRays;
-  }
+  // Adds geometry, light, and configures render settings
+  void configure(const std::vector<Geometry*>& newGeometries,
+                 const std::vector<Light*>& newLights, int newDepthDiffuse,
+                 int newDepthReflective, int newShadowRays,
+                 int newIndirectRays);
 
  private:
   int width;

@@ -3,12 +3,13 @@
 #include "../include/Camera.h"
 
 Camera::Camera(int w, int h) : width(w), height(h) {
+  // Constants will be updated in Scene::render
   MAX_DEPTH_DIFFUSE = 0;
   MAX_DEPTH_REFLECTIVE = 0;
   MAX_SHADOWRAYS = 0;
   MAX_INDIRECTRAYS = 0;
 
-  // Allokera minne för pixels
+  // Allocate memory for all the pixels
   pixels.resize(height);
   for (int i = 0; i < height; ++i) {
     pixels[i].resize(width);
@@ -138,20 +139,14 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) const {
 }
 
 glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
-  float yi = static_cast<float>(rand()) / RAND_MAX;  // random value [0,1]
-  float phi = 2.0f * PI * yi;                        // azimuth [0, 2PI]
-  float omega = acos(sqrt(1.0f - yi));               // inclination [0, PI/2]
+  float random = (float)rand() / RAND_MAX;  // random value [0,1]
+  float phi = 2.0f * PI * random;           // azimuth [0, 2PI]
+  float omega = acos(sqrt(1.0f - random));  // inclination [0, PI/2]
 
-  /*float phi = static_cast<float>(rand()) / RAND_MAX * 2.0f * PI;
-  float omega = static_cast<float>(rand()) / RAND_MAX * PI / 2.0f;*/
-
-  glm::vec3 localDir = HemisphericalToLocalCartesian(phi, omega);
-  glm::vec3 worldDir = LocalCartesianToWorldCartesian(localDir, hitPointNormal);
+  glm::vec3 worldDir = HemisphericalToWorld(phi, omega, hitPointNormal);
 
   // Make sure the direction is not pointing back into the surface
-  if (glm::dot(worldDir, hitPointNormal) < 0.0f) {
-    worldDir = -worldDir;
-  }
+  if (glm::dot(worldDir, hitPointNormal) < 0.0f) worldDir = -worldDir;
 
   return glm::normalize(worldDir);
 }
@@ -172,13 +167,10 @@ void Camera::progressBar(float percent) {
   std::cout.flush();
 }
 
-glm::vec3 Camera::HemisphericalToLocalCartesian(float phi, float omega) {
-  float sinOmega = sin(omega);
-  return glm::vec3(cos(phi) * sinOmega, sin(phi) * sinOmega, cos(omega));
-}
+glm::vec3 Camera::HemisphericalToWorld(float phi, float omega,
+                                       const glm::vec3& normal) {
+  glm::vec3 localDir(cos(phi) * sin(omega), sin(phi) * sin(omega), cos(omega));
 
-glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir,
-                                                 const glm::vec3& normal) {
   glm::vec3 c = normal;
   glm::vec3 a = glm::normalize(-localDir + glm::dot(normal, localDir) * normal);
   glm::vec3 b = glm::cross(c, a);
@@ -186,6 +178,18 @@ glm::vec3 Camera::LocalCartesianToWorldCartesian(const glm::vec3& localDir,
   glm::mat3 transformationMatrix(a, b, c);
 
   return transformationMatrix * localDir;
+}
+
+void Camera::configure(const std::vector<Geometry*>& newGeometries,
+                       const std::vector<Light*>& newLights,
+                       int newDepthDiffuse, int newDepthReflective,
+                       int newShadowRays, int newIndirectRays) {
+  geometries = newGeometries;
+  lights = newLights;
+  MAX_DEPTH_DIFFUSE = newDepthDiffuse;
+  MAX_DEPTH_REFLECTIVE = newDepthReflective;
+  MAX_SHADOWRAYS = newShadowRays;
+  MAX_INDIRECTRAYS = newIndirectRays;
 }
 
 hitResult closestIntersect(const Ray& ray,

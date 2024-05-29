@@ -15,7 +15,7 @@ Scene::Scene(int width, int height) : camera(width, height) {
   Material materialRed(DIFFUSE, red);
   Material materialGreen(DIFFUSE, green);
   Material mirror(REFLECTIVE);
-  Material glas(TRANSPARENT, 1.5);  // glas with refractiveIndex 1.5
+  // Material glas(TRANSPARENT, 1.5);  // glas with refractiveIndex 1.5
 
   // Golv
   glm::vec3 p0(0.0f, 6.0f, -5.0f);
@@ -80,13 +80,9 @@ void Scene::addCube(Cube* cube) {
 void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
                    int shadowRayCount, int indirectRayCount, int raysPerPixel,
                    std::string outputPath) {
-  // Adds all geometry to the camera
-  camera.setGeometries(geometries);
-  camera.setLights(lights);
-  camera.setDepthDiffuse(diffuseBounceCount);
-  camera.setDepthReflective(mirrorBounceCount);
-  camera.setIndirectRays(indirectRayCount);
-  camera.setShadowRays(shadowRayCount);
+  // Adds geometry, light, and configures render settings
+  camera.configure(geometries, lights, diffuseBounceCount, mirrorBounceCount,
+                   shadowRayCount, indirectRayCount);
 
   camera.castRays(raysPerPixel);
   camera.saveImage(outputPath + "/output.ppm");
