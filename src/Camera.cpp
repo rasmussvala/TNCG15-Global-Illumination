@@ -50,16 +50,19 @@ void Camera::castRays(int raysPerPixel) {
     for (int i = 0; i < width; ++i) {
       glm::vec3 colorSum(0.0f);
 
+      // Calculate ray direction once per pixel
+      glm::vec3 direction = rayDirectionFromCamera(i, j);
+
       for (int k = 0; k < raysPerPixel; ++k) {
-        // Create a ray from the camera's position to the pixel's position
-        ray.setRay(location, rayDirectionFromCamera(i, j));
+        // Reuse ray object
+        ray.setRay(location, direction);
 
         // Check intersections that occur in the scene
         colorSum += castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
       }
 
       // Average the color over the number of rays per pixel
-      pixels[j][i] = colorSum / (float)raysPerPixel;
+      pixels[j][i] = colorSum / static_cast<float>(raysPerPixel);
 
       // Show progress during rendering
       progressBar(progress / (height * width));
@@ -110,7 +113,6 @@ glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
 glm::vec3 Camera::directLight(const glm::vec3& hitPoint,
                               const glm::vec3& hitPointNormal, int index) {
   glm::vec3 colorOfObject = geometries[index]->getMaterial().color;
-
   float irradiance = 0.0f;
 
   for (Light* light : lights) {
@@ -124,15 +126,15 @@ glm::vec3 Camera::directLight(const glm::vec3& hitPoint,
 glm::vec3 Camera::indirectLight(int depthDiffuse, int depthReflective,
                                 const glm::vec3& hitPoint,
                                 const glm::vec3& hitPointNormal) {
-  glm::vec3 indirect{};
+  glm::vec3 indirect{0.0f};
   Ray randomRay{};
 
-  for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
+  for (int i = 0; i < MAX_INDIRECTRAYS; ++i) {
     randomRay.setRay(hitPoint, randomRayDirection(hitPointNormal));
     indirect += castRay(randomRay, depthDiffuse - 1, depthReflective);
   }
 
-  indirect = indirect / (float)MAX_INDIRECTRAYS;
+  indirect /= static_cast<float>(MAX_INDIRECTRAYS);
   return indirect;
 }
 
