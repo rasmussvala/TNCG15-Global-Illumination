@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 
-#include "ColorRGB.h"
 #include "Cube.h"
 #include "Light.h"
 #include "Polygon.h"
@@ -26,14 +25,26 @@ class Camera {
 
   void saveImage(std::string filename);
   void castRays(int samplesPerPixel);
-  ColorRGB castRay(const Ray& ray, int depthDiffuse, int depthReflective);
-  ColorRGB directLight(const glm::vec3& hitPoint,
-                       const glm::vec3& hitPointNormal, int index);
-  ColorRGB indirectLight(int depthDiffuse, int depthReflective,
-                         const glm::vec3& hitPoint,
-                         const glm::vec3& hitPointNormal);
+
+  // Cast a ray and return the color of that ray
+  glm::vec3 castRay(const Ray& ray, int depthDiffuse, int depthReflective);
+
+  // Return the color of the direct light
+  glm::vec3 directLight(const glm::vec3& hitPoint,
+                        const glm::vec3& hitPointNormal, int index);
+
+  // Return the color of the indirect light
+  glm::vec3 indirectLight(int depthDiffuse, int depthReflective,
+                          const glm::vec3& hitPoint,
+                          const glm::vec3& hitPointNormal);
+
+  // Calculate the ray direction from the cameras origin to it's viewport
   glm::vec3 rayDirectionFromCamera(int i, int j) const;
+
+  // Calulate a new random ray direction based on the intersection
   glm::vec3 randomRayDirection(const glm::vec3& hitPointNormal);
+
+  // Print the progress of the render in the console
   void progressBar(float percent);
 
   glm::vec3 HemisphericalToLocalCartesian(float phi, float omega);
@@ -75,7 +86,7 @@ class Camera {
   int MAX_SHADOWRAYS;
   int MAX_INDIRECTRAYS;
 
-  std::vector<std::vector<ColorRGB>> pixels;
+  std::vector<std::vector<glm::vec3>> pixels;
 
   const float EPSILON = 1e-4f;
   const float PI = 3.14159265f;

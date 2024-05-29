@@ -1,7 +1,6 @@
 #pragma once
 #include <vector>
 
-#include "ColorRGB.h"
 #include "Geometry.h"
 #include "Polygon.h"
 #include "Ray.h"
@@ -14,7 +13,7 @@ class Cube {
   std::vector<Geometry*> getSurfaces();
 
  private:
-  ColorRGB color;
+  glm::vec3 color;
   Material material;
 
   glm::vec3 p0;

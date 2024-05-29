@@ -15,51 +15,6 @@ Camera::Camera(int w, int h) : width(w), height(h) {
   }
 }
 
-// void Camera::saveImage(std::string filename) {
-//	// CONTRAST STRETCHING
-//	std::ofstream ppmFile(filename); // Opens/creates the file
-//
-//	ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
-//
-//	// Find the maximum pixel value among all channels
-//	float maxRGB = -1.0f;
-//
-//	for (int j = 0; j < height; ++j) {
-//		for (int i = 0; i < width; ++i) {
-//			auto r = pixels[j][i].r;
-//			auto g = pixels[j][i].g;
-//			auto b = pixels[j][i].b;
-//
-//			float maxChannel = (float)std::max({ r, g, b });
-//			maxRGB = (float)std::max(maxRGB, maxChannel);
-//		}
-//	}
-//
-//	// Calculate the stretching factor
-//	float stretchFactor = 255.0f / maxRGB;
-//
-//	// Write the stretched pixel values to the output file
-//	for (int j = 0; j < height; ++j) {
-//		for (int i = 0; i < width; ++i) {
-//			auto r = pixels[j][i].r;
-//			auto g = pixels[j][i].g;
-//			auto b = pixels[j][i].b;
-//
-//			// Convert to 0-255
-//			int ir = static_cast<int>(255.999 * r);
-//			int ig = static_cast<int>(255.999 * g);
-//			int ib = static_cast<int>(255.999 * b);
-//			// Apply contrast stretching using the brightest channel
-//			ir = static_cast<int>(stretchFactor * r);
-//			ig = static_cast<int>(stretchFactor * g);
-//			ib = static_cast<int>(stretchFactor * b);
-//
-//			ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
-//		}
-//	}
-//	ppmFile.close();
-// }
-
 void Camera::saveImage(std::string filename) {
   std::ofstream ppmFile(filename);  // Opens/creates the file
 
@@ -101,7 +56,7 @@ void Camera::castRays(int samplesPerPixel) {
       }
 
       // Delar på antalet samplesPerPixel
-      pixels[j][i] = pixels[j][i] / samplesPerPixel;
+      pixels[j][i] = pixels[j][i] / (float)samplesPerPixel;
 
       // Visar progress under rendrering
       progressBar(progress / (height * width));
@@ -110,9 +65,9 @@ void Camera::castRays(int samplesPerPixel) {
   }
 }
 
-ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse,
-                         int depthReflective) {
-  ColorRGB color{0.0f, 0.0f, 0.0f};
+glm::vec3 Camera::castRay(const Ray& ray, int depthDiffuse,
+                          int depthReflective) {
+  glm::vec3 color{0.0f, 0.0f, 0.0f};
 
   if (depthDiffuse <= 0 || depthReflective <= 0) {
     return color;
@@ -130,9 +85,9 @@ ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse,
 
       color = castRay(reflectedRay, depthDiffuse, depthReflective - 1);
     } else {  // DIFFUSE
-      ColorRGB direct = directLight(
+      glm::vec3 direct = directLight(
           hitPoint, geometries[hit.index]->getNormal(hitPoint), hit.index);
-      ColorRGB indirect =
+      glm::vec3 indirect =
           indirectLight(depthDiffuse, depthReflective, hitPoint,
                         geometries[hit.index]->getNormal(hitPoint));
 
@@ -143,9 +98,9 @@ ColorRGB Camera::castRay(const Ray& ray, int depthDiffuse,
   return color;
 }
 
-ColorRGB Camera::directLight(const glm::vec3& hitPoint,
-                             const glm::vec3& hitPointNormal, int index) {
-  ColorRGB colorOfObject = geometries[index]->getMaterial().color;
+glm::vec3 Camera::directLight(const glm::vec3& hitPoint,
+                              const glm::vec3& hitPointNormal, int index) {
+  glm::vec3 colorOfObject = geometries[index]->getMaterial().color;
 
   float irradiance = 0.0f;
 
@@ -157,10 +112,10 @@ ColorRGB Camera::directLight(const glm::vec3& hitPoint,
   return colorOfObject * irradiance;
 }
 
-ColorRGB Camera::indirectLight(int depthDiffuse, int depthReflective,
-                               const glm::vec3& hitPoint,
-                               const glm::vec3& hitPointNormal) {
-  ColorRGB indirect;
+glm::vec3 Camera::indirectLight(int depthDiffuse, int depthReflective,
+                                const glm::vec3& hitPoint,
+                                const glm::vec3& hitPointNormal) {
+  glm::vec3 indirect{};
   Ray randomRay{};
 
   for (int i = 0; i < MAX_INDIRECTRAYS; i++) {
@@ -168,7 +123,7 @@ ColorRGB Camera::indirectLight(int depthDiffuse, int depthReflective,
     indirect += castRay(randomRay, depthDiffuse - 1, depthReflective);
   }
 
-  indirect = indirect / MAX_INDIRECTRAYS;
+  indirect = indirect / (float)MAX_INDIRECTRAYS;
   return indirect;
 }
 

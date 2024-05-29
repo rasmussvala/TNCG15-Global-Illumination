@@ -1,30 +1,26 @@
 #pragma once
 
-#include "ColorRGB.h"
 #include "Ray.h"
 #include "glm/glm.hpp"
 
-enum MaterialType { REFLECTIVE, TRANSPARENT, DIFFUSE, NO_TYPE };
+enum MaterialType { REFLECTIVE, TRANSPARENT, DIFFUSE };
 
 struct Material {
   MaterialType type;
-  ColorRGB color;
+  glm::vec3 color;
   float refractiveIndex;
-
-  Material()
-      : type(NO_TYPE), color(ColorRGB(0.0, 0.0, 0.0)), refractiveIndex(1.0f) {}
 
   // Constructor for MIRROR
   Material(MaterialType t)
-      : type(t), color(ColorRGB(0.0, 0.0, 0.0)), refractiveIndex(1.0f) {}
+      : type(t), color(glm::vec3(0.0, 0.0, 0.0)), refractiveIndex(1.0f) {}
 
   // Constructor for DIFFUSE
-  Material(MaterialType t, ColorRGB c)
+  Material(MaterialType t, glm::vec3 c)
       : type(t), color(c), refractiveIndex(1.0f) {}
 
   // Constructor for TRANSPARENT
   Material(MaterialType t, float ri)
-      : type(t), color(ColorRGB(0.0, 0.0, 0.0)), refractiveIndex(ri) {}
+      : type(t), color(glm::vec3(0.0, 0.0, 0.0)), refractiveIndex(ri) {}
 };
 
 class Geometry {

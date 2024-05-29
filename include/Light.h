@@ -2,7 +2,6 @@
 
 #include <vector>
 
-#include "ColorRGB.h"
 #include "Cube.h"
 #include "Geometry.h"
 #include "Polygon.h"
@@ -26,7 +25,7 @@ class Light {
   glm::vec3 e1, e2;
   float area;
   glm::vec3 normal;
-  ColorRGB white{1.0f, 1.0f, 1.0f};
+  glm::vec3 white{1.0f, 1.0f, 1.0f};
   Material materialWhite{DIFFUSE, white};
   Rectangle rectangle{v1, v2, v3, v4, materialWhite};
 };

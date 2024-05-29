@@ -1,15 +1,14 @@
 #include "../include/Scene.h"
 
 #include "../include/Camera.h"
-#include "../include/ColorRGB.h"
 #include "../include/Polygon.h"
 
 Scene::Scene(int width, int height) : camera(width, height) {
   // Färger
-  ColorRGB white(0.4, 0.4, 0.4);
-  ColorRGB blue(0.0, 0.0, 0.4);
-  ColorRGB red(0.4, 0.0, 0.0);
-  ColorRGB green(0.0, 0.4, 0.0);
+  glm::vec3 white(0.4, 0.4, 0.4);
+  glm::vec3 blue(0.0, 0.0, 0.4);
+  glm::vec3 red(0.4, 0.0, 0.0);
+  glm::vec3 green(0.0, 0.4, 0.0);
 
   Material materialWhite(DIFFUSE, white);
   Material materialBlue(DIFFUSE, blue);
