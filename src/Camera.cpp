@@ -81,6 +81,8 @@ void Camera::saveImage(std::string filename) {
     }
   }
   ppmFile.close();
+
+  std::cout << "The file has been created at: " + filename + "\n";
 }
 
 void Camera::castRays(int samplesPerPixel) {

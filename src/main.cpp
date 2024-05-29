@@ -47,7 +47,7 @@ int main() {
   int raysPerPixel = 1;
 
   myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
-                 indirectRayCount, raysPerPixel);
+                 indirectRayCount, raysPerPixel, "../images");
 
   return 0;
 }

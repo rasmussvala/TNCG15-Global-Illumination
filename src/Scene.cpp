@@ -78,16 +78,17 @@ void Scene::addCube(Cube* cube) {
   }
 }
 
-void Scene::render(int depthDiffuse, int depthReflective, int nrOfShadowRays,
-                   int nrOfIndirectRays, int samplesPerPixel) {
+void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
+                   int shadowRayCount, int indirectRayCount, int raysPerPixel,
+                   std::string outputPath) {
   // Adds all geometry to the camera
   camera.setGeometries(geometries);
   camera.setLights(lights);
-  camera.setDepthDiffuse(depthDiffuse);
-  camera.setDepthReflective(depthReflective);
-  camera.setIndirectRays(nrOfIndirectRays);
-  camera.setShadowRays(nrOfShadowRays);
+  camera.setDepthDiffuse(diffuseBounceCount);
+  camera.setDepthReflective(mirrorBounceCount);
+  camera.setIndirectRays(indirectRayCount);
+  camera.setShadowRays(shadowRayCount);
 
-  camera.castRays(samplesPerPixel);
-  camera.saveImage("../images/test.ppm");
+  camera.castRays(raysPerPixel);
+  camera.saveImage(outputPath + "/output.ppm");
 }
