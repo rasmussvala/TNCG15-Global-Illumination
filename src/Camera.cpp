@@ -29,9 +29,9 @@ void Camera::saveImage(std::string filename) {
       auto b = pixels[j][i].b;
 
       // Convert to 0-255 and clamp
-      int ir = std::min(static_cast<int>(255.999 * r), 255);
-      int ig = std::min(static_cast<int>(255.999 * g), 255);
-      int ib = std::min(static_cast<int>(255.999 * b), 255);
+      int ir = std::min((int)(255.999 * r), 255);
+      int ig = std::min((int)(255.999 * g), 255);
+      int ib = std::min((int)(255.999 * b), 255);
 
       ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
     }
@@ -41,14 +41,14 @@ void Camera::saveImage(std::string filename) {
   std::cout << "The file has been created at: " + filename + "\n";
 }
 
-void Camera::castRays(int samplesPerPixel) {
+void Camera::castRays(int raysPerPixel) {
   float progress = 0.0f;
   Ray ray{};
 
   // Loopar igenom alla pixlar och ansätter färger
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
-      for (int k = 0; k < samplesPerPixel; k++) {
+      for (int k = 0; k < raysPerPixel; k++) {
         // Skapar en ray från kamerans position till pixlens position
         ray.setRay(location, rayDirectionFromCamera(i, j));
 
@@ -57,7 +57,7 @@ void Camera::castRays(int samplesPerPixel) {
       }
 
       // Delar på antalet samplesPerPixel
-      pixels[j][i] = pixels[j][i] / (float)samplesPerPixel;
+      pixels[j][i] = pixels[j][i] / (float)raysPerPixel;
 
       // Visar progress under rendrering
       progressBar(progress / (height * width));
@@ -66,11 +66,11 @@ void Camera::castRays(int samplesPerPixel) {
   }
 }
 
-glm::vec3 Camera::castRay(const Ray& ray, int depthDiffuse,
-                          int depthReflective) {
+glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
+                          int mirrorBounceCount) {
   glm::vec3 color{0.0f, 0.0f, 0.0f};
 
-  if (depthDiffuse <= 0 || depthReflective <= 0) {
+  if (diffuseBounceCount <= 0 || mirrorBounceCount <= 0) {
     return color;
   }
 
@@ -78,21 +78,25 @@ glm::vec3 Camera::castRay(const Ray& ray, int depthDiffuse,
 
   if (hit.t > EPSILON && hit.t < FLT_MAX) {
     glm::vec3 hitPoint = ray.at(hit.t);
+    Geometry* hitGeometry = geometries[hit.index];
 
-    if (geometries[hit.index]->getMaterial().type == REFLECTIVE) {
-      glm::vec3 reflectDir = glm::reflect(
-          ray.getDirection(), geometries[hit.index]->getNormal(hitPoint));
+    // REFLECTIVE
+    if (hitGeometry->getMaterial().type == REFLECTIVE) {
+      glm::vec3 reflectDir =
+          glm::reflect(ray.getDirection(), hitGeometry->getNormal(hitPoint));
       Ray reflectedRay(hitPoint, reflectDir);
 
-      color = castRay(reflectedRay, depthDiffuse, depthReflective - 1);
-    } else {  // DIFFUSE
-      glm::vec3 direct = directLight(
-          hitPoint, geometries[hit.index]->getNormal(hitPoint), hit.index);
+      color = castRay(reflectedRay, diffuseBounceCount, mirrorBounceCount - 1);
+    }
+    // DIFFUSE
+    else {
+      glm::vec3 direct =
+          directLight(hitPoint, hitGeometry->getNormal(hitPoint), hit.index);
       glm::vec3 indirect =
-          indirectLight(depthDiffuse, depthReflective, hitPoint,
-                        geometries[hit.index]->getNormal(hitPoint));
+          indirectLight(diffuseBounceCount, mirrorBounceCount, hitPoint,
+                        hitGeometry->getNormal(hitPoint));
 
-      color += direct + (indirect * geometries[hit.index]->getMaterial().color);
+      color += direct + (indirect * hitGeometry->getMaterial().color);
     }
   }
 

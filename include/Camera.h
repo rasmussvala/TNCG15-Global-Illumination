@@ -12,8 +12,8 @@
 #include "glm/glm.hpp"
 
 struct hitResult {
-  float t;
-  int index;
+  float t;    // At which length (t) we get a hit
+  int index;  // Index of the closest intersection with all geometries
 };
 
 hitResult closestIntersect(const Ray& ray,
