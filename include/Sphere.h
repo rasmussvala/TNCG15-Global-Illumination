@@ -5,7 +5,6 @@
 class Sphere : public Geometry {
  public:
   Sphere(const glm::vec3& center, float radius, const Material& material);
-  ~Sphere() {}
 
   float intersect(const Ray& ray) const override;
   glm::vec3 getNormal(const glm::vec3& point) const override;

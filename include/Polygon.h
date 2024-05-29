@@ -8,7 +8,6 @@ class Triangle : public Geometry {
  public:
   Triangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3,
            const Material& material);
-  ~Triangle() {}
 
   float intersect(const Ray& ray) const override;
   glm::vec3 getNormal(const glm::vec3& point) const override;
@@ -24,7 +23,6 @@ class Rectangle : public Geometry {
  public:
   Rectangle(const glm::vec3& p1, const glm::vec3& p2, const glm::vec3& p3,
             const glm::vec3& p4, const Material& material);
-  ~Rectangle() {}
 
   float intersect(const Ray& ray) const override;
   glm::vec3 getNormal(const glm::vec3& point) const override;
