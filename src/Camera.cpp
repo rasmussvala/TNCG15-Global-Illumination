@@ -45,21 +45,23 @@ void Camera::castRays(int raysPerPixel) {
   float progress = 0.0f;
   Ray ray{};
 
-  // Loopar igenom alla pixlar och ansätter färger
+  // Loop through all pixels and assign colors
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
-      for (int k = 0; k < raysPerPixel; k++) {
-        // Skapar en ray från kamerans position till pixlens position
+      glm::vec3 colorSum(0.0f);
+
+      for (int k = 0; k < raysPerPixel; ++k) {
+        // Create a ray from the camera's position to the pixel's position
         ray.setRay(location, rayDirectionFromCamera(i, j));
 
-        // Kollar intersections som sker i scenen
-        pixels[j][i] += castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
+        // Check intersections that occur in the scene
+        colorSum += castRay(ray, MAX_DEPTH_DIFFUSE, MAX_DEPTH_REFLECTIVE);
       }
 
-      // Delar på antalet samplesPerPixel
-      pixels[j][i] = pixels[j][i] / (float)raysPerPixel;
+      // Average the color over the number of rays per pixel
+      pixels[j][i] = colorSum / (float)raysPerPixel;
 
-      // Visar progress under rendrering
+      // Show progress during rendering
       progressBar(progress / (height * width));
       progress += 1.0f;
     }
@@ -70,12 +72,14 @@ glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
                           int mirrorBounceCount) {
   glm::vec3 color{0.0f, 0.0f, 0.0f};
 
+  // End of recursion, return black
   if (diffuseBounceCount <= 0 || mirrorBounceCount <= 0) {
     return color;
   }
 
   hitResult hit = closestIntersect(ray, geometries);
 
+  // We have a hit
   if (hit.t > EPSILON && hit.t < FLT_MAX) {
     glm::vec3 hitPoint = ray.at(hit.t);
     Geometry* hitGeometry = geometries[hit.index];
