@@ -51,8 +51,8 @@ int main() {
   return 0;
 }
 
-// TODO 1: Multicore, implemented in ray casting but I think I need to make more
-// changes
-// TODO 2: Fix rendering for glass
+// TODO 1: Fix rendering for glass
+// TODO 2: Check how colors blend - direct light and indirect light
 // TODO 3: Make sure the light source is visible
-// TODO 4: Check how colors blend - direct light and indirect light
+// TODO 4: Multicore, implemented in ray casting but I think I need to make more
+// changes
