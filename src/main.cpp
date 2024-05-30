@@ -21,7 +21,7 @@ int main() {
   myScene.addGeometry(&sphere);
 
   // Create a rectangular light with a position just below the roof
-  Light light{glm::vec3{5.0f, 1.0f, 4.9999f}, glm::vec3{5.0f, -1.0f, 4.99999f},
+  Light light{glm::vec3{5.0f, 1.0f, 4.9999f}, glm::vec3{5.0f, -1.0f, 4.9999f},
               glm::vec3{3.0f, -1.0f, 4.9999f}, glm::vec3{3.0f, 1.0f, 4.9999f}};
   myScene.addLight(&light);
 
@@ -35,7 +35,7 @@ int main() {
   int mirrorBounceCount = 5;
 
   // Determines the number of shadow rays to shoot at each light source in the
-  // scene. Mark recommends 100, but I suggest a max of 10
+  // scene. Mark recommends 100, but that's demanding
   int shadowRayCount = 10;
 
   // Determines the number of rays to create when hitting a diffuse object
