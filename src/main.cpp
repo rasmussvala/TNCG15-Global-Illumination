@@ -51,9 +51,8 @@ int main() {
   return 0;
 }
 
-// TODO: memoryleaks!
-// TODO: Kolla hur färger blandas - direktljus och indirektljus
-// TODO: fixa rendering till glas
-// TODO: tänk på att ytan vända fel kastas bort i traingle::intersect (hur
-// glas ska hantera det) om bool insideObj = true, ignorera?
-// TODO: fixa så att man ser ljuskällan (fixa senare)
+// TODO 1: Multicore, implemented in ray casting but I think I need to make more
+// changes
+// TODO 2: Fix rendering for glass
+// TODO 3: Make sure the light source is visible
+// TODO 4: Check how colors blend - direct light and indirect light
