@@ -51,7 +51,7 @@ class Camera {
   void progressBar(float percent);
 
   // Convert from hemispherical coordinate to world coordinate
-  glm::vec3 HemisphericalToWorld(float phi, float omega,
+  glm::vec3 sphericalToCartesian(float phi, float omega,
                                  const glm::vec3& normal);
 
   // Adds geometry, light, and configures render settings

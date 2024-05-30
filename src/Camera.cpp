@@ -16,6 +16,12 @@ Camera::Camera(int w, int h) : width(w), height(h) {
   }
 }
 
+inline static float linear_to_gamma(double linear_component) {
+  if (linear_component > 0.0f) return sqrt(linear_component);
+
+  return 0.0f;
+}
+
 void Camera::saveImage(std::string filename) {
   std::ofstream ppmFile(filename);  // Opens/creates the file
 
@@ -28,10 +34,14 @@ void Camera::saveImage(std::string filename) {
       auto g = pixels[j][i].g;
       auto b = pixels[j][i].b;
 
+      r = linear_to_gamma(r);
+      g = linear_to_gamma(g);
+      b = linear_to_gamma(b);
+
       // Convert to 0-255 and clamp
-      int ir = std::min((int)(255.999 * r), 255);
-      int ig = std::min((int)(255.999 * g), 255);
-      int ib = std::min((int)(255.999 * b), 255);
+      int ir = std::min((int)(255 * r), 255);
+      int ig = std::min((int)(255 * g), 255);
+      int ib = std::min((int)(255 * b), 255);
 
       ppmFile << ir << ' ' << ig << ' ' << ib << '\n';
     }
@@ -104,6 +114,7 @@ glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
                         hitGeometry->getNormal(hitPoint));
 
       color += direct + (indirect * hitGeometry->getMaterial().color);
+      // color += 0.8f * direct + 0.2f * indirect;
     }
   }
 
@@ -149,11 +160,12 @@ glm::vec3 Camera::rayDirectionFromCamera(int i, int j) const {
 }
 
 glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
-  float random = (float)rand() / RAND_MAX;  // random value [0,1]
-  float phi = 2.0f * PI * random;           // azimuth [0, 2PI]
-  float omega = acos(sqrt(1.0f - random));  // inclination [0, PI/2]
+  float random1 = (float)rand() / RAND_MAX;  // random value [0,1]
+  float random2 = (float)rand() / RAND_MAX;  // random value [0,1]
+  float phi = 2.0f * PI * random1;           // azimuth [0, 2PI]
+  float omega = PI * random2;                // inclination [0, PI]
 
-  glm::vec3 worldDir = HemisphericalToWorld(phi, omega, hitPointNormal);
+  glm::vec3 worldDir = sphericalToCartesian(phi, omega, hitPointNormal);
 
   // Make sure the direction is not pointing back into the surface
   if (glm::dot(worldDir, hitPointNormal) < 0.0f) worldDir = -worldDir;
@@ -177,17 +189,19 @@ void Camera::progressBar(float percent) {
   std::cout.flush();
 }
 
-glm::vec3 Camera::HemisphericalToWorld(float phi, float omega,
+glm::vec3 Camera::sphericalToCartesian(float phi, float omega,
                                        const glm::vec3& normal) {
-  glm::vec3 localDir(cos(phi) * sin(omega), sin(phi) * sin(omega), cos(omega));
+  glm::vec3 cartesianDir(cos(phi) * sin(omega), sin(phi) * sin(omega),
+                         cos(omega));
 
+  // Old version, didn't look good
+  /*
   glm::vec3 c = normal;
-  glm::vec3 a = glm::normalize(-localDir + glm::dot(normal, localDir) * normal);
-  glm::vec3 b = glm::cross(c, a);
-
-  glm::mat3 transformationMatrix(a, b, c);
-
-  return transformationMatrix * localDir;
+  glm::vec3 a = glm::normalize(-cartesianDir + glm::dot(normal, cartesianDir) *
+  normal); glm::vec3 b = glm::cross(c, a); glm::mat3 transformationMatrix(a, b,
+  c); return transformationMatrix * cartesianDir;
+  */
+  return cartesianDir;
 }
 
 void Camera::configure(const std::vector<Geometry*>& newGeometries,
