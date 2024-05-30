@@ -43,11 +43,9 @@ void Camera::saveImage(std::string filename) {
   std::cout << "The file has been created at: " + filename + "\n";
 }
 
-void Camera::castRaysSubset(int startRow, int endRow, int raysPerPixel,
-                            std::atomic<float>& progress) {
+void Camera::castRaysSubset(int startRow, int endRow, int raysPerPixel) {
   Ray ray{};
   float totalPixels = (endRow - startRow) * width;
-  int pixelCount = 0;
 
   for (int j = startRow; j < endRow; ++j) {
     for (int i = 0; i < width; ++i) {
@@ -60,32 +58,20 @@ void Camera::castRaysSubset(int startRow, int endRow, int raysPerPixel,
       }
 
       pixels[j][i] = colorSum / static_cast<float>(raysPerPixel);
-      pixelCount++;
-
-      // Only update progress for thread 1
-      if (startRow == 0) {
-        progress = static_cast<float>(pixelCount) / totalPixels;
-        progressBar(progress);
-      }
     }
   }
 }
 
 void Camera::castRays(int raysPerPixel) {
-  // Initialize threads and progress for core 1
   int numThreads = std::thread::hardware_concurrency();
   std::vector<std::thread> threads;
   int rowsPerThread = height / numThreads;
-  std::atomic<float> progress(0.0f);
 
-  // Split the viewports rows into subset for every thread to render
   for (int t = 0; t < numThreads; ++t) {
     int startRow = t * rowsPerThread;
     int endRow = (t == numThreads - 1) ? height : startRow + rowsPerThread;
-
-    // Launch a thread to cast rays for a subset of rows and update the progress
     threads.emplace_back(&Camera::castRaysSubset, this, startRow, endRow,
-                         raysPerPixel, std::ref(progress));
+                         raysPerPixel);
   }
 
   for (auto& thread : threads) {
