@@ -54,7 +54,8 @@ float Rectangle::intersect(const Ray& ray) const {
   float t1 = triangle1->intersect(ray);
   float t2 = triangle2->intersect(ray);
 
-  delete triangle1, triangle2;
+  delete triangle1;
+  delete triangle2;
 
   const float EPSILON = 1e-4f;
 
