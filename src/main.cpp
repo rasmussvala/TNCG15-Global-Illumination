@@ -6,8 +6,8 @@
 #include "../include/Sphere.h"
 
 int main() {
-  // 400x400 pixels is max on my pc with low settings
-  Scene myScene(100, 100);
+  // Set the image size (pixels)
+  Scene myScene(200, 200);
 
   // Default cube adds a blue cube to right hand side
   Cube cube1{};
@@ -35,11 +35,11 @@ int main() {
   int mirrorBounceCount = 5;
 
   // Determines the number of shadow rays to shoot at each light source in the
-  // scene. Mark recommends 100, but I suggest a max of 10
+  // scene. Mark recommends 100 but I think that's a lot.
   int shadowRayCount = 10;
 
-  // Determines the number of rays to create when hitting a diffuse object
-  int indirectRayCount = 1;
+  // Determines the number of rays to create when hitting a diffuse object.
+  int indirectRayCount = 5;
 
   // Determines the number of rays shot from a single pixel, then averages them
   // Demanding!
@@ -51,9 +51,7 @@ int main() {
   return 0;
 }
 
-// TODO: memoryleaks!
-// TODO: Kolla hur färger blandas - direktljus och indirektljus
-// TODO: fixa rendering till glas
-// TODO: tänk på att ytan vända fel kastas bort i traingle::intersect (hur
-// glas ska hantera det) om bool insideObj = true, ignorera?
-// TODO: fixa så att man ser ljuskällan (fixa senare)
+// TODO 1: Multicore
+// TODO 2: Fixa rendering till glas
+// TODO 3: Fixa så att man ser ljuskällan
+// TODO 4: Kolla hur färger blandas - direktljus och indirektljus

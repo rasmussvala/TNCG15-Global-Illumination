@@ -26,6 +26,9 @@ class Camera {
   // Save the image as a .ppm file to the specified
   void saveImage(std::string filename);
 
+  // Function to cast rays for a subset of rows, needed for multicore
+  void castRaysSubset(int startRow, int endRow, int raysPerPixel);
+
   // Loop through all the pixels created for the cameras viewports and cast rays
   void castRays(int samplesPerPixel);
 
