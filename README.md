@@ -1,4 +1,4 @@
-# RayTracing-TNGC15
+# Ray Tracer in C++
 
 **Run it on your machine:**
 1. Clone repo.
