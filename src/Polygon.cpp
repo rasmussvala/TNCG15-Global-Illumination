@@ -5,9 +5,9 @@ float Triangle::intersect(const Ray& ray) const {
   glm::vec3 D = ray.getDirection();
 
   // Vi träffar fel sida av triangeln eller är parallell med ytan
-  if (glm::dot(D, normal) > -EPSILON) {
+  /*if (glm::dot(D, normal) > -EPSILON) {
     return -1.0f;
-  }
+  }*/
 
   glm::vec3 E1 = v2 - v1;
   glm::vec3 E2 = v3 - v1;

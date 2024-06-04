@@ -106,7 +106,7 @@ glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
       color = castRay(reflectedRay, diffuseBounceCount, mirrorBounceCount - 1);
     }
     // DIFFUSE
-    else {
+    else if (hitGeometry->getMaterial().type == DIFFUSE) {
       glm::vec3 direct =
           directLight(hitPoint, hitGeometry->getNormal(hitPoint), hit.index);
       glm::vec3 indirect =
@@ -114,7 +114,50 @@ glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
                         hitGeometry->getNormal(hitPoint));
 
       color += direct + (indirect * hitGeometry->getMaterial().color);
-      // color += 0.8f * direct + 0.2f * indirect;
+    }
+    // TRANSPARENT
+    else {
+      // Reflection
+      glm::vec3 normal = hitGeometry->getNormal(hitPoint);
+      glm::vec3 reflectDir = glm::reflect(ray.getDirection(), normal);
+      Ray reflectedRay(hitPoint, reflectDir);
+      glm::vec3 reflectColor =
+          castRay(reflectedRay, diffuseBounceCount, mirrorBounceCount - 1);
+
+      // Refraction
+      float n1 = 1.0f;                                        // Air
+      float n2 = hitGeometry->getMaterial().refractiveIndex;  // Glass
+
+      glm::vec3 d0 =
+          glm::normalize(ray.getDirection());  // Normalize incident direction
+      float cosOmega = glm::clamp(glm::dot(d0, normal), -1.0f, 1.0f);
+
+      // We are inside of the glass
+      if (cosOmega > 0) {
+        std::swap(n1, n2);
+        normal = -normal;  // Invert normal if we are inside the object
+      }
+
+      float R = n1 / n2;  // Ratio of refractive indices
+      float k =
+          1 - R * R * (1 - cosOmega * cosOmega);  // Snell's law discriminant
+
+      glm::vec3 refractColor(0.0f);
+      if (k >= 0) {  // Total internal reflection check
+        glm::vec3 refractDir =
+            R * d0 + (R * cosOmega - sqrtf(k)) *
+                         normal;  // Calculate refraction direction
+        Ray refractedRay(hitPoint, refractDir);
+        refractColor =
+            castRay(refractedRay, diffuseBounceCount, mirrorBounceCount - 1);
+      }
+
+      // Fresnel effect (using Schlick's approximation)
+      float R0 = powf((n1 - n2) / (n1 + n2), 2);
+      float fresnel = R0 + (1 - R0) * powf(1.0f - fabs(cosOmega), 5);
+
+      // Combine reflection and refraction based on Fresnel effect
+      color = fresnel * reflectColor + (1 - fresnel) * refractColor;
     }
   }
 
