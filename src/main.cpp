@@ -14,7 +14,7 @@ int main() {
   myScene.addCube(&cube1);
 
   // Create a sphere
-  glm::vec3 center{1.5f, 0.0f, 0.0f};
+  glm::vec3 center{5.5f, 2.5f, -3.5f};
   float radius = 1.5f;
   Material material{TRANSPARENT, 1.5f};
   Sphere sphere{center, radius, material};
@@ -23,7 +23,6 @@ int main() {
   // Create another sphere
   glm::vec3 center2{8.8f, 0.0f, -3.5f};
   float radius2 = 1.5f;
-  // glm::vec3 color2{0.4f, 0.4f, 0.4f};
   Material material2{REFLECTIVE};
   Sphere sphere2{center2, radius2, material2};
   myScene.addGeometry(&sphere2);
