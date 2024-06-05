@@ -6,10 +6,10 @@
 #include "../include/Sphere.h"
 
 int main() {
-  // 400x400 pixels is max on my pc with low settings
+  // Set resolution of the rendering
   Scene myScene(200, 200);
 
-  // Default cube adds a blue cube to right hand side
+  // Default cube adds a white cube to right hand side
   Cube cube1{};
   myScene.addCube(&cube1);
 
@@ -20,6 +20,7 @@ int main() {
   Sphere sphere{center, radius, material};
   myScene.addGeometry(&sphere);
 
+  // Create another sphere
   glm::vec3 center2{8.8f, 2.5f, -3.5f};
   float radius2 = 1.5f;
   glm::vec3 color2{0.4f, 0.4f, 0.4f};
@@ -50,16 +51,10 @@ int main() {
 
   // Determines the number of rays shot from a single pixel, then averages them
   // Demanding!
-  int raysPerPixel = 4;
+  int raysPerPixel = 1;
 
   myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
                  indirectRayCount, raysPerPixel, "../images");
 
   return 0;
 }
-
-// TODO 1: Fix rendering for glass
-// TODO 2: Check how colors blend - direct light and indirect light
-// TODO 3: Make sure the light source is visible
-// TODO 4: Multicore, implemented in ray casting but I think I need to make more
-// changes
