@@ -2,6 +2,8 @@
 
 #include "../include/Camera.h"
 
+#include <chrono>  // Include the chrono library for timing
+
 Camera::Camera(int w, int h) : width(w), height(h) {
   // Constants will be updated in Scene::render
   MAX_DEPTH_DIFFUSE = 0;
@@ -9,11 +11,8 @@ Camera::Camera(int w, int h) : width(w), height(h) {
   MAX_SHADOWRAYS = 0;
   MAX_INDIRECTRAYS = 0;
 
-  // Allocate memory for all the pixels
-  pixels.resize(height);
-  for (int i = 0; i < height; ++i) {
-    pixels[i].resize(width);
-  }
+  // Allocate memory for all the pixels in a 1D vector
+  pixels.resize(width * height);
 }
 
 inline static float linear_to_gamma(double linear_component) {
@@ -30,9 +29,10 @@ void Camera::saveImage(std::string filename) {
   // Write the clamped pixel values to the output file
   for (int j = 0; j < height; ++j) {
     for (int i = 0; i < width; ++i) {
-      auto r = pixels[j][i].r;
-      auto g = pixels[j][i].g;
-      auto b = pixels[j][i].b;
+      auto& pixel = pixels[j * width + i];
+      auto r = pixel.r;
+      auto g = pixel.g;
+      auto b = pixel.b;
 
       r = linear_to_gamma(r);
       g = linear_to_gamma(g);
@@ -52,6 +52,9 @@ void Camera::saveImage(std::string filename) {
 }
 
 void Camera::castRays(int raysPerPixel) {
+  // Record the start time
+  auto start = std::chrono::high_resolution_clock::now();
+
   const float updateInterval = 0.05f;  // Update progress every 5%
   float nextProgressUpdate = updateInterval;
   int totalRows = height;
@@ -75,7 +78,7 @@ void Camera::castRays(int raysPerPixel) {
       }
 
       // Average the color over the number of rays per pixel
-      pixels[j][i] = colorSum / static_cast<float>(raysPerPixel);
+      pixels[j * width + i] = colorSum / static_cast<float>(raysPerPixel);
     }
 
     // Update progress bar less frequently
@@ -85,6 +88,13 @@ void Camera::castRays(int raysPerPixel) {
       nextProgressUpdate += updateInterval;
     }
   }
+
+  // Record the end time
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+
+  // Print the rendering time
+  std::cout << "Rendering completed in " << elapsed.count() << " seconds.\n";
 }
 
 glm::vec3 Camera::castRay(const Ray& ray, int diffuseBounceCount,
