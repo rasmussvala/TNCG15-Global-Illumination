@@ -4,7 +4,7 @@
 
 #include <chrono>  // Include the chrono library for timing
 
-Camera::Camera(int w, int h) : width(w), height(h) {
+Camera::Camera(size_t w, size_t h) : width(w), height(h) {
   // Constants will be updated in Scene::render
   MAX_DEPTH_DIFFUSE = 0;
   MAX_DEPTH_REFLECTIVE = 0;
@@ -15,7 +15,7 @@ Camera::Camera(int w, int h) : width(w), height(h) {
   pixels.resize(width * height);
 }
 
-inline static float linear_to_gamma(double linear_component) {
+inline static float linear_to_gamma(float linear_component) {
   if (linear_component > 0.0f) return sqrt(linear_component);
 
   return 0.0f;
@@ -27,8 +27,8 @@ void Camera::saveImage(std::string filename) {
   ppmFile << "P3\n" << width << ' ' << height << "\n255\n";
 
   // Write the clamped pixel values to the output file
-  for (int j = 0; j < height; ++j) {
-    for (int i = 0; i < width; ++i) {
+  for (size_t j = 0; j < height; ++j) {
+    for (size_t i = 0; i < width; ++i) {
       auto& pixel = pixels[j * width + i];
       auto r = pixel.r;
       auto g = pixel.g;
@@ -57,7 +57,7 @@ void Camera::castRays(int raysPerPixel) {
 
   const float updateInterval = 0.05f;  // Update progress every 5%
   float nextProgressUpdate = updateInterval;
-  int totalRows = height;
+  size_t totalRows = height;
 
   Ray ray{};
 
@@ -224,7 +224,7 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
   float phi = 2.0f * PI * random1;           // azimuth [0, 2PI]
   float omega = PI * random2;                // inclination [0, PI]
 
-  glm::vec3 worldDir = sphericalToCartesian(phi, omega, hitPointNormal);
+  glm::vec3 worldDir = sphericalToCartesian(phi, omega);
 
   // Make sure the direction is not pointing back into the surface
   if (glm::dot(worldDir, hitPointNormal) < 0.0f) worldDir = -worldDir;
@@ -256,19 +256,8 @@ void Camera::progressBar(float percent) {
   }
 }
 
-glm::vec3 Camera::sphericalToCartesian(float phi, float omega,
-                                       const glm::vec3& normal) {
-  glm::vec3 cartesianDir(cos(phi) * sin(omega), sin(phi) * sin(omega),
-                         cos(omega));
-
-  // Old version, didn't look good
-  /*
-  glm::vec3 c = normal;
-  glm::vec3 a = glm::normalize(-cartesianDir + glm::dot(normal, cartesianDir) *
-  normal); glm::vec3 b = glm::cross(c, a); glm::mat3 transformationMatrix(a, b,
-  c); return transformationMatrix * cartesianDir;
-  */
-  return cartesianDir;
+glm::vec3 Camera::sphericalToCartesian(float phi, float omega) {
+  return glm::vec3(cos(phi) * sin(omega), sin(phi) * sin(omega), cos(omega));
 }
 
 void Camera::configure(const std::vector<Geometry*>& newGeometries,

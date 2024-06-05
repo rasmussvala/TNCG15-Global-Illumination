@@ -21,7 +21,7 @@ hitResult closestIntersect(const Ray& ray,
 
 class Camera {
  public:
-  Camera(int w, int h);
+  Camera(size_t w, size_t h);
 
   // Save the image as a .ppm file to the specified
   void saveImage(std::string filename);
@@ -51,8 +51,7 @@ class Camera {
   void progressBar(float percent);
 
   // Convert from hemispherical coordinate to world coordinate
-  glm::vec3 sphericalToCartesian(float phi, float omega,
-                                 const glm::vec3& normal);
+  glm::vec3 sphericalToCartesian(float phi, float omega);
 
   // Adds geometry, light, and configures render settings
   void configure(const std::vector<Geometry*>& newGeometries,
@@ -61,8 +60,8 @@ class Camera {
                  int newIndirectRays);
 
  private:
-  int width;
-  int height;
+  size_t width;
+  size_t height;
   glm::vec3 location{-1.0f, 0.0f, 0.0f};
 
   std::vector<Geometry*> geometries;
