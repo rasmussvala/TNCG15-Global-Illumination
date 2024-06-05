@@ -19,14 +19,14 @@ std::vector<Geometry*> Cube::getSurfaces() {
 Cube::Cube()
     : color(0.4, 0.4, 0.4),
       material(DIFFUSE, color),
-      p0(6.0f, -1.0f, -5.0f),
-      p1(9.0f, -1.0f, -5.0f),
-      p2(9.0f, -4.0f, -5.0f),
-      p3(6.0f, -4.0f, -5.0f),
-      p4(6.0f, -1.0f, -2.0f),
-      p5(9.0f, -1.0f, -2.0f),
-      p6(9.0f, -4.0f, -2.0f),
-      p7(6.0f, -4.0f, -2.0f),
+      p0(4.5f, -1.5f, -5.0f),
+      p1(7.0f, -1.5f, -5.0f),
+      p2(7.0f, -4.0f, -5.0f),
+      p3(4.5f, -4.0f, -5.0f),
+      p4(4.5f, -1.5f, -2.5f),
+      p5(7.0f, -1.5f, -2.5f),
+      p6(7.0f, -4.0f, -2.5f),
+      p7(4.5f, -4.0f, -2.5f),
       surface1(p0, p1, p2, p3, material),  // botten
       surface2(p4, p7, p6, p5, material),  // toppen
       surface3(p0, p3, p7, p4, material),  // sidan mot kameran
