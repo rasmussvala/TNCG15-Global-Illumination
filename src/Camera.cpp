@@ -52,7 +52,10 @@ void Camera::saveImage(std::string filename) {
 }
 
 void Camera::castRays(int raysPerPixel) {
-  float progress = 0.0f;
+  const float updateInterval = 0.05f;  // Update progress every 5%
+  float nextProgressUpdate = updateInterval;
+  int totalRows = height;
+
   Ray ray{};
 
   // Loop through all pixels and assign colors
@@ -73,10 +76,13 @@ void Camera::castRays(int raysPerPixel) {
 
       // Average the color over the number of rays per pixel
       pixels[j][i] = colorSum / static_cast<float>(raysPerPixel);
+    }
 
-      // Show progress during rendering
-      progressBar(progress / (height * width));
-      progress += 1.0f;
+    // Update progress bar less frequently
+    float currentProgress = static_cast<float>(j) / totalRows;
+    if (currentProgress >= nextProgressUpdate) {
+      progressBar(currentProgress);
+      nextProgressUpdate += updateInterval;
     }
   }
 }
@@ -218,18 +224,26 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3& hitPointNormal) {
 
 void Camera::progressBar(float percent) {
   const int BAR_WIDTH = 20;
+  const int PROGRESS_THRESHOLD = 2;  // Update every 2% change
+  static int lastProgress = -PROGRESS_THRESHOLD;
 
-  std::cout << "[";
-  int pos = (int)(BAR_WIDTH * percent);
-  for (int i = 0; i < BAR_WIDTH; ++i) {
-    if (i <= pos)
-      std::cout << "=";
-    else
-      std::cout << " ";
+  int currentProgress = static_cast<int>(percent * 100.0f);
+  if (currentProgress - lastProgress >= PROGRESS_THRESHOLD) {
+    lastProgress = currentProgress;
+
+    std::string bar = "[";
+    int pos = static_cast<int>(BAR_WIDTH * percent);
+    for (int i = 0; i < BAR_WIDTH; ++i) {
+      if (i <= pos)
+        bar += "=";
+      else
+        bar += " ";
+    }
+    bar += "] " + std::to_string(currentProgress) + " %\r";
+
+    std::cout << bar;
+    std::cout.flush();
   }
-  std::cout << "] " << int(percent * 100.0f + 0.5f)
-            << " %\r";  // +0.5 for round-off error
-  std::cout.flush();
 }
 
 glm::vec3 Camera::sphericalToCartesian(float phi, float omega,
