@@ -66,7 +66,12 @@ Scene::Scene(int width, int height) : camera(width, height) {
   addGeometry(rectangle_ceiling);
 }
 
-void Scene::addLight(Light* light) { lights.push_back(light); }
+void Scene::addLight(Light* light) {
+  lights.push_back(light);
+
+  Rectangle* lightGeometry = new Rectangle{light->getGeometry()};
+  addGeometry(lightGeometry);
+}
 
 void Scene::addGeometry(Geometry* geometry) { geometries.push_back(geometry); }
 

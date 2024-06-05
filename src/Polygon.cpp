@@ -46,6 +46,14 @@ Rectangle::Rectangle(const glm::vec3& p1, const glm::vec3& p2,
   normal = glm::normalize(glm::cross(v2 - v1, v4 - v1));
 }
 
+Rectangle::Rectangle(const Rectangle& other)
+    : v1(other.v1),
+      v2(other.v2),
+      v3(other.v3),
+      v4(other.v4),
+      material(other.material),
+      normal(other.normal) {}
+
 float Rectangle::intersect(const Ray& ray) const {
   Triangle* triangle1 = new Triangle(v1, v2, v3, material);
   Triangle* triangle2 = new Triangle(v1, v3, v4, material);
