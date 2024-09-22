@@ -7,21 +7,21 @@
 
 int main() {
   // Set resolution of the rendering
-  Scene myScene(100, 100);
+  Scene myScene(600, 600);
 
   // Default cube adds a white cube to right hand side
   Cube cube1{};
   myScene.addCube(&cube1);
 
   // Create a sphere
-  glm::vec3 center{5.5f, 2.5f, -3.5f};
+  glm::vec3 center{3.4f, 0.0f, 0.0f};
   float radius = 1.5f;
   Material material{TRANSPARENT, 1.5f};
   Sphere sphere{center, radius, material};
   myScene.addGeometry(&sphere);
 
   // Create another sphere
-  glm::vec3 center2{8.8f, 0.0f, -3.5f};
+  glm::vec3 center2{6.5f, 2.5f, -3.5f};
   float radius2 = 1.5f;
   Material material2{REFLECTIVE};
   Sphere sphere2{center2, radius2, material2};
@@ -43,14 +43,14 @@ int main() {
 
   // Determines the number of shadow rays to shoot at each light source in the
   // scene. Mark recommends 100, but that's demanding
-  int shadowRayCount = 5;
+  int shadowRayCount = 50;
 
   // Determines the number of rays to create when hitting a diffuse object
   int indirectRayCount = 10;
 
   // Determines the number of rays shot from a single pixel, then averages them
   // Demanding!
-  int raysPerPixel = 1;
+  int raysPerPixel = 5;
 
   myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
                  indirectRayCount, raysPerPixel, "../images");
