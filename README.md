@@ -1,6 +1,8 @@
 # Ray Tracer in C++
 
-**Run it on your machine:**
+A Monte Carlo ray tracer in C++ that simulates realistic global illumination featuring transparent, reflective, and Lambertian surfaces.
+
+## Run it on your machine:
 1. Clone repo.
 2. Create a build directory in the project.
 3. Use CMake to generate the project.
@@ -8,4 +10,5 @@
 5. Choose the build directory created in step 2.
 6. Generate.
 
-![image](https://github.com/rasmussvala/TNGC15-Global-Illumination/assets/91534734/edc5bbe6-039c-4c0b-b339-3aa7291aa597)
+## Render
+![render2](https://github.com/user-attachments/assets/27657e2f-e40f-44a4-a799-ad6a233967e1)
