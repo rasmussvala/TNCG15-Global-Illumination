@@ -4,10 +4,11 @@
 
 #include "../include/Sphere.h"
 
-Sphere::Sphere(const glm::vec3& c, float r, const Material& mat)
+Sphere::Sphere(const glm::vec3 &c, float r, const Material &mat)
     : center(c), radius(r), material(mat) {}
 
-float Sphere::intersect(const Ray& ray) const {
+float Sphere::intersect(const Ray &ray) const
+{
   const float EPSILON = 1e-4f;
 
   glm::vec3 D = glm::normalize(ray.getDirection());
@@ -22,28 +23,39 @@ float Sphere::intersect(const Ray& ray) const {
   // Calculate the discriminant
   float arg = c2 * c2 - 4.0f * c1 * c3;
 
-  if (arg < 0.0f) {
+  if (arg < 0.0f)
+  {
     // No intersection
     return -1.0f;
-  } else {
+  }
+  else
+  {
     // Two possible intersection points
     float t1 = (-c2 - sqrt(arg)) / (2 * c1);
     float t2 = (-c2 + sqrt(arg)) / (2 * c1);
 
-    if (t1 > EPSILON && t2 > EPSILON) {
+    if (t1 > EPSILON && t2 > EPSILON)
+    {
       return glm::min(t1, t2);
-    } else if (t1 > EPSILON) {
+    }
+    else if (t1 > EPSILON)
+    {
       return t1;
-    } else if (t2 > EPSILON) {
+    }
+    else if (t2 > EPSILON)
+    {
       return t2;
-    } else {
+    }
+    else
+    {
       // No valid intersection
       return -1.0f;
     }
   }
 }
 
-glm::vec3 Sphere::getNormal(const glm::vec3& point) const {
+glm::vec3 Sphere::getNormal(const glm::vec3 &point) const
+{
   glm::vec3 normal = glm::normalize(point - center);
   return normal;
 }

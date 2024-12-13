@@ -7,18 +7,20 @@
 #include "Polygon.h"
 #include "Sphere.h"
 
-class Scene {
- public:
+class Scene
+{
+public:
   Scene(int width, int height);
 
-  void addLight(Light* light);
-  void addGeometry(Geometry* geometry);
-  void addCube(Cube* cube);
-  void render(int diffuseBounceCount, int mirrorBounceCount, int shadowRayCount,
-              int indirectRayCount, int raysPerPixel, std::string outputPath);
+  void addLight(Light *light);
+  void addGeometry(Geometry *geometry);
+  void addCube(Cube *cube);
+  void render(int diffuseBounceCount, int mirrorBounceCount,
+              int shadowRayCount, int indirectRayCount, int raysPerPixel,
+              std::string outputPath = ".");
 
- private:
+private:
   Camera camera;
-  std::vector<Geometry*> geometries;
-  std::vector<Light*> lights;
+  std::vector<Geometry *> geometries;
+  std::vector<Light *> lights;
 };

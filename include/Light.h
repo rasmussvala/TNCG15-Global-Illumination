@@ -10,17 +10,18 @@
 #include "glm/glm.hpp"
 
 // Area light
-class Light {
- public:
+class Light
+{
+public:
   Light(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4);
 
   Rectangle getGeometry();
-  float calculateLight(const std::vector<Geometry*>& geometries,
-                       const glm::vec3& intersectionPoint,
-                       const glm::vec3& intersectionPointNormal,
+  float calculateLight(const std::vector<Geometry *> &geometries,
+                       const glm::vec3 &intersectionPoint,
+                       const glm::vec3 &intersectionPointNormal,
                        int MAX_SHADOWRAYS) const;
 
- private:
+private:
   glm::vec3 v1, v2, v3, v4;
   glm::vec3 e1, e2;
   float area;

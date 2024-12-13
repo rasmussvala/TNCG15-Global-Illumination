@@ -1,13 +1,12 @@
-#pragma once
-
 #include "../include/Cube.h"
 #include "../include/Polygon.h"
 #include "../include/Scene.h"
 #include "../include/Sphere.h"
 
-int main() {
+int main()
+{
   // Set resolution of the rendering
-  Scene myScene(600, 600);
+  Scene myScene(10, 10);
 
   // Default cube adds a white cube to right hand side
   Cube cube1{};
@@ -53,7 +52,7 @@ int main() {
   int raysPerPixel = 5;
 
   myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
-                 indirectRayCount, raysPerPixel, "../images");
+                 indirectRayCount, raysPerPixel);
 
   return 0;
 }

@@ -6,13 +6,14 @@
 #include "Ray.h"
 #include "glm/glm.hpp"
 
-class Cube {
- public:
-  Cube();  // Declare the constructor
+class Cube
+{
+public:
+  Cube(); // Declare the constructor
   Material getMaterial() const;
-  std::vector<Geometry*> getSurfaces();
+  std::vector<Geometry *> getSurfaces();
 
- private:
+private:
   glm::vec3 color;
   Material material;
 

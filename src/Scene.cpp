@@ -3,8 +3,9 @@
 #include "../include/Camera.h"
 #include "../include/Polygon.h"
 
-Scene::Scene(int width, int height) : camera(width, height) {
-  // Färger
+Scene::Scene(int width, int height) : camera(width, height)
+{
+  // Fï¿½rger
   glm::vec3 white(0.4, 0.4, 0.4);
   glm::vec3 blue(0.0, 0.0, 0.4);
   glm::vec3 red(0.4, 0.0, 0.0);
@@ -34,24 +35,24 @@ Scene::Scene(int width, int height) : camera(width, height) {
   glm::vec3 p11(-3.0f, 0.0f, 5.0f);
 
   // Glov
-  Triangle* triangle_floorB = new Triangle(p0, p5, p4, materialWhite);
-  Triangle* triangle_floorF = new Triangle(p1, p3, p2, materialWhite);
-  Rectangle* rectangle_floor = new Rectangle(p0, p4, p3, p1, materialWhite);
+  Triangle *triangle_floorB = new Triangle(p0, p5, p4, materialWhite);
+  Triangle *triangle_floorF = new Triangle(p1, p3, p2, materialWhite);
+  Rectangle *rectangle_floor = new Rectangle(p0, p4, p3, p1, materialWhite);
 
-  // Väggar
-  Rectangle* rectangle_wallH = new Rectangle(p3, p4, p10, p9, materialRed);
-  Rectangle* rectangle_wallHB = new Rectangle(p4, p5, p11, p10, materialWhite);
-  Rectangle* rectangle_wallHF = new Rectangle(p2, p3, p9, p8, materialWhite);
-  Rectangle* rectangle_wallV = new Rectangle(p0, p1, p7, p6, materialGreen);
-  Rectangle* rectangle_wallVB = new Rectangle(p0, p6, p11, p5, materialWhite);
-  Rectangle* rectangle_wallVF = new Rectangle(p1, p2, p8, p7, materialWhite);
+  // Vï¿½ggar
+  Rectangle *rectangle_wallH = new Rectangle(p3, p4, p10, p9, materialRed);
+  Rectangle *rectangle_wallHB = new Rectangle(p4, p5, p11, p10, materialWhite);
+  Rectangle *rectangle_wallHF = new Rectangle(p2, p3, p9, p8, materialWhite);
+  Rectangle *rectangle_wallV = new Rectangle(p0, p1, p7, p6, materialGreen);
+  Rectangle *rectangle_wallVB = new Rectangle(p0, p6, p11, p5, materialWhite);
+  Rectangle *rectangle_wallVF = new Rectangle(p1, p2, p8, p7, materialWhite);
 
   // Tak
-  Triangle* triangle_ceilingB = new Triangle(p6, p10, p11, materialWhite);
-  Triangle* triangle_ceilingF = new Triangle(p7, p8, p9, materialWhite);
-  Rectangle* rectangle_ceiling = new Rectangle(p6, p7, p9, p10, materialWhite);
+  Triangle *triangle_ceilingB = new Triangle(p6, p10, p11, materialWhite);
+  Triangle *triangle_ceilingF = new Triangle(p7, p8, p9, materialWhite);
+  Rectangle *rectangle_ceiling = new Rectangle(p6, p7, p9, p10, materialWhite);
 
-  // Lägger till alla polygoner i scenen
+  // Lï¿½gger till alla polygoner i scenen
   addGeometry(triangle_floorB);
   addGeometry(triangle_floorF);
   addGeometry(rectangle_floor);
@@ -66,25 +67,29 @@ Scene::Scene(int width, int height) : camera(width, height) {
   addGeometry(rectangle_ceiling);
 }
 
-void Scene::addLight(Light* light) {
+void Scene::addLight(Light *light)
+{
   lights.push_back(light);
 
-  Rectangle* lightGeometry = new Rectangle{light->getGeometry()};
+  Rectangle *lightGeometry = new Rectangle{light->getGeometry()};
   addGeometry(lightGeometry);
 }
 
-void Scene::addGeometry(Geometry* geometry) { geometries.push_back(geometry); }
+void Scene::addGeometry(Geometry *geometry) { geometries.push_back(geometry); }
 
-void Scene::addCube(Cube* cube) {
-  std::vector<Geometry*> surfaces = cube->getSurfaces();
-  for (Geometry* surface : surfaces) {
+void Scene::addCube(Cube *cube)
+{
+  std::vector<Geometry *> surfaces = cube->getSurfaces();
+  for (Geometry *surface : surfaces)
+  {
     geometries.push_back(surface);
   }
 }
 
 void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
                    int shadowRayCount, int indirectRayCount, int raysPerPixel,
-                   std::string outputPath) {
+                   std::string outputPath = ".")
+{
   // Adds geometry, light, and configures render settings
   camera.configure(geometries, lights, diffuseBounceCount, mirrorBounceCount,
                    shadowRayCount, indirectRayCount);

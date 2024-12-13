@@ -4,8 +4,9 @@
 
 Material Cube::getMaterial() const { return material; }
 
-std::vector<Geometry*> Cube::getSurfaces() {
-  std::vector<Geometry*> surfaces;
+std::vector<Geometry *> Cube::getSurfaces()
+{
+  std::vector<Geometry *> surfaces;
   surfaces.push_back(&surface1);
   surfaces.push_back(&surface2);
   surfaces.push_back(&surface3);
@@ -27,10 +28,11 @@ Cube::Cube()
       p5(7.0f, -1.5f, -2.5f),
       p6(7.0f, -4.0f, -2.5f),
       p7(4.5f, -4.0f, -2.5f),
-      surface1(p0, p1, p2, p3, material),  // botten
-      surface2(p4, p7, p6, p5, material),  // toppen
-      surface3(p0, p3, p7, p4, material),  // sidan mot kameran
-      surface4(p3, p2, p6, p7, material),  // sidan mot höger
-      surface5(p0, p4, p5, p1, material),  // sidan mot vänster
-      surface6(p1, p5, p6, p2, material)   // sidan mot bortre väggen
-{}
+      surface1(p0, p1, p2, p3, material), // botten
+      surface2(p4, p7, p6, p5, material), // toppen
+      surface3(p0, p3, p7, p4, material), // sidan mot kameran
+      surface4(p3, p2, p6, p7, material), // sidan mot hï¿½ger
+      surface5(p0, p4, p5, p1, material), // sidan mot vï¿½nster
+      surface6(p1, p5, p6, p2, material)  // sidan mot bortre vï¿½ggen
+{
+}
