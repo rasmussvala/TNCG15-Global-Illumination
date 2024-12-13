@@ -1,9 +1,0 @@
-These are the default settings for the images. In each folder, only this setting of the folder name has been adjusted.
-
-300x300 pixels
-
-depthDiffuse = 2; 
-depthReflective = 5; 
-nrOfShadowRays = 10; 
-nrOfIndirectRays = 2;
-samplesPerPixel = 1; 
