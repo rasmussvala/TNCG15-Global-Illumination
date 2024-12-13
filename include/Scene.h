@@ -17,7 +17,7 @@ public:
   void addCube(Cube *cube);
   void render(int diffuseBounceCount, int mirrorBounceCount,
               int shadowRayCount, int indirectRayCount, int raysPerPixel,
-              std::string outputPath = ".");
+              std::string outputPath = "..");
 
 private:
   Camera camera;

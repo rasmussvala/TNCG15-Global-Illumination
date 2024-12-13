@@ -88,7 +88,7 @@ void Scene::addCube(Cube *cube)
 
 void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
                    int shadowRayCount, int indirectRayCount, int raysPerPixel,
-                   std::string outputPath = ".")
+                   std::string outputPath)
 {
   // Adds geometry, light, and configures render settings
   camera.configure(geometries, lights, diffuseBounceCount, mirrorBounceCount,
