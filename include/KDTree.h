@@ -47,14 +47,14 @@ private:
     }
 
     // Recursive function to search for a point in the KDTree
-    bool searchRecursive(Node *node, const glm::vec3 &point, int depth) const
+    bool searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth) const
     {
         // Base case: If node is null, the point is not found
         if (node == nullptr)
             return false;
 
-        // If the current node matches the point, return true
-        if (node->point == point)
+        // If the current node is within range, return true
+        if (glm::distance(node->point, point) <= radius)
             return true;
 
         // Calculate current dimension (cd)
@@ -62,9 +62,9 @@ private:
 
         // Compare point with current node and decide to go left or right
         if (point[cd] < node->point[cd])
-            return searchRecursive(node->left, point, depth + 1);
+            return searchRecursive(node->left, point, radius, depth + 1);
         else
-            return searchRecursive(node->right, point, depth + 1);
+            return searchRecursive(node->right, point, radius, depth + 1);
     }
 
     // Recursive function to print the KDTree
@@ -102,9 +102,9 @@ public:
     }
 
     // Public function to search for a point in the KDTree
-    bool search(const glm::vec3 &point) const
+    bool search(const glm::vec3 &point, float radius) const
     {
-        return searchRecursive(root, point, 0);
+        return searchRecursive(root, point, radius, 0);
     }
 
     // Public function to print the KDTree
