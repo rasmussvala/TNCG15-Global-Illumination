@@ -3,7 +3,6 @@
 #include <iostream>
 #include <cmath>
 #include "../include/glm/glm.hpp"
-using namespace std;
 
 // Template class for KDTree with 3 dimensions
 size_t K = 3;
@@ -46,13 +45,13 @@ private:
     }
 
     // Recursive function to search for points in the KDTree within a given radius
-    vector<glm::vec3> searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth)
+    std::vector<glm::vec3> searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth)
     {
         // Base case: If node is null, return empty vector
         if (node == nullptr)
-            return vector<glm::vec3>();
+            return std::vector<glm::vec3>();
 
-        vector<glm::vec3> results;
+        std::vector<glm::vec3> results;
 
         // Check if current node's point is within the radius
         if (glm::distance(node->point, point) <= radius)
@@ -67,7 +66,7 @@ private:
         Node *secondSubtree = goLeft ? node->right : node->left;
 
         // First, recursively search the closer subtree
-        vector<glm::vec3> firstResults = searchRecursive(firstSubtree, point, radius, depth + 1);
+        std::vector<glm::vec3> firstResults = searchRecursive(firstSubtree, point, radius, depth + 1);
         results.insert(results.end(), firstResults.begin(), firstResults.end());
 
         // Check if we need to search the other subtree
@@ -75,7 +74,7 @@ private:
         float planeDist = std::abs(point[cd] - node->point[cd]);
         if (planeDist <= radius)
         {
-            vector<glm::vec3> secondResults = searchRecursive(secondSubtree, point, radius, depth + 1);
+            std::vector<glm::vec3> secondResults = searchRecursive(secondSubtree, point, radius, depth + 1);
             results.insert(results.end(), secondResults.begin(), secondResults.end());
         }
 
@@ -90,15 +89,15 @@ private:
 
         // Print current node with indentation based on depth
         for (int i = 0; i < depth; i++)
-            cout << "  ";
-        cout << "(";
+            std::cout << "  ";
+        std::cout << "(";
         for (size_t i = 0; i < K; i++)
         {
-            cout << node->point[i];
+            std::cout << node->point[i];
             if (i < K - 1)
-                cout << ", ";
+                std::cout << ", ";
         }
-        cout << ")" << endl;
+        std::cout << ")" << std::endl;
 
         // Recursively print left and right children
         printRecursive(node->left, depth + 1);
@@ -116,7 +115,7 @@ public:
     }
 
     // Public function to search for a point in the KDTree
-    vector<glm::vec3> search(const glm::vec3 &point, float radius)
+    std::vector<glm::vec3> search(const glm::vec3 &point, float radius)
     {
         return searchRecursive(root, point, radius, 0);
     }
@@ -127,3 +126,5 @@ public:
         printRecursive(root, 0);
     }
 };
+
+// TODO: Balance tree
