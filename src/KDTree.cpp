@@ -1,6 +1,6 @@
 #include "../include/KDTree.h"
 
-KDTree::Node *KDTree::insertRecursive(std::vector<glm::vec3> &points, int start, int end, int depth)
+KDTree::Node *KDTree::insertRecursive(std::vector<Photon> &photons, int start, int end, int depth)
 {
     if (start > end)
         return nullptr;
@@ -9,52 +9,52 @@ KDTree::Node *KDTree::insertRecursive(std::vector<glm::vec3> &points, int start,
     int cd = depth % 3;
 
     // Sort points by the current dimension
-    std::sort(points.begin() + start, points.begin() + end + 1, [cd](const glm::vec3 &a, const glm::vec3 &b)
-              { return a[cd] < b[cd]; });
+    std::sort(photons.begin() + start, photons.begin() + end + 1, [cd](const Photon &a, const Photon &b)
+              { return a.position[cd] < b.position[cd]; });
 
     // Find the median index
     int mid = start + (end - start) / 2;
 
     // Create a node with the median point
-    Node *node = new Node(points[mid]);
+    Node *node = new Node(photons[mid]);
 
     // Recursively build the left and right subtrees
-    node->left = insertRecursive(points, start, mid - 1, depth + 1);
-    node->right = insertRecursive(points, mid + 1, end, depth + 1);
+    node->left = insertRecursive(photons, start, mid - 1, depth + 1);
+    node->right = insertRecursive(photons, mid + 1, end, depth + 1);
 
     return node;
 }
 
-std::vector<glm::vec3> KDTree::searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth)
+std::vector<Photon> KDTree::searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth)
 {
     // Base case: If node is null, return empty vector
     if (node == nullptr)
-        return std::vector<glm::vec3>();
+        return std::vector<Photon>();
 
-    std::vector<glm::vec3> results;
+    std::vector<Photon> results;
 
     // Check if current node's point is within the radius
-    if (glm::distance(node->point, point) <= radius)
-        results.push_back(node->point);
+    if (glm::distance(node->photon.position, point) <= radius)
+        results.push_back(node->photon);
 
     // Calculate current dimension (cd)
     int cd = depth % 3;
 
     // Decide which subtree to explore first based on the current dimension
-    bool goLeft = point[cd] < node->point[cd];
+    bool goLeft = point[cd] < node->photon.position[cd];
     Node *firstSubtree = goLeft ? node->left : node->right;
     Node *secondSubtree = goLeft ? node->right : node->left;
 
     // First, recursively search the closer subtree
-    std::vector<glm::vec3> firstResults = searchRecursive(firstSubtree, point, radius, depth + 1);
+    std::vector<Photon> firstResults = searchRecursive(firstSubtree, point, radius, depth + 1);
     results.insert(results.end(), firstResults.begin(), firstResults.end());
 
     // Check if we need to search the other subtree
     // This happens when the splitting plane is closer than the radius
-    float planeDist = std::abs(point[cd] - node->point[cd]);
+    float planeDist = std::abs(point[cd] - node->photon.position[cd]);
     if (planeDist <= radius)
     {
-        std::vector<glm::vec3> secondResults = searchRecursive(secondSubtree, point, radius, depth + 1);
+        std::vector<Photon> secondResults = searchRecursive(secondSubtree, point, radius, depth + 1);
         results.insert(results.end(), secondResults.begin(), secondResults.end());
     }
 
@@ -73,7 +73,7 @@ void KDTree::printRecursive(Node *node, int depth) const
     std::cout << "(";
     for (size_t i = 0; i < 3; i++)
     {
-        std::cout << node->point[i];
+        std::cout << node->photon.position[i];
         if (i < 3 - 1)
             std::cout << ", ";
     }
@@ -84,13 +84,13 @@ void KDTree::printRecursive(Node *node, int depth) const
     printRecursive(node->right, depth + 1);
 }
 
-void KDTree::insert(const std::vector<glm::vec3> &points)
+void KDTree::insert(const std::vector<Photon> &photons)
 {
-    std::vector<glm::vec3> pointsCopy = points;
-    root = insertRecursive(pointsCopy, 0, pointsCopy.size() - 1, 0);
+    std::vector<Photon> photonsCopy = photons;
+    root = insertRecursive(photonsCopy, 0, photonsCopy.size() - 1, 0);
 }
 
-std::vector<glm::vec3> KDTree::search(const glm::vec3 &point, float radius)
+std::vector<Photon> KDTree::search(const glm::vec3 &point, float radius)
 {
     return searchRecursive(root, point, radius, 0);
 }

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <cmath>
 #include "../include/glm/glm.hpp"
+#include "../include/Photon.h"
 
 // Class for KDTree with 3 dimensions
 class KDTree
@@ -12,23 +13,23 @@ private:
     struct Node
     {
         // Point in 3 dimensions
-        glm::vec3 point;
+        Photon photon;
         // Pointer to left child
         Node *left;
         // Pointer to right child
         Node *right;
 
         // Constructor to initialize a Node
-        Node(const glm::vec3 &pt) : point(pt), left(nullptr), right(nullptr) {}
+        Node(const Photon &p) : photon(p), left(nullptr), right(nullptr) {}
     };
 
     Node *root; // Root of the KDTree
 
     // Recursive function to insert a point into the KDTree
-    Node *insertRecursive(std::vector<glm::vec3> &points, int start, int end, int depth);
+    Node *insertRecursive(std::vector<Photon> &photons, int start, int end, int depth);
 
     // Recursive function to search for points in the KDTree within a given radius
-    std::vector<glm::vec3> searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth);
+    std::vector<Photon> searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth);
 
     // Recursive function to print the KDTree
     void printRecursive(Node *node, int depth) const;
@@ -38,10 +39,10 @@ public:
     KDTree() : root(nullptr) {}
 
     // Public function to insert a point into the KDTree
-    void insert(const std::vector<glm::vec3> &points);
+    void insert(const std::vector<Photon> &photons);
 
-    // Public function to search for a point in the KDTree
-    std::vector<glm::vec3> search(const glm::vec3 &point, float radius);
+    // Public function to search for photons in the KDTree
+    std::vector<Photon> search(const glm::vec3 &point, float radius);
 
     // Public function to print the KDTree
     void print() const;
