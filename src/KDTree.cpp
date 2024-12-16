@@ -1,19 +1,26 @@
 #include "../include/KDTree.h"
 
-KDTree::Node *KDTree::insertRecursive(Node *node, const glm::vec3 &point, int depth)
+KDTree::Node *KDTree::insertRecursive(std::vector<glm::vec3> &points, int start, int end, int depth)
 {
-    // Base case: If node is null, create a new node
-    if (node == nullptr)
-        return new Node(point);
+    if (start > end)
+        return nullptr;
 
     // Calculate current dimension (cd)
     int cd = depth % 3;
 
-    // Compare point with current node and decide to go left or right
-    if (point[cd] < node->point[cd])
-        node->left = insertRecursive(node->left, point, depth + 1);
-    else
-        node->right = insertRecursive(node->right, point, depth + 1);
+    // Sort points by the current dimension
+    std::sort(points.begin() + start, points.begin() + end + 1, [cd](const glm::vec3 &a, const glm::vec3 &b)
+              { return a[cd] < b[cd]; });
+
+    // Find the median index
+    int mid = start + (end - start) / 2;
+
+    // Create a node with the median point
+    Node *node = new Node(points[mid]);
+
+    // Recursively build the left and right subtrees
+    node->left = insertRecursive(points, start, mid - 1, depth + 1);
+    node->right = insertRecursive(points, mid + 1, end, depth + 1);
 
     return node;
 }
@@ -77,9 +84,10 @@ void KDTree::printRecursive(Node *node, int depth) const
     printRecursive(node->right, depth + 1);
 }
 
-void KDTree::insert(const glm::vec3 &point)
+void KDTree::insert(const std::vector<glm::vec3> &points)
 {
-    root = insertRecursive(root, point, 0);
+    std::vector<glm::vec3> pointsCopy = points;
+    root = insertRecursive(pointsCopy, 0, pointsCopy.size() - 1, 0);
 }
 
 std::vector<glm::vec3> KDTree::search(const glm::vec3 &point, float radius)

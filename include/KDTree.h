@@ -25,7 +25,7 @@ private:
     Node *root; // Root of the KDTree
 
     // Recursive function to insert a point into the KDTree
-    Node *insertRecursive(Node *node, const glm::vec3 &point, int depth);
+    Node *insertRecursive(std::vector<glm::vec3> &points, int start, int end, int depth);
 
     // Recursive function to search for points in the KDTree within a given radius
     std::vector<glm::vec3> searchRecursive(Node *node, const glm::vec3 &point, float radius, int depth);
@@ -38,7 +38,7 @@ public:
     KDTree() : root(nullptr) {}
 
     // Public function to insert a point into the KDTree
-    void insert(const glm::vec3 &point);
+    void insert(const std::vector<glm::vec3> &points);
 
     // Public function to search for a point in the KDTree
     std::vector<glm::vec3> search(const glm::vec3 &point, float radius);
