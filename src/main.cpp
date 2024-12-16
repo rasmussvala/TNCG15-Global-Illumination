@@ -2,28 +2,30 @@
 #include "../include/Polygon.h"
 #include "../include/Scene.h"
 #include "../include/Sphere.h"
+#include "../include/KDTree.h"
+
+void testKDTree();
 
 int main()
 {
+  // Test KDTree
+  testKDTree();
+
   // Set resolution of the rendering
-  Scene myScene(10, 10);
+  Scene myScene(100, 100);
 
-  // Default cube adds a white cube to right hand side
-  Cube cube1{};
-  myScene.addCube(&cube1);
-
-  // Create a sphere
-  glm::vec3 center{3.4f, 0.0f, 0.0f};
+  // Sphere params
   float radius = 1.5f;
   Material material{TRANSPARENT, 1.5f};
+
+  // Create a sphere
+  glm::vec3 center{7.0f, -2.0f, -3.5f};
   Sphere sphere{center, radius, material};
   myScene.addGeometry(&sphere);
 
   // Create another sphere
   glm::vec3 center2{6.5f, 2.5f, -3.5f};
-  float radius2 = 1.5f;
-  Material material2{REFLECTIVE};
-  Sphere sphere2{center2, radius2, material2};
+  Sphere sphere2{center2, radius, material};
   myScene.addGeometry(&sphere2);
 
   // Create a rectangular light with a position just below the roof
@@ -55,4 +57,43 @@ int main()
                  indirectRayCount, raysPerPixel);
 
   return 0;
+}
+
+void testKDTree()
+{
+  // Create a KDTree with 3 dimensions
+  KDTree tree;
+
+  std::vector<glm::vec3> points{
+      glm::vec3(2.0f, 2.0f, 0.0f),
+      glm::vec3(1.0f, 1.0f, 0.0f),
+      glm::vec3(3.0f, 3.0f, 0.0f),
+      glm::vec3(4.0f, 4.0f, 0.0f),
+      glm::vec3(5.0f, 5.0f, 0.0f),
+      glm::vec3(6.0f, 6.0f, 0.0f),
+  };
+
+  // Test insertion
+  tree.insert(points);
+
+  // Print the KDTree structure (optional)
+  std::cout << "KDTree structure:" << std::endl;
+  tree.print();
+
+  // Test range search
+  glm::vec3 searchPoint(2.5f, 4.5f, 0.0f);
+  float searchRadius = 2.0f;
+  auto rangePoints = tree.search(searchPoint, searchRadius);
+
+  // Assertions for range search
+  assert(!rangePoints.empty() && "Search should return some points");
+
+  // Verify that returned points are within the search radius
+  for (const auto &point : rangePoints)
+  {
+    float distance = glm::length(point - searchPoint);
+    assert(distance <= searchRadius && "Point should be within search radius");
+  }
+
+  std::cout << "KDTree tests passed successfully!" << std::endl;
 }
