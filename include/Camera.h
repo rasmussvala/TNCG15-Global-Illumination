@@ -32,6 +32,12 @@ public:
   // Loop through all the pixels created for the cameras viewports and cast rays
   void castRays(int samplesPerPixel);
 
+  // Adds geometry, light, and configures render settings
+  void configure(Scene *newScene, int newDepthDiffuse,
+                 int newDepthReflective, int newShadowRays,
+                 int newIndirectRays);
+
+private:
   // Cast a ray and return the color of that ray
   glm::vec3 castRay(const Ray &ray, int depthDiffuse, int depthReflective);
 
@@ -56,12 +62,6 @@ public:
   // Convert from hemispherical coordinate to world coordinate
   glm::vec3 sphericalToCartesian(float phi, float omega);
 
-  // Adds geometry, light, and configures render settings
-  void configure(Scene *newScene, int newDepthDiffuse,
-                 int newDepthReflective, int newShadowRays,
-                 int newIndirectRays);
-
-private:
   size_t width;
   size_t height;
   glm::vec3 location{-1.0f, 0.0f, 0.0f};

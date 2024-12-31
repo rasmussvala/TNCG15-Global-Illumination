@@ -45,14 +45,14 @@ int main()
 
   // Determines the number of shadow rays to shoot at each light source in the
   // scene. Mark recommends 100, but that's demanding
-  int shadowRayCount = 50;
+  int shadowRayCount = 10;
 
   // Determines the number of rays to create when hitting a diffuse object
   int indirectRayCount = 10;
 
   // Determines the number of rays shot from a single pixel, then averages them
   // Demanding!
-  int raysPerPixel = 5;
+  int raysPerPixel = 1;
 
   myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
                  indirectRayCount, raysPerPixel);
