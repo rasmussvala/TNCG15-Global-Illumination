@@ -2,8 +2,6 @@
 
 #include <limits>
 
-#include "../include/Sphere.h"
-
 Sphere::Sphere(const glm::vec3 &c, float r, const Material &mat)
     : center(c), radius(r), material(mat) {}
 

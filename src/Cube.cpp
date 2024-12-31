@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../include/Cube.h"
 
 Material Cube::getMaterial() const { return material; }

@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../include/Light.h"
 
 #include <cstdlib> // for rand function
