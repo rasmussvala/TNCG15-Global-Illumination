@@ -107,6 +107,26 @@ void Camera::castRays(int raysPerPixel)
   std::cout << "Rendering completed in " << elapsed.count() << " seconds.\n";
 }
 
+void Camera::castPhotons(Scene *scene, int Np)
+{
+  // - kolla om vi har nagra transparanta klot
+  std::vector<Geometry *> spheres;
+
+  for (const auto &geometry : scene->getGeometries())
+  {
+    Material material = geometry->getMaterial();
+    if (material.type == TRANSPARENT && geometry->getGeometryType() == GeometryType::SPHERE)
+    {
+      spheres.push_back(geometry);
+      std::cout << "one transparent sphere found." << std::endl;
+    }
+  }
+  // - omvandla klot till disk med normal som pekar mot ljuskallans mitt
+  // - random punkter (Xs) från ljuskallan skickas till random punkter (Xe) på disken
+  // - lat ljuset studsa till att den nar en diffus yta
+  // - spara punkten i kd tree
+}
+
 glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,
                           int mirrorBounceCount)
 {

@@ -43,6 +43,8 @@ glm::vec3 Triangle::getNormal(const glm::vec3 & /* point */) const
 
 Material Triangle::getMaterial() const { return material; }
 
+GeometryType Triangle::getGeometryType() const { return GeometryType::TRIANGLE; }
+
 Rectangle::Rectangle(const glm::vec3 &p1, const glm::vec3 &p2,
                      const glm::vec3 &p3, const glm::vec3 &p4,
                      const Material &mat)
@@ -98,3 +100,5 @@ glm::vec3 Rectangle::getNormal(const glm::vec3 & /* point */) const
 }
 
 Material Rectangle::getMaterial() const { return material; }
+
+GeometryType Rectangle::getGeometryType() const { return GeometryType::RECTANGLE; }

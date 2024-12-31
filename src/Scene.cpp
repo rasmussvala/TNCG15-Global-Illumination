@@ -94,6 +94,7 @@ void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
   camera->configure(this, diffuseBounceCount, mirrorBounceCount,
                     shadowRayCount, indirectRayCount);
 
+  // camera->castPhotons(this, 200);
   camera->castRays(raysPerPixel);
   camera->saveImage(outputPath + "/output.ppm");
 }

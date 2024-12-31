@@ -10,6 +10,13 @@ enum MaterialType
     DIFFUSE
 };
 
+enum class GeometryType
+{
+    SPHERE,
+    TRIANGLE,
+    RECTANGLE
+};
+
 struct Material
 {
     MaterialType type;
@@ -35,4 +42,5 @@ public:
     virtual float intersect(const Ray &ray) const = 0;
     virtual glm::vec3 getNormal(const glm::vec3 &point) const = 0;
     virtual Material getMaterial() const = 0;
+    virtual GeometryType getGeometryType() const = 0;
 };

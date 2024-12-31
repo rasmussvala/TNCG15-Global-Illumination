@@ -32,6 +32,9 @@ public:
   // Loop through all the pixels created for the cameras viewports and cast rays
   void castRays(int samplesPerPixel);
 
+  // Cast photons into the scene for the camera rays to catch
+  void castPhotons(Scene *scene, int Np);
+
   // Adds geometry, light, and configures render settings
   void configure(Scene *newScene, int newDepthDiffuse,
                  int newDepthReflective, int newShadowRays,
