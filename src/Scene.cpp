@@ -1,10 +1,10 @@
 #include "../include/Scene.h"
-
 #include "../include/Camera.h"
-#include "../include/Polygon.h"
 
-Scene::Scene(int width, int height) : camera(width, height)
+Scene::Scene(int width, int height)
 {
+  camera = new Camera(width, height);
+
   // F�rger
   glm::vec3 white(0.4, 0.4, 0.4);
   glm::vec3 blue(0.0, 0.0, 0.4);
@@ -91,9 +91,9 @@ void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
                    std::string outputPath)
 {
   // Adds geometry, light, and configures render settings
-  camera.configure(geometries, lights, diffuseBounceCount, mirrorBounceCount,
-                   shadowRayCount, indirectRayCount);
+  camera->configure(this, diffuseBounceCount, mirrorBounceCount,
+                    shadowRayCount, indirectRayCount);
 
-  camera.castRays(raysPerPixel);
-  camera.saveImage(outputPath + "/output.ppm");
+  camera->castRays(raysPerPixel);
+  camera->saveImage(outputPath + "/output.ppm");
 }

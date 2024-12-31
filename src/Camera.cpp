@@ -1,5 +1,3 @@
-#pragma once
-
 #include "../include/Camera.h"
 
 #include <chrono> // Include the chrono library for timing
@@ -70,9 +68,9 @@ void Camera::castRays(int raysPerPixel)
   Ray ray{};
 
   // Loop through all pixels and assign colors
-  for (int j = 0; j < height; ++j)
+  for (size_t j = 0; j < height; ++j)
   {
-    for (int i = 0; i < width; ++i)
+    for (size_t i = 0; i < width; ++i)
     {
       glm::vec3 colorSum(0.0f);
 
@@ -120,6 +118,7 @@ glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,
     return color;
   }
 
+  const std::vector<Geometry *> &geometries = scene->getGeometries();
   hitResult hit = closestIntersect(ray, geometries);
 
   // We have a hit
@@ -203,6 +202,9 @@ glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,
 glm::vec3 Camera::directLight(const glm::vec3 &hitPoint,
                               const glm::vec3 &hitPointNormal, int index)
 {
+  const std::vector<Geometry *> &geometries = scene->getGeometries();
+  const std::vector<Light *> &lights = scene->getLights();
+
   glm::vec3 colorOfObject = geometries[index]->getMaterial().color;
   float irradiance = 0.0f;
 
@@ -291,13 +293,11 @@ glm::vec3 Camera::sphericalToCartesian(float phi, float omega)
   return glm::vec3(cos(phi) * sin(omega), sin(phi) * sin(omega), cos(omega));
 }
 
-void Camera::configure(const std::vector<Geometry *> &newGeometries,
-                       const std::vector<Light *> &newLights,
+void Camera::configure(Scene *newScene,
                        int newDepthDiffuse, int newDepthReflective,
                        int newShadowRays, int newIndirectRays)
 {
-  geometries = newGeometries;
-  lights = newLights;
+  scene = newScene;
   MAX_DEPTH_DIFFUSE = newDepthDiffuse;
   MAX_DEPTH_REFLECTIVE = newDepthReflective;
   MAX_SHADOWRAYS = newShadowRays;
@@ -313,7 +313,7 @@ hitResult closestIntersect(const Ray &ray,
   int closestIndex = -1; // Initialize to an invalid index
 
   // Check intersections with polygons
-  for (int i = 0; i < geometries.size(); i++)
+  for (size_t i = 0; i < geometries.size(); i++)
   {
     float t = geometries[i]->intersect(ray);
     if (t > EPSILON && t < closestT)
