@@ -1,12 +1,5 @@
 #include "../include/Light.h"
-
-#include <cstdlib> // for rand function
-#include <vector>
-
 #include "../include/Camera.h"
-#include "../include/Cube.h"
-#include "../include/Sphere.h"
-#include "../include/glm/glm.hpp"
 
 Light::Light(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec3 v4)
     : v1(v1), v2(v2), v3(v3), v4(v4)

@@ -1,12 +1,11 @@
 #pragma once
 
 #include <vector>
+#include <cstdlib> // for rand function
 
-#include "Cube.h"
-#include "Geometry.h"
 #include "Polygon.h"
+#include "Geometry.h"
 #include "Ray.h"
-#include "Sphere.h"
 #include "glm/glm.hpp"
 
 // Area light
