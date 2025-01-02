@@ -65,3 +65,27 @@ GeometryType Sphere::getGeometryType() const { return GeometryType::SPHERE; }
 glm::vec3 Sphere::getCenter() const { return center; }
 
 float Sphere::getRadius() const { return radius; }
+
+std::vector<glm::vec3> Sphere::getDiskBasis(const glm::vec3 &diskNormal) const
+{
+  // L = local axis, W = world axis
+  glm::vec3 zL = diskNormal;
+  glm::vec3 xW(1.0f, 0.0f, 0.0f);
+  glm::vec3 yL = glm::normalize(glm::cross(zL, xW));
+  glm::vec3 xL = glm::normalize(glm::cross(yL, zL));
+
+  return {xL, yL, zL};
+}
+
+glm::vec3 Sphere::getRandomPointOnDisk(const glm::vec3 &xL, const glm::vec3 &yL) const
+{
+  float randomRadius = static_cast<float>(rand()) / RAND_MAX * radius;
+  float randomAngle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
+
+  float a = randomRadius * glm::cos(randomAngle);
+  float b = randomRadius * glm::sin(randomAngle);
+
+  glm::vec3 randomPoint = center + a * xL + b * yL;
+
+  return randomPoint;
+}

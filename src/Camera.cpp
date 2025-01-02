@@ -128,15 +128,19 @@ void Camera::castPhotons(Scene *scene, int Np)
   {
     for (const auto &sphere : spheres)
     {
-      glm::vec3 sphereCenter = sphere->getCenter();
       glm::vec3 lightCenter = light->getCenter();
-
-      float As = computeProjectedArea(sphereCenter, lightCenter, sphere->getRadius());
+      glm::vec3 sphereCenter = sphere->getCenter();
+      glm::vec3 diskNormal = glm::normalize(lightCenter - sphereCenter);
 
       // Transform the sphere into a plane with a normal pointing towards the light
+      std::vector<glm::vec3> sphereDiskBasis = sphere->getDiskBasis(diskNormal);
+
       for (int i = 0; i < Np; i++)
       {
         glm::vec3 pointOnLight = light->getRandomPoint();
+        glm::vec3 pointOnDisk = sphere->getRandomPointOnDisk(sphereDiskBasis[0], sphereDiskBasis[1]);
+
+        // float As = computeProjectedArea(sphereCenter, lightCenter, sphere->getRadius());
       }
     }
   }
@@ -148,7 +152,7 @@ void Camera::castPhotons(Scene *scene, int Np)
 
 float Camera::computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius)
 {
-  // Everything formula can be found at lec12 page 4
+  // Every formula can be found at lec12 page 4
 
   glm::vec3 distanceVector = lightCenter - sphereCenter;
 
