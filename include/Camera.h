@@ -41,6 +41,16 @@ public:
                  int newIndirectRays);
 
 private:
+  // ----- PHOTON THINGS (PASS 1) -----
+
+  // Calculate the geometric factor (Gm)
+  float computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius);
+
+  // Calculate the projected area (As)
+  float computeProjectedArea(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius);
+
+  // ----- NORMAL RAY STUFF (PASS 2) -----
+
   // Cast a ray and return the color of that ray
   glm::vec3 castRay(const Ray &ray, int depthDiffuse, int depthReflective);
 

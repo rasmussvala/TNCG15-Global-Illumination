@@ -20,6 +20,9 @@ public:
                        const glm::vec3 &intersectionPointNormal,
                        int MAX_SHADOWRAYS) const;
 
+  glm::vec3 getRandomPoint() const;
+  glm::vec3 getCenter() const;
+
 private:
   glm::vec3 v1, v2, v3, v4;
   glm::vec3 e1, e2;

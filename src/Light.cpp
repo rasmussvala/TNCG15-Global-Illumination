@@ -26,8 +26,6 @@ float Light::calculateLight(const std::vector<Geometry *> &geometries,
   glm::vec3 pointOnLight;
   glm::vec3 direction;
 
-  float S;
-  float T;
   float distanceToLight;
   float cosOmegaX;
   float cosOmegaY;
@@ -36,11 +34,8 @@ float Light::calculateLight(const std::vector<Geometry *> &geometries,
 
   for (int i = 0; i < N; i++)
   {
-    // V�rde mellan 0 - 1
-    S = static_cast<float>(rand()) / RAND_MAX;
-    T = static_cast<float>(rand()) / RAND_MAX;
+    glm::vec3 pointOnLight = getRandomPoint(); // random point pa ljuskalla
 
-    pointOnLight = v1 + S * e1 + T * e2; // random point p� ljusk�lla
     direction = pointOnLight - hitPoint; // di
     distanceToLight = glm::distance(pointOnLight, hitPoint);
     rayToLight.setRay(hitPoint, direction);
@@ -63,4 +58,26 @@ float Light::calculateLight(const std::vector<Geometry *> &geometries,
   irradiance = (irradiance * area * Le) / (N * PI);
 
   return irradiance;
+}
+
+glm::vec3 Light::getRandomPoint() const
+{
+  float S = static_cast<float>(rand()) / RAND_MAX;
+  float T = static_cast<float>(rand()) / RAND_MAX;
+
+  return v1 + S * e1 + T * e2;
+}
+
+glm::vec3 Light::getCenter() const
+{
+  // v1 and v3 are in opposite end (x), we use the diagonal to find the center
+  // x---o
+  // |   |
+  // 0---x
+
+  float x = v1.x + v3.x / 2;
+  float y = v1.y + v3.y / 2;
+  float z = v1.z + v3.z / 2;
+
+  return glm::vec3(x, y, z);
 }

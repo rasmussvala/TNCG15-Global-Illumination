@@ -61,3 +61,7 @@ glm::vec3 Sphere::getNormal(const glm::vec3 &point) const
 Material Sphere::getMaterial() const { return material; }
 
 GeometryType Sphere::getGeometryType() const { return GeometryType::SPHERE; }
+
+glm::vec3 Sphere::getCenter() const { return center; }
+
+float Sphere::getRadius() const { return radius; }

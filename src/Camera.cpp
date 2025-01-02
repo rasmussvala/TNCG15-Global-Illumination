@@ -109,22 +109,74 @@ void Camera::castRays(int raysPerPixel)
 
 void Camera::castPhotons(Scene *scene, int Np)
 {
-  // - kolla om vi har nagra transparanta klot
-  std::vector<Geometry *> spheres;
+  // Check if we have any transparent spheres
+  std::vector<Sphere *> spheres;
 
   for (const auto &geometry : scene->getGeometries())
   {
     Material material = geometry->getMaterial();
     if (material.type == TRANSPARENT && geometry->getGeometryType() == GeometryType::SPHERE)
     {
-      spheres.push_back(geometry);
+      // Add geometry to vector and cast it as a Sphere, not a Geometry to access Sphere functions like getCenter()
+      spheres.push_back(dynamic_cast<Sphere *>(geometry));
       std::cout << "one transparent sphere found." << std::endl;
     }
   }
-  // - omvandla klot till disk med normal som pekar mot ljuskallans mitt
+
+  // Do the photon thingy
+  for (const auto &light : scene->getLights())
+  {
+    for (const auto &sphere : spheres)
+    {
+      glm::vec3 sphereCenter = sphere->getCenter();
+      glm::vec3 lightCenter = light->getCenter();
+
+      float As = computeProjectedArea(sphereCenter, lightCenter, sphere->getRadius());
+
+      // Transform the sphere into a plane with a normal pointing towards the light
+      for (int i = 0; i < Np; i++)
+      {
+        glm::vec3 pointOnLight = light->getRandomPoint();
+      }
+    }
+  }
+
   // - random punkter (Xs) från ljuskallan skickas till random punkter (Xe) på disken
   // - lat ljuset studsa till att den nar en diffus yta
   // - spara punkten i kd tree
+}
+
+float Camera::computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius)
+{
+  // Everything formula can be found at lec12 page 4
+
+  glm::vec3 distanceVector = lightCenter - sphereCenter;
+
+  // Magnitude of the distance vector (||d||)
+  float distanceMagnitude = glm::length(distanceVector);
+
+  // Normalize the distance vector (d / ||d||)
+  glm::vec3 unitDistanceVector = glm::normalize(distanceVector);
+
+  // Define the disk normal (Nd) pointing to the light (same as normalized d)
+  glm::vec3 diskNormal = unitDistanceVector;
+
+  // Compute the dot product (Nd · (d / ||d||))
+  float cosOmegaL = glm::dot(diskNormal, unitDistanceVector);
+
+  // Compute the geometric factor Gm
+  return cosOmegaL / (distanceMagnitude * distanceMagnitude);
+}
+
+float Camera::computeProjectedArea(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius)
+{
+  // Compute the geometric factor GM
+  float geometricFactor = computeGeometricFactor(sphereCenter, lightCenter, sphereRadius);
+
+  // Compute the projected area As = GM * π * r0^2
+  float projectedArea = geometricFactor * PI * sphereRadius * sphereRadius;
+
+  return projectedArea;
 }
 
 glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,

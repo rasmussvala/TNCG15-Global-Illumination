@@ -11,6 +11,8 @@ public:
   glm::vec3 getNormal(const glm::vec3 &point) const override;
   Material getMaterial() const override;
   GeometryType getGeometryType() const override;
+  glm::vec3 getCenter() const;
+  float getRadius() const;
 
 private:
   glm::vec3 center;
