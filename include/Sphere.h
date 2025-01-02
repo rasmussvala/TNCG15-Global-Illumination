@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Geometry.h"
+#include "Light.h"
 #include <vector>
 
 class Sphere : public Geometry
@@ -12,10 +13,12 @@ public:
   glm::vec3 getNormal(const glm::vec3 &point) const override;
   Material getMaterial() const override;
   GeometryType getGeometryType() const override;
+  // Photon stuff
   glm::vec3 getCenter() const;
   float getRadius() const;
   std::vector<glm::vec3> getDiskBasis(const glm::vec3 &diskNormal) const;
   glm::vec3 getRandomPointOnDisk(const glm::vec3 &xL, const glm::vec3 &yL) const;
+  float computeFlux(const Light *light, float geometricFactor, float projectedArea, int photonCount) const;
 
 private:
   glm::vec3 center;

@@ -107,7 +107,7 @@ void Camera::castRays(int raysPerPixel)
   std::cout << "Rendering completed in " << elapsed.count() << " seconds.\n";
 }
 
-void Camera::castPhotons(Scene *scene, int Np)
+void Camera::castPhotons(Scene *scene, int photonCount)
 {
   // Check if we have any transparent spheres
   std::vector<Sphere *> spheres;
@@ -135,19 +135,72 @@ void Camera::castPhotons(Scene *scene, int Np)
       // Transform the sphere into a plane with a normal pointing towards the light
       std::vector<glm::vec3> sphereDiskBasis = sphere->getDiskBasis(diskNormal);
 
-      for (int i = 0; i < Np; i++)
+      for (int i = 0; i < photonCount; i++)
       {
+        // Send random points from the light source (Xs) ti the disk (Xe)
         glm::vec3 pointOnLight = light->getRandomPoint();
         glm::vec3 pointOnDisk = sphere->getRandomPointOnDisk(sphereDiskBasis[0], sphereDiskBasis[1]);
+        glm::vec3 direction = pointOnDisk - pointOnLight;
 
-        // float As = computeProjectedArea(sphereCenter, lightCenter, sphere->getRadius());
+        float Gm = computeGeometricFactor(sphereCenter, lightCenter, sphere->getRadius());
+        float As = computeProjectedArea(Gm, sphere->getRadius());
+
+        float flux = sphere->computeFlux(light, Gm, As, photonCount);
+
+        Photon photon(Ray(pointOnLight, direction), flux);
+
+        // Set the maximum depth of a photon to scatter before terminated
+        castPhoton(photon, 5);
       }
     }
   }
 
-  // - random punkter (Xs) från ljuskallan skickas till random punkter (Xe) på disken
   // - lat ljuset studsa till att den nar en diffus yta
   // - spara punkten i kd tree
+}
+
+void Camera::castPhoton(Photon &photon, int scatterDepth)
+{
+  // End of recursion, return
+  if (scatterDepth <= 0)
+  {
+    return;
+  }
+
+  const std::vector<Geometry *> &geometries = scene->getGeometries();
+  hitResult hit = closestIntersect(photon.ray, geometries);
+
+  // We have a hit
+  if (hit.t > EPSILON && hit.t < FLT_MAX)
+  {
+    glm::vec3 hitPoint = photon.ray.at(hit.t);
+    Geometry *hitGeometry = geometries[hit.index];
+
+    // REFLECTIVE
+    if (hitGeometry->getMaterial().type == REFLECTIVE)
+    {
+      glm::vec3 reflectDir =
+          glm::reflect(photon.ray.getDirection(), hitGeometry->getNormal(hitPoint));
+      photon.ray.setRay(hitPoint, reflectDir);
+      castPhoton(photon, scatterDepth - 1);
+    }
+    // DIFFUSE
+    else if (hitGeometry->getMaterial().type == DIFFUSE)
+    {
+      // Update the position of the photon's ray and add it to the photons vector
+      photon.ray.setRay(hitPoint, photon.ray.getDirection());
+      photons.push_back(photon);
+      return;
+    }
+    // TRANSPARENT
+    else
+    {
+      // Reflection
+      // DO SOMETHING
+      // Refraction
+      // DO SOMETHING
+    }
+  }
 }
 
 float Camera::computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius)
@@ -172,11 +225,8 @@ float Camera::computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::v
   return cosOmegaL / (distanceMagnitude * distanceMagnitude);
 }
 
-float Camera::computeProjectedArea(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius)
+float Camera::computeProjectedArea(float geometricFactor, float sphereRadius)
 {
-  // Compute the geometric factor GM
-  float geometricFactor = computeGeometricFactor(sphereCenter, lightCenter, sphereRadius);
-
   // Compute the projected area As = GM * π * r0^2
   float projectedArea = geometricFactor * PI * sphereRadius * sphereRadius;
 

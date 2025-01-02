@@ -10,6 +10,7 @@
 #include "Light.h"
 #include "Polygon.h"
 #include "Sphere.h"
+#include "Photon.h"
 #include "glm/glm.hpp"
 
 struct hitResult
@@ -33,7 +34,7 @@ public:
   void castRays(int samplesPerPixel);
 
   // Cast photons into the scene for the camera rays to catch
-  void castPhotons(Scene *scene, int Np);
+  void castPhotons(Scene *scene, int photonCount);
 
   // Adds geometry, light, and configures render settings
   void configure(Scene *newScene, int newDepthDiffuse,
@@ -47,7 +48,9 @@ private:
   float computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius);
 
   // Calculate the projected area (As)
-  float computeProjectedArea(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius);
+  float computeProjectedArea(float geometricFactor, float sphereRadius);
+
+  void castPhoton(Photon &photon, int scatterDepth);
 
   // ----- NORMAL RAY STUFF (PASS 2) -----
 
@@ -80,6 +83,7 @@ private:
   glm::vec3 location{-1.0f, 0.0f, 0.0f};
 
   Scene *scene;
+  std::vector<Photon> photons;
 
   int MAX_DEPTH_DIFFUSE;
   int MAX_DEPTH_REFLECTIVE;

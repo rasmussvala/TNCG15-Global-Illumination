@@ -12,7 +12,7 @@ float Triangle::intersect(const Ray &ray) const
 
   glm::vec3 E1 = v2 - v1;
   glm::vec3 E2 = v3 - v1;
-  glm::vec3 T = ray.getOrigin() - v1;
+  glm::vec3 T = ray.getPosition() - v1;
   glm::vec3 P = glm::cross(D, E2);
   glm::vec3 Q = glm::cross(T, E1);
 

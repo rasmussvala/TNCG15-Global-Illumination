@@ -22,6 +22,7 @@ public:
 
   glm::vec3 getRandomPoint() const;
   glm::vec3 getCenter() const;
+  float getArea() const;
 
 private:
   glm::vec3 v1, v2, v3, v4;

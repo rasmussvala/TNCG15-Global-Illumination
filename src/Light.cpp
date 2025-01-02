@@ -81,3 +81,8 @@ glm::vec3 Light::getCenter() const
 
   return glm::vec3(x, y, z);
 }
+
+float Light::getArea() const
+{
+  return area;
+}

@@ -1,12 +1,12 @@
 #pragma once
 
-#include "../include/glm/glm.hpp"
+#include "glm/glm.hpp"
+#include "Ray.h"
 
 struct Photon
 {
-    glm::vec3 position;
-    glm::vec3 direction;
+    Ray ray;
     float flux;
 
-    Photon(const glm::vec3 &p, const glm::vec3 &d, float f) : position(p), direction(d), flux(f) {}
+    Photon(const Ray &ray, float flux) : ray(ray), flux(flux) {}
 };

@@ -10,7 +10,7 @@ KDTree::Node *KDTree::insertRecursive(std::vector<Photon> &photons, int start, i
 
     // Sort points by the current dimension
     std::sort(photons.begin() + start, photons.begin() + end + 1, [cd](const Photon &a, const Photon &b)
-              { return a.position[cd] < b.position[cd]; });
+              { return a.ray.getPosition()[cd] < b.ray.getPosition()[cd]; });
 
     // Find the median index
     int mid = start + (end - start) / 2;
@@ -34,14 +34,14 @@ std::vector<Photon> KDTree::searchRecursive(Node *node, const glm::vec3 &point, 
     std::vector<Photon> results;
 
     // Check if current node's point is within the radius
-    if (glm::distance(node->photon.position, point) <= radius)
+    if (glm::distance(node->photon.ray.getPosition(), point) <= radius)
         results.push_back(node->photon);
 
     // Calculate current dimension (cd)
     int cd = depth % 3;
 
     // Decide which subtree to explore first based on the current dimension
-    bool goLeft = point[cd] < node->photon.position[cd];
+    bool goLeft = point[cd] < node->photon.ray.getPosition()[cd];
     Node *firstSubtree = goLeft ? node->left : node->right;
     Node *secondSubtree = goLeft ? node->right : node->left;
 
@@ -51,7 +51,7 @@ std::vector<Photon> KDTree::searchRecursive(Node *node, const glm::vec3 &point, 
 
     // Check if we need to search the other subtree
     // This happens when the splitting plane is closer than the radius
-    float planeDist = std::abs(point[cd] - node->photon.position[cd]);
+    float planeDist = std::abs(point[cd] - node->photon.ray.getPosition()[cd]);
     if (planeDist <= radius)
     {
         std::vector<Photon> secondResults = searchRecursive(secondSubtree, point, radius, depth + 1);
@@ -73,7 +73,7 @@ void KDTree::printRecursive(Node *node, int depth) const
     std::cout << "(";
     for (size_t i = 0; i < 3; i++)
     {
-        std::cout << node->photon.position[i];
+        std::cout << node->photon.ray.getPosition()[i];
         if (i < 3 - 1)
             std::cout << ", ";
     }

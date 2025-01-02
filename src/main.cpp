@@ -66,12 +66,12 @@ void testKDTree()
   KDTree tree;
 
   std::vector<Photon> photons{
-      Photon(glm::vec3(2.0f, 2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1),
-      Photon(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1),
-      Photon(glm::vec3(3.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1),
-      Photon(glm::vec3(4.0f, 4.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1),
-      Photon(glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1),
-      Photon(glm::vec3(6.0f, 6.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), 1),
+      Photon(Ray(glm::vec3(2.0f, 2.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), 1),
+      Photon(Ray(glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), 1),
+      Photon(Ray(glm::vec3(3.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), 1),
+      Photon(Ray(glm::vec3(4.0f, 4.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), 1),
+      Photon(Ray(glm::vec3(5.0f, 5.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), 1),
+      Photon(Ray(glm::vec3(6.0f, 6.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f)), 1),
   };
 
   // Test insertion
@@ -92,7 +92,7 @@ void testKDTree()
   // Verify that returned points are within the search radius
   for (const auto &photon : foundPhotons)
   {
-    float distance = glm::length(photon.position - searchPoint);
+    float distance = glm::length(photon.ray.getPosition() - searchPoint);
     assert(distance <= searchRadius && "Point should be within search radius");
   }
 

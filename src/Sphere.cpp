@@ -10,7 +10,7 @@ float Sphere::intersect(const Ray &ray) const
   const float EPSILON = 1e-4f;
 
   glm::vec3 D = glm::normalize(ray.getDirection());
-  glm::vec3 S = ray.getOrigin();
+  glm::vec3 S = ray.getPosition();
   glm::vec3 C = center;
 
   // Coefficients for the quadratic equation
@@ -79,6 +79,7 @@ std::vector<glm::vec3> Sphere::getDiskBasis(const glm::vec3 &diskNormal) const
 
 glm::vec3 Sphere::getRandomPointOnDisk(const glm::vec3 &xL, const glm::vec3 &yL) const
 {
+  // IF NO GOOD RESULT: Check lecture 12, slide 10 and redo randomRadius accordingly
   float randomRadius = static_cast<float>(rand()) / RAND_MAX * radius;
   float randomAngle = static_cast<float>(rand()) / RAND_MAX * 2 * PI;
 
@@ -88,4 +89,12 @@ glm::vec3 Sphere::getRandomPointOnDisk(const glm::vec3 &xL, const glm::vec3 &yL)
   glm::vec3 randomPoint = center + a * xL + b * yL;
 
   return randomPoint;
+}
+
+float Sphere::computeFlux(const Light *light, float geometricFactor, float projectedArea, int photonCount) const
+{
+  float phiT = PI * light->getArea();
+  float phiE = phiT * geometricFactor * projectedArea / 2 * PI;
+
+  return phiE / static_cast<float>(photonCount);
 }
