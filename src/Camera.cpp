@@ -298,7 +298,7 @@ glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,
       color = castRay(reflectedRay, diffuseBounceCount, mirrorBounceCount - 1);
     }
     // DIFFUSE
-    else if (hitGeometry->getMaterial().type == DIFFUSE)
+    else if (hitGeometry->getMaterial().type == DIFFUSE && diffuseBounceCount != MAX_DEPTH_DIFFUSE)
     {
       glm::vec3 direct =
           directLight(hitPoint, hitGeometry->getNormal(hitPoint), hit.index);
@@ -324,7 +324,7 @@ glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,
           indirectLight(diffuseBounceCount, mirrorBounceCount, hitPoint,
                         hitGeometry->getNormal(hitPoint));
 
-      color += direct + (indirect * hitGeometry->getMaterial().color) + totalFlux;
+      color += direct + (indirect * hitGeometry->getMaterial().color) + totalFlux * 100;
     }
     // TRANSPARENT
     else
