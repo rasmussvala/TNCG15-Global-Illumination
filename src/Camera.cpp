@@ -61,7 +61,7 @@ void Camera::castRays(int raysPerPixel)
   // Record the start time
   auto start = std::chrono::high_resolution_clock::now();
 
-  const float updateInterval = 0.05f; // Update progress every 5%
+  const float updateInterval = 0.01f; // Update progress every 1%
   float nextProgressUpdate = updateInterval;
   size_t totalRows = height;
 
@@ -446,7 +446,7 @@ glm::vec3 Camera::randomRayDirection(const glm::vec3 &hitPointNormal)
 void Camera::progressBar(float percent)
 {
   const int BAR_WIDTH = 20;
-  const int PROGRESS_THRESHOLD = 2; // Update every 2% change
+  const int PROGRESS_THRESHOLD = 1; // Update every 1% change
   static int lastProgress = -PROGRESS_THRESHOLD;
 
   int currentProgress = static_cast<int>(percent * 100.0f);
