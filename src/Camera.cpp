@@ -196,20 +196,27 @@ void Camera::castPhoton(Photon &photon, int scatterDepth)
     // TRANSPARENT
     else
     {
-      // REFLECTION
       glm::vec3 normal = hitGeometry->getNormal(hitPoint);
-      glm::vec3 reflectDir = glm::reflect(photon.ray.getDirection(), normal);
-      Photon reflectedPhoton(Ray(hitPoint, reflectDir), photon.flux);
 
-      castPhoton(reflectedPhoton, scatterDepth - 1);
-
-      // REFRACTION
+      // FRESNEL CALCULATIONS
       float n1 = 1.0f;                                       // Air
       float n2 = hitGeometry->getMaterial().refractiveIndex; // Glass
 
       glm::vec3 d0 =
           glm::normalize(photon.ray.getDirection()); // Normalize incident direction
       float cosOmega = glm::clamp(glm::dot(d0, normal), -1.0f, 1.0f);
+
+      // Fresnel effect (using Schlick's approximation)
+      float R0 = powf((n1 - n2) / (n1 + n2), 2);
+      float fresnel = R0 + (1 - R0) * powf(1.0f - fabs(cosOmega), 5);
+
+      // REFLECTION
+      glm::vec3 reflectDir = glm::reflect(photon.ray.getDirection(), normal);
+
+      Photon reflectedPhoton(Ray(hitPoint, reflectDir), photon.flux * fresnel);
+      castPhoton(reflectedPhoton, scatterDepth - 1);
+
+      // REFRACTION
 
       // We are inside of the glass
       if (cosOmega > 0)
@@ -227,13 +234,9 @@ void Camera::castPhoton(Photon &photon, int scatterDepth)
         glm::vec3 refractDir =
             R * d0 + (R * cosOmega - sqrtf(k)) *
                          normal; // Calculate refraction direction
-        Photon refractedPhoton(Ray(hitPoint, refractDir), photon.flux);
-
+        Photon refractedPhoton(Ray(hitPoint, refractDir), photon.flux * (1 - fresnel));
         castPhoton(refractedPhoton, scatterDepth - 1);
       }
-
-      // NOTE: NO FRESNEL EFFECT ATM THAT REMOVES FLUX INTENSITY, DONNO IF I NEED THAT. CHECK castRay(...) FOR EXAMPLE
-      // POSSIBLE SOLUTION IS TO CALCULATE THE NEW FLUX, UPDATE THE PHOTONS THAT ARE ABOUT TO BE CASTED AND THEN CAST THE PHOTONS.
     }
   }
 }
