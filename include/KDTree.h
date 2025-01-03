@@ -1,5 +1,7 @@
 // C++ Program to Implement KD Tree: https://www.geeksforgeeks.org/kd-trees-in-cpp/
 // Modified with glm::vec3 and range search
+#pragma once
+
 #include <iostream>
 #include <cmath>
 #include "../include/glm/glm.hpp"

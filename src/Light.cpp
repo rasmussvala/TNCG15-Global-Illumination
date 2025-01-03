@@ -34,7 +34,7 @@ float Light::calculateLight(const std::vector<Geometry *> &geometries,
 
   for (int i = 0; i < N; i++)
   {
-    glm::vec3 pointOnLight = getRandomPoint(); // random point pa ljuskalla
+    pointOnLight = getRandomPoint(); // random point pa ljuskalla
 
     direction = pointOnLight - hitPoint; // di
     distanceToLight = glm::distance(pointOnLight, hitPoint);

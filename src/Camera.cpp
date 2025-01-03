@@ -107,7 +107,7 @@ void Camera::castRays(int raysPerPixel)
   std::cout << "Rendering completed in " << elapsed.count() << " seconds.\n";
 }
 
-void Camera::castPhotons(Scene *scene, int photonCount)
+std::vector<Photon> Camera::castPhotons(Scene *scene, int photonCount)
 {
   // Check if we have any transparent spheres
   std::vector<Sphere *> spheres;
@@ -142,7 +142,7 @@ void Camera::castPhotons(Scene *scene, int photonCount)
         glm::vec3 pointOnDisk = sphere->getRandomPointOnDisk(sphereDiskBasis[0], sphereDiskBasis[1]);
         glm::vec3 direction = pointOnDisk - pointOnLight;
 
-        float Gm = computeGeometricFactor(sphereCenter, lightCenter, sphere->getRadius());
+        float Gm = computeGeometricFactor(sphereCenter, lightCenter);
         float As = computeProjectedArea(Gm, sphere->getRadius());
 
         float flux = sphere->computeFlux(light, Gm, As, photonCount);
@@ -154,7 +154,8 @@ void Camera::castPhotons(Scene *scene, int photonCount)
       }
     }
   }
-
+  // photons get added to the vector photons in castPhoton
+  return photons;
   // - lat ljuset studsa till att den nar en diffus yta
   // - spara punkten i kd tree
 }
@@ -195,15 +196,49 @@ void Camera::castPhoton(Photon &photon, int scatterDepth)
     // TRANSPARENT
     else
     {
-      // Reflection
-      // DO SOMETHING
-      // Refraction
-      // DO SOMETHING
+      // REFLECTION
+      glm::vec3 normal = hitGeometry->getNormal(hitPoint);
+      glm::vec3 reflectDir = glm::reflect(photon.ray.getDirection(), normal);
+      Photon reflectedPhoton(Ray(hitPoint, reflectDir), photon.flux);
+
+      castPhoton(reflectedPhoton, scatterDepth - 1);
+
+      // REFRACTION
+      float n1 = 1.0f;                                       // Air
+      float n2 = hitGeometry->getMaterial().refractiveIndex; // Glass
+
+      glm::vec3 d0 =
+          glm::normalize(photon.ray.getDirection()); // Normalize incident direction
+      float cosOmega = glm::clamp(glm::dot(d0, normal), -1.0f, 1.0f);
+
+      // We are inside of the glass
+      if (cosOmega > 0)
+      {
+        std::swap(n1, n2);
+        normal = -normal; // Invert normal if we are inside the object
+      }
+
+      float R = n1 / n2; // Ratio of refractive indices
+      float k =
+          1 - R * R * (1 - cosOmega * cosOmega); // Snell's law discriminant
+
+      if (k >= 0)
+      { // Total internal reflection check
+        glm::vec3 refractDir =
+            R * d0 + (R * cosOmega - sqrtf(k)) *
+                         normal; // Calculate refraction direction
+        Photon refractedPhoton(Ray(hitPoint, refractDir), photon.flux);
+
+        castPhoton(refractedPhoton, scatterDepth - 1);
+      }
+
+      // NOTE: NO FRESNEL EFFECT ATM THAT REMOVES FLUX INTENSITY, DONNO IF I NEED THAT. CHECK castRay(...) FOR EXAMPLE
+      // POSSIBLE SOLUTION IS TO CALCULATE THE NEW FLUX, UPDATE THE PHOTONS THAT ARE ABOUT TO BE CASTED AND THEN CAST THE PHOTONS.
     }
   }
 }
 
-float Camera::computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius)
+float Camera::computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter)
 {
   // Every formula can be found at lec12 page 4
 
@@ -272,6 +307,24 @@ glm::vec3 Camera::castRay(const Ray &ray, int diffuseBounceCount,
                         hitGeometry->getNormal(hitPoint));
 
       color += direct + (indirect * hitGeometry->getMaterial().color);
+    }
+    // DIFFUSE AND FIRST HIT => INCLUDE PHOTON CONTRIBUTION
+    else if (hitGeometry->getMaterial().type == DIFFUSE && diffuseBounceCount == MAX_DEPTH_DIFFUSE)
+    {
+      KDTree tree = scene->getKDTree();
+      std::vector<Photon> photons = tree.search(hitPoint, 0.2f);
+
+      float totalFlux = 0.0f;
+      for (const auto &photon : photons)
+        totalFlux += photon.flux;
+
+      glm::vec3 direct =
+          directLight(hitPoint, hitGeometry->getNormal(hitPoint), hit.index);
+      glm::vec3 indirect =
+          indirectLight(diffuseBounceCount, mirrorBounceCount, hitPoint,
+                        hitGeometry->getNormal(hitPoint));
+
+      color += direct + (indirect * hitGeometry->getMaterial().color) + totalFlux;
     }
     // TRANSPARENT
     else

@@ -94,7 +94,12 @@ void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
   camera->configure(this, diffuseBounceCount, mirrorBounceCount,
                     shadowRayCount, indirectRayCount);
 
-  // camera->castPhotons(this, 200);
+  // Cast photons and add them to the scenes KD Tree (Pass 1)
+  std::vector<Photon> photons = camera->castPhotons(this, 200);
+  tree.insert(photons);
+
+  // Cast the ray and fetch potential photons (Pass 2)
   camera->castRays(raysPerPixel);
+
   camera->saveImage(outputPath + "/output.ppm");
 }

@@ -34,7 +34,7 @@ public:
   void castRays(int samplesPerPixel);
 
   // Cast photons into the scene for the camera rays to catch
-  void castPhotons(Scene *scene, int photonCount);
+  std::vector<Photon> castPhotons(Scene *scene, int photonCount);
 
   // Adds geometry, light, and configures render settings
   void configure(Scene *newScene, int newDepthDiffuse,
@@ -45,7 +45,7 @@ private:
   // ----- PHOTON THINGS (PASS 1) -----
 
   // Calculate the geometric factor (Gm)
-  float computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter, float sphereRadius);
+  float computeGeometricFactor(const glm::vec3 &sphereCenter, const glm::vec3 &lightCenter);
 
   // Calculate the projected area (As)
   float computeProjectedArea(float geometricFactor, float sphereRadius);

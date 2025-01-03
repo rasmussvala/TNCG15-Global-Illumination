@@ -20,12 +20,12 @@ int main()
   Material material{TRANSPARENT, 1.5f};
 
   // Create a sphere
-  glm::vec3 center{7.0f, -2.0f, -3.5f};
+  glm::vec3 center{7.0f, -2.0f, -1.5f};
   Sphere sphere{center, radius, material};
   myScene.addGeometry(&sphere);
 
   // Create another sphere
-  glm::vec3 center2{6.5f, 2.5f, -3.5f};
+  glm::vec3 center2{6.5f, 2.5f, -1.5f};
   Sphere sphere2{center2, radius, material};
   myScene.addGeometry(&sphere2);
 
