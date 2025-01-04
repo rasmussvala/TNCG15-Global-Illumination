@@ -119,7 +119,6 @@ std::vector<Photon> Camera::castPhotons(Scene *scene, int photonCount)
     {
       // Add geometry to vector and cast it as a Sphere, not a Geometry to access Sphere functions like getCenter()
       spheres.push_back(dynamic_cast<Sphere *>(geometry));
-      std::cout << "one transparent sphere found." << std::endl;
     }
   }
 

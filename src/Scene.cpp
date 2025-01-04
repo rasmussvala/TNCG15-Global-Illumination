@@ -95,10 +95,13 @@ void Scene::render(int diffuseBounceCount, int mirrorBounceCount,
                     shadowRayCount, indirectRayCount);
 
   // Cast photons and add them to the scenes KD Tree (Pass 1)
-  std::vector<Photon> photons = camera->castPhotons(this, 200);
+  std::cout << "Casting photons..." << std::endl;
+  std::vector<Photon> photons = camera->castPhotons(this, 2000);
   tree.insert(photons);
+  std::cout << "Casting photons done." << std::endl;
 
   // Cast the ray and fetch potential photons (Pass 2)
+  std::cout << "Casting rays..." << std::endl;
   camera->castRays(raysPerPixel);
 
   camera->saveImage(outputPath + "/output.ppm");

@@ -10,10 +10,10 @@ void testKDTree();
 int main()
 {
   // Test KDTree
-  testKDTree();
+  // testKDTree();
 
   // Set resolution of the rendering
-  Scene myScene(100, 100);
+  Scene myScene(600, 600);
 
   // Sphere params
   float radius = 1.5f;
@@ -45,14 +45,14 @@ int main()
 
   // Determines the number of shadow rays to shoot at each light source in the
   // scene. Mark recommends 100, but that's demanding
-  int shadowRayCount = 10;
+  int shadowRayCount = 50;
 
   // Determines the number of rays to create when hitting a diffuse object
   int indirectRayCount = 10;
 
   // Determines the number of rays shot from a single pixel, then averages them
   // Demanding!
-  int raysPerPixel = 1;
+  int raysPerPixel = 4;
 
   myScene.render(diffuseBounceCount, mirrorBounceCount, shadowRayCount,
                  indirectRayCount, raysPerPixel);
