@@ -76,6 +76,8 @@ Done! Now you can open the solution created in the build directory (.sln file).
 
 That’s it! The ray tracer will run and generate the output based on the provided settings.
 
-## Render from Ray Tracer
+## Renders from Ray Tracer
 
 ![render2](https://github.com/user-attachments/assets/27657e2f-e40f-44a4-a799-ad6a233967e1)
+![image2](https://github.com/user-attachments/assets/7208996f-4b73-4270-8b6c-43f52ce6319c)
+
