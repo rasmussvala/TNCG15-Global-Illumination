@@ -80,4 +80,3 @@ That’s it! The ray tracer will run and generate the output based on the provid
 
 ![render2](https://github.com/user-attachments/assets/27657e2f-e40f-44a4-a799-ad6a233967e1)
 ![image2](https://github.com/user-attachments/assets/7208996f-4b73-4270-8b6c-43f52ce6319c)
-
